@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout Apple Style</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    background: #000;
+    color: #f5f5f7;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+  }
+
+  .block {
+    max-width: 980px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 17px;
+    font-weight: 400;
+    color: #6e6e73;
+    margin-bottom: 12px;
+    letter-spacing: 0;
+  }
+
+  h2 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: #f5f5f7;
+    margin-bottom: 20px;
+  }
+
+  h2 span {
+    background: linear-gradient(90deg, #2997ff, #29d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #86868b;
+    max-width: 600px;
+    margin: 0 auto 72px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: #1d1d1f;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .item {
+    background: #111;
+    padding: 40px 32px 44px;
+    text-align: left;
+    transition: background 0.2s;
+  }
+
+  .item:first-child { border-radius: 16px 0 0 16px; }
+  .item:last-child  { border-radius: 0 16px 16px 0; }
+
+  .item:hover { background: #161616; }
+
+  .item-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2997ff;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .item p {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: #a1a1a6;
+  }
+</style>
+</head>
+<body>
+
+<div class="block">
+  <p class="eyebrow">Processo de Seleção</p>
+  <h2>Um programa pensado para<br><span>transformar</span> o modelo de saúde.</h2>
+  <p class="subtitle">O processo de seleção da Alice foi desenhado para garantir consistência clínica, alinhamento de prática e uma evolução real do modelo tradicional de saúde.</p>
+
+  <div class="grid">
+    <div class="item">
+      <div class="item-num">01</div>
+      <p>Avaliação rigorosa de formação e trajetória clínica</p>
+    </div>
+    <div class="item">
+      <div class="item-num">02</div>
+      <p>Análise da prática médica e tomada de decisão</p>
+    </div>
+    <div class="item">
+      <div class="item-num">03</div>
+      <p>Alinhamento com princípios clínicos objetivos</p>
+    </div>
+    <div class="item">
+      <div class="item-num">04</div>
+      <p>Entrada pensada para preservar e elevar o padrão da comunidade</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ds",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "packages/ds",
+      "port": 5174
+    }
+    ,{
+      "name": "storybook",
+      "runtimeExecutable": "node_modules/.bin/storybook",
+      "runtimeArgs": ["dev", "-p", "6006", "--no-open"],
+      "cwd": "packages/ds",
+      "port": 6006
+    }
+  ,{
+      "name": "layouts",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", ".", "-l", "3456"],
+      "port": 3456
+    }
+  ]
+}
