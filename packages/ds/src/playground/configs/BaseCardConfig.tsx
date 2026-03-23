@@ -50,7 +50,7 @@ export const BaseCardConfig: ComponentConfig = {
     showSubtitle:  { type: 'boolean',     label: 'Subtitle',       default: true },
     leftAsset:     { type: 'boolean',     label: 'Left asset',     default: true },
     rightAsset:    { type: 'boolean',     label: 'Right asset',    default: true },
-    showSlot:      { type: 'boolean',     label: 'Slot',           default: true },
+    showSlot:      { type: 'boolean',     label: 'Slot',           default: false },
     leftIconName:  { type: 'icon-picker', label: 'Left icon',      default: 'link-variant', showWhen: { field: 'leftAsset', values: ['true'] } },
     rightIconName: { type: 'icon-picker', label: 'Right icon',     default: 'link-variant', showWhen: { field: 'rightAsset', values: ['true'] } },
   },
@@ -69,8 +69,7 @@ export const BaseCardConfig: ComponentConfig = {
       : undefined
 
     return (
-      <div className="p-10 rounded-xl" style={{ backgroundColor: 'var(--color-surface-bg)' }}>
-        <BaseCard
+      <BaseCard
           size={p.size as any}
           filled={p.filled as boolean}
           category={p.category as string}
@@ -90,7 +89,6 @@ export const BaseCardConfig: ComponentConfig = {
           linkLabel={p.linkLabel as string}
           linkLabel2={p.linkLabel2 as string}
         />
-      </div>
     )
   },
 }

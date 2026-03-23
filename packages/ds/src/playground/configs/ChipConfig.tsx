@@ -55,8 +55,7 @@ export const ChipConfig: ComponentConfig = {
     const affIconEl = affIconName ? <Icon name={affIconName} size={closeSize} color="var(--color-content-primary)" /> : undefined
 
     return (
-      <div className="p-10 rounded-xl" style={{ backgroundColor: 'var(--color-surface)' }}>
-        <Chip
+      <Chip
           label={p.label as string}
           variant={p.variant as any}
           size={p.size as any}
@@ -68,7 +67,6 @@ export const ChipConfig: ComponentConfig = {
           iconElement={iconEl}
           imageUrl={p.variant === 'image' ? PLACEHOLDER_IMAGE : undefined}
         />
-      </div>
     )
   },
 }

@@ -37,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "eslint-plugin-storybook": "^10.2.19",
     "globals": "^17.4.0",
+    "html-to-image": "^1.11.13",
     "playwright": "^1.58.2",
     "storybook": "^10.2.19",
     "tailwindcss": "^4.2.1",

@@ -56,7 +56,13 @@ Always use inline `style={{ }}` props for token-based values instead.
 - Before writing ANY styled element, check if a component already solves it
 - **This also applies to UI patterns in the playground**: if a toggle, inspect overlay, toolbar, or layout already exists in one page, reuse the exact same code/pattern in other pages. NEVER create a different version of the same UI element.
 
-## Rule #5: Figma is the source of truth
+## Rule #5: Playground control types
+
+- When a control has **more than 4 options**, use `type: 'select'` (dropdown) instead of `type: 'radio'` (pills)
+- Radio pills work well for 2–4 options; beyond that they wrap and clutter the panel
+- Example: a `state` control with 7 options → `select`; an `items` control with 4 options → `radio`
+
+## Rule #6: Figma is the source of truth
 
 - Always check Figma for exact values before implementing or fixing components
 - File key for components: `kcmeyj2SAZqHF0s8Nayjor` (branch `KB95zjXOg5PPMX5uPPOyBW`)

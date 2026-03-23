@@ -15,48 +15,85 @@ function MissingTag({ label }: { label: string }) {
   )
 }
 
-const specialties = [
-  { key: 'todos', label: 'Todos' },
-  { key: 'clinico', label: 'Clínico geral' },
-  { key: 'dermato', label: 'Dermatologia' },
-  { key: 'cardio', label: 'Cardiologia' },
-  { key: 'orto', label: 'Ortopedia' },
-  { key: 'neuro', label: 'Neurologia' },
-]
+export interface EspecialistasContent {
+  pageTitle: string
+  searchPlaceholder: string
+  specialties: { key: string; label: string }[]
+  doctors: {
+    key: string
+    name: string
+    specialty: string
+    rating: string
+    availability: string
+    imageUrl: string
+  }[]
+  recentSection: string
+  recentDoctors: {
+    key: string
+    title: string
+    description: string
+  }[]
+  helpCard: {
+    category: string
+    title: string
+    subtitle: string
+    linkLabel: string
+  }
+}
 
-const doctors = [
-  {
-    key: 'isabella',
-    name: 'Dra. Isabella Moreira',
-    specialty: 'Clínico geral',
-    rating: '4.9',
-    availability: 'Disponível hoje',
-    imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop&crop=face',
+export const defaultEspecialistasContent: EspecialistasContent = {
+  pageTitle: 'Especialistas',
+  searchPlaceholder: 'Buscar médico ou especialidade',
+  specialties: [
+    { key: 'todos', label: 'Todos' },
+    { key: 'clinico', label: 'Clínico geral' },
+    { key: 'dermato', label: 'Dermatologia' },
+    { key: 'cardio', label: 'Cardiologia' },
+    { key: 'orto', label: 'Ortopedia' },
+    { key: 'neuro', label: 'Neurologia' },
+  ],
+  doctors: [
+    {
+      key: 'isabella',
+      name: 'Dra. Isabella Moreira',
+      specialty: 'Clínico geral',
+      rating: '4.9',
+      availability: 'Disponível hoje',
+      imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop&crop=face',
+    },
+    {
+      key: 'carlos',
+      name: 'Dr. Carlos Mendes',
+      specialty: 'Cardiologia',
+      rating: '4.8',
+      availability: 'Próxima: Quinta, 10h',
+      imageUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face',
+    },
+    {
+      key: 'ana',
+      name: 'Dra. Ana Beatriz Costa',
+      specialty: 'Dermatologia',
+      rating: '5.0',
+      availability: 'Disponível amanhã',
+      imageUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=80&h=80&fit=crop&crop=face',
+    },
+  ],
+  recentSection: 'Consultas recentes',
+  recentDoctors: [
+    { key: 'rec-isabella', title: 'Dra. Isabella Moreira', description: 'Clínico geral · Última consulta: 04/03' },
+    { key: 'rec-pedro', title: 'Dr. Pedro Alvares', description: 'Ortopedia · Última consulta: 12/02' },
+  ],
+  helpCard: {
+    category: 'Dúvidas',
+    title: 'Como funciona o agendamento?',
+    subtitle: 'Tire suas dúvidas sobre consultas online e presenciais',
+    linkLabel: 'Saiba mais',
   },
-  {
-    key: 'carlos',
-    name: 'Dr. Carlos Mendes',
-    specialty: 'Cardiologia',
-    rating: '4.8',
-    availability: 'Próxima: Quinta, 10h',
-    imageUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face',
-  },
-  {
-    key: 'ana',
-    name: 'Dra. Ana Beatriz Costa',
-    specialty: 'Dermatologia',
-    rating: '5.0',
-    availability: 'Disponível amanhã',
-    imageUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=80&h=80&fit=crop&crop=face',
-  },
-]
+}
 
-const recentDoctors = [
-  { key: 'rec-isabella', title: 'Dra. Isabella Moreira', description: 'Clínico geral · Última consulta: 04/03', icon: 'account-outline' },
-  { key: 'rec-pedro', title: 'Dr. Pedro Alvares', description: 'Ortopedia · Última consulta: 12/02', icon: 'account-outline' },
-]
+export function EspecialistasScreen({ content }: { content?: EspecialistasContent }) {
+  const c = content ?? defaultEspecialistasContent
 
-export function EspecialistasScreen() {
   return (
     <div
       style={{
@@ -91,7 +128,7 @@ export function EspecialistasScreen() {
             margin: 0,
           }}
         >
-          Especialistas
+          {c.pageTitle}
         </h1>
       </div>
 
@@ -119,7 +156,7 @@ export function EspecialistasScreen() {
                 color: 'var(--color-content-tertiary)',
               }}
             >
-              Buscar médico ou especialidade
+              {c.searchPlaceholder}
             </span>
           </div>
         </div>
@@ -136,7 +173,7 @@ export function EspecialistasScreen() {
           scrollbarWidth: 'none',
         }}
       >
-        {specialties.map((item, i) => (
+        {c.specialties.map((item, i) => (
           <div key={item.key} className="shrink-0">
             <Chip
               label={item.label}
@@ -153,7 +190,7 @@ export function EspecialistasScreen() {
         className="flex flex-col"
         style={{ padding: '0 var(--spacing-06)', gap: 'var(--spacing-03)' }}
       >
-        {doctors.map((doc) => (
+        {c.doctors.map((doc) => (
           <div key={doc.key} style={{ position: 'relative' }}>
             <MissingTag label="DoctorCard — fora do DS" />
             <div
@@ -226,7 +263,7 @@ export function EspecialistasScreen() {
         ))}
       </div>
 
-      {/* Section — Consultas recentes */}
+      {/* Section — recent */}
       <div style={{ paddingLeft: 'var(--spacing-06)', paddingTop: 'var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
         <h2
           style={{
@@ -238,13 +275,13 @@ export function EspecialistasScreen() {
             margin: 0,
           }}
         >
-          Consultas recentes
+          {c.recentSection}
         </h2>
       </div>
 
       {/* Recent doctors — ListItem DS */}
       <div>
-        {recentDoctors.map((item, i) => (
+        {c.recentDoctors.map((item, i) => (
           <ListItem
             key={item.key}
             title={item.title}
@@ -252,8 +289,8 @@ export function EspecialistasScreen() {
             size="small"
             leftSide="icon"
             rightAsset="icon"
-            icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
-            divider={i < recentDoctors.length - 1}
+            icon={<Icon name="account-outline" size={20} color="var(--color-content-primary)" />}
+            divider={i < c.recentDoctors.length - 1}
           />
         ))}
       </div>
@@ -263,17 +300,17 @@ export function EspecialistasScreen() {
         <BaseCard
           size="sm"
           filled={false}
-          category="Dúvidas"
+          category={c.helpCard.category}
           showCategory
-          title="Como funciona o agendamento?"
+          title={c.helpCard.title}
           showTitle
-          subtitle="Tire suas dúvidas sobre consultas online e presenciais"
+          subtitle={c.helpCard.subtitle}
           showSubtitle
           leftAsset
           leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
           rightAsset={false}
           action="link"
-          linkLabel="Saiba mais"
+          linkLabel={c.helpCard.linkLabel}
           showSlot={false}
           width="100%"
         />

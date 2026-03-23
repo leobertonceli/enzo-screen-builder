@@ -49,17 +49,15 @@ export const ButtonConfig: ComponentConfig = {
     const iconEl = iconName ? <Icon name={iconName} size={iconSize} /> : undefined
 
     return (
-      <div className="p-10 rounded-xl" style={{ backgroundColor: p.darkMode ? 'var(--color-dark-surface)' : 'var(--color-surface)' }}>
-        <Button
-          label={p.label as string}
-          darkMode={p.darkMode as boolean}
-          style={p.style as any}
-          size={p.size as any}
-          type={p.btnType as any}
-          state={p.state as any}
-          iconElement={iconEl}
-        />
-      </div>
+      <Button
+        label={p.label as string}
+        darkMode={p.darkMode as boolean}
+        style={p.style as any}
+        size={p.size as any}
+        type={p.btnType as any}
+        state={p.state as any}
+        iconElement={iconEl}
+      />
     )
   },
 }

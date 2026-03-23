@@ -146,7 +146,7 @@ export function BaseCard({
   return (
     <div className={className} style={containerStyle} onClick={onClick}>
       {/* Top section: assets + text */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)', width: '100%', paddingBottom: 'var(--spacing-04)', position: 'relative' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)', width: '100%', position: 'relative' }}>
         {/* Left asset */}
         {leftAsset && (
           <div className="flex items-center" style={{ width: s.assetSize, height: s.assetSize }}>

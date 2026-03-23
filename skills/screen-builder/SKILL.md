@@ -177,10 +177,116 @@ export function ScreenName() {
 7. **Page titles with colored name.** A common pattern is page titles with a highlighted word in brand color: `"Minha saúde "` + `<span style={{ color: 'var(--color-brand)' }}>Diogo</span>`. The base title is `--color-content-primary`, the highlighted word is `--color-brand`.
 8. **Section titles** use `fontSize: 'var(--font-size-md)'` (16px) with `fontWeight: 'var(--font-weight-medium)'` (500). Smaller than page titles.
 9. **Screen rhythm / visual variety.** Never stack the same component type repeatedly without breaking it up. A good screen alternates between different component types to create visual rhythm. Example: title → hero card → BaseCard → score widget → section title → ListItems → chips. Avoid: ListItems → ListItems → ListItems → ListItems.
-10. **Even "fora do DS" elements must use tokens.** When building placeholder elements that don't exist in the DS yet, still use all design tokens (fontFamily, fontWeight, fontSize, color, spacing, radius). The only difference is the MissingTag — the visual treatment must be consistent with the DS.
+10. **Use only the props that the context actually needs.** Before mounting a component, ask: *"what does this element need to communicate?"* — and only pass the props that answer that question. Do not fill every available slot just because it exists.
+
+   | Context | What to use | What to omit |
+   |---|---|---|
+   | Card de ajuda | `title` + `linkLabel` | category, icon, subtitle |
+   | Card de destaque | `category` + `title` + `buttonLabel` | subtitle is optional |
+   | Card de consulta | `title` + `subtitle` (data/hora) + `linkLabel` | category, icon |
+   | ListItem simples | `title` + divider | leftIcon, rightAsset, description |
+   | ListItem com contexto | `title` + `description` + `leftIcon` | rightAsset if irrelevant |
+
+   This rule applies to **all components** — BaseCard, ListItem, Chip, Button. Prefer the simplest combination that still communicates the intent. Add props only when they add real information, not to "complete" the component.
+
+11. **Even "fora do DS" elements must use tokens.** When building placeholder elements that don't exist in the DS yet, still use all design tokens (fontFamily, fontWeight, fontSize, color, spacing, radius). The only difference is the MissingTag — the visual treatment must be consistent with the DS.
 12. **Screen structure: StatusBar → Navigation (back) → Title.** The page title (h1) always comes below the back navigation bar, never above it. The standard top flow is: StatusBar → Navigation bar with back arrow → h1 page title → Content.
 13. **Photos and avatars use standard radius tokens.** Never use `--radius-pill` for photos or avatars — that creates a fully round shape which is not the DS pattern. Use `--radius-xs` (8px) or `--radius-sm` (12px) depending on the size. `--radius-pill` is only for pills/chips/badges.
-11. **Chips as action options (chat context only).** In chat/assistant screens, chips can be stacked vertically as quick-reply options (e.g. "Estou em uma emergência", "Tenho sintomas"). Use `flex-col` with `items-start` and `gap: var(--spacing-02)`. In all other screens, chips should be horizontal (scroll row).
+14. **Chips as action options (chat context only).** In chat/assistant screens, chips can be stacked vertically as quick-reply options (e.g. "Estou em uma emergência", "Tenho sintomas"). Use `flex-col` with `items-start` and `gap: var(--spacing-02)`. In all other screens, chips should be horizontal (scroll row).
+
+## Visual design principles
+
+These principles were extracted from real production screens and should guide layout decisions — but they are **guidelines, not hard blocks**. Use judgment based on the specific screen being built.
+
+### 1. Breathing room over clutter
+Empty areas create focus and hierarchy. Prefer fewer, well-placed elements over filling every inch. But if the screen's purpose demands density (e.g. a settings list, a search results page), that's fine — just make sure spacing tokens are consistent.
+
+### 2. Identity marks should feel intentional
+AI avatars, product logos, and identity elements work best when simple — a circle with an initial, a minimal icon. Avoid heavy gradients or complex illustrations, but don't be afraid to use a small photo, a colored circle, or a branded element when the context calls for it.
+
+### 3. Quick-action prompts
+In conversational screens, prefer **vertical pill chips** (left-aligned, text only) for quick-reply options. In non-conversational screens (home, dashboard), action prompts can use cards, icons, or other richer patterns. Match the prompt style to the screen's energy.
+
+### 4. Component complexity matches the screen's moment
+Match the complexity of components to what the user needs at that point in the flow:
+- **Entry/home state**: minimal controls, fewer affordances, more breathing room
+- **Active/engaged state**: richer controls, full component capabilities
+For example: a chat input on a home screen can show just the text field + send. The same input mid-conversation can show add, mic, and send.
+
+### 5. Navigation context changes the header
+Different moments in a flow use fundamentally different header patterns:
+- **Home/root screens**: no back button, identity mark on left, utility icons on right, bottom nav present
+- **Detail/flow screens**: back arrow on left, centered title, contextual action on right, no bottom nav
+Prefer these patterns, but adapt if the design calls for a different approach.
+
+### 6. Left-align content in conversational screens
+Text-heavy conversational screens (greetings, prompts, chat messages) are left-aligned, not centered. Centered text works for empty states and illustrations.
+
+## Figma reference screens
+
+When building screens, use these Figma files as composition references. Fetch them via `get_screenshot` or `get_design_context` to understand real layout patterns:
+
+| Type | File key | Node ID | Description |
+|---|---|---|---|
+| Home / Hub | `TjVtIQaMrwpPzmX4dW2Kd9` | `2004-75418` | Nova Home AA — hub with cards, sections, identity |
+| Chat / Conversational | `H6DQZbFEToGXx4ZFfaMHEp` | `2-43` | Planta Baixa — conversational flow structure |
+| Discovery / Search | `nnaLovNJDQSfQ8RGppOtRy` | `1683-14754` | Discovery macro — search, filters, results |
+| Authorizations / Flow | `rywjDuWYfTHpRTp4mp4nbK` | `674-8418` | Autorizações — multi-step approval flow |
+| Detail / Specs | `0HDEnq8f5BPfD9702IaAOK` | `1-3` | Coparticipação — detail screens, data display |
+
+| Hub / First-level | `H6DQZbFEToGXx4ZFfaMHEp` | `208-12810` | Minha saúde — cards + sections + lists |
+
+**How to use references:** Before building a screen, check if any reference matches the type of screen being requested. Fetch the screenshot to understand the composition pattern (element hierarchy, spacing, density, component mix). Don't copy the design literally — use it as a guide for the overall structure and rhythm.
+
+## Screen recipes
+
+Recipes are composition patterns extracted from real approved screens. Use them as starting points, then customize.
+
+### Recipe: Hub / First-level screen
+**Source:** Figma `H6DQZbFEToGXx4ZFfaMHEp` node `208:12810`
+
+```
+Structure:
+  StatusBar
+  PageTitle (título + nome em --color-brand) + ícone utility à direita
+  ─── Cards zone (hierarquia alta) ───
+    Hero card (bg brand, CTA principal)
+    Feature card (destaque com imagem/foto)
+    ... quantos cards forem necessários
+  ─── Sections zone (conteúdo agrupado) ───
+    Section title + BaseCard/widget
+    Section title + ListItem group
+  ─── Navigation ───
+    Bottom NavBar
+
+Spacing rules:
+  - Card → Card: gap menor (~48px / --spacing-09)
+  - Card → Section (title + componente): gap maior (~80px / --spacing-10)
+  - Section → Section: gap maior (~80px / --spacing-10)
+  - Section title → conteúdo da section: 16px (--spacing-04)
+  - Padding lateral: 24px (--spacing-06)
+  - Card radius: 24px (--radius-lg)
+
+Hierarchy principle:
+  - Cards = hierarquia alta. Agrupam informações, destacam conteúdo
+    principal, funcionam como chamadas pra próximas telas ou resumos.
+    São uma ótima forma de dividir seções. Use quantos forem necessários.
+  - Lists = conjunto de ações relacionadas, menor peso visual.
+    Aparecem depois dos cards quando há ambos na tela.
+
+Typography:
+  - Page title: 20px (--font-size-md) regular, nome destacado em --color-brand
+  - Section title: 14px (--font-size-sm) medium
+  - ListItem: title regular, description tertiary color
+
+DS components used:
+  - BaseCard (outlined, com slot e linkLabel)
+  - ListItem (small, leftIcon, description, rightAsset chevron)
+  - Último ListItem do grupo: divider={false}
+
+Components fora do DS (flag com MissingTag):
+  - StatusBar, PageTitle, ShortcutCard, DoctorCard, NavBar, ScoreWidget
+```
 
 ## Project context
 
