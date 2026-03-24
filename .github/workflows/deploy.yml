@@ -19,7 +19,7 @@ jobs:
       - name: Install
         run: |
           cd packages/ds
-          npm install
+          npm install --legacy-peer-deps
 
       - name: Build
         run: |
