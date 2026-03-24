@@ -65,7 +65,7 @@ function MediaGrid({ images }: { images: string[] }) {
 
   if (total === 2) {
     return (
-      <div style={{ display: 'flex', gap: 4, flexShrink: 0, height: 108 }}>
+      <div style={{ display: 'flex', gap: 4, flexShrink: 0, width: 220, height: 108 }}>
         <MediaCell src={images[0]} style={{ flex: '1 0 0', height: '100%' }} />
         <MediaCell src={images[1]} style={{ flex: '1 0 0', height: '100%' }} />
       </div>
@@ -228,7 +228,8 @@ export function ChatBubble({
           border: '1.5px solid var(--color-gray-white)',
           borderRadius: 22, height: 24, width: 32,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 14,
+          fontSize: 12,
+          lineHeight: '14px',
         }}>
           {reactionEmoji}
         </div>

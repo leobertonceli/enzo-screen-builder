@@ -13,6 +13,8 @@ import { ChatInputConfig } from './configs/ChatInputConfig'
 import { LinkConfig } from './configs/LinkConfig'
 import { CardMFCConfig } from './configs/CardMFCConfig'
 import { ChatBubbleConfig } from './configs/ChatBubbleConfig'
+import { TagConfig } from './configs/TagConfig'
+import { NavBarConfig } from './configs/NavBarConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -31,7 +33,7 @@ import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -45,6 +47,8 @@ function getCategory(c: ComponentConfig): string {
   if (c.name === 'BaseCard') return 'Cards'
   if (c.name === 'CardMFC') return 'Cards'
   if (c.name === 'ChatBubble') return 'Chat'
+  if (c.name === 'Tag') return 'Badges'
+  if (c.name === 'NavBar') return 'Navigation'
   return 'Other'
 }
 
@@ -85,6 +89,8 @@ const COMPONENT_RADIUS: Record<string, number> = {
   Link: 200,
   CardMFC: 24,
   ChatBubble: 24,
+  Tag: 200,
+  NavBar: 0,
 }
 
 /* Components that don't have their own background — need white container in preview */
@@ -540,7 +546,6 @@ export function Playground() {
                       backgroundColor: NEEDS_PREVIEW_BG.has(comp.name) ? 'var(--color-surface)' : 'transparent',
                       borderRadius: radius,
                       overflow: 'hidden',
-                      boxShadow: '0 0 0 1px rgba(255,255,255,0.08)',
                     }}
                   >
                     <div style={{ pointerEvents: 'none' }}>
