@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: |
           cd packages/ds
-          npm run build
+          npx vite build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
