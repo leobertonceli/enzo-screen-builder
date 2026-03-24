@@ -1,5 +1,6 @@
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 const settingsOptions = [
   { title: 'Conta', icon: 'account-circle', description: 'Gerencie sua conta e dados pessoais' },
@@ -47,29 +48,30 @@ export function SettingsScreen() {
         }}
       >
         {settingsOptions.map((option, index) => (
-          <ListItem
-            key={option.title}
-            title={option.title}
-            description={option.description}
-            size="large"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={
-              <Icon
-                name={option.icon}
-                size={24}
-                color="var(--color-content-primary)"
-              />
-            }
-            rightIconElement={
-              <Icon
-                name="chevron-right"
-                size={24}
-                color="var(--color-content-secondary)"
-              />
-            }
-            divider={index < settingsOptions.length - 1}
-          />
+          <Slot key={option.title} id={`ListItem-${index}`}>
+            <ListItem
+              title={option.title}
+              description={option.description}
+              size="large"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={
+                <Icon
+                  name={option.icon}
+                  size={24}
+                  color="var(--color-content-primary)"
+                />
+              }
+              rightIconElement={
+                <Icon
+                  name="chevron-right"
+                  size={24}
+                  color="var(--color-content-secondary)"
+                />
+              }
+              divider={index < settingsOptions.length - 1}
+            />
+          </Slot>
         ))}
       </div>
     </div>

@@ -14,5 +14,7 @@ export interface ComponentConfig {
   name: string
   controls: Record<string, ControlDef>
   render: (props: Record<string, unknown>) => React.ReactNode
+  /** Optional render used when dropping into a template slot. Falls back to render if not provided. */
+  slotRender?: (props: Record<string, unknown>) => React.ReactNode
   presets?: ComponentPreset[]
 }

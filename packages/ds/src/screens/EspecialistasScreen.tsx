@@ -2,6 +2,7 @@ import { BaseCard } from '../components/BaseCard'
 import { Chip } from '../components/Chip'
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 function MissingTag({ label }: { label: string }) {
   return (
@@ -175,12 +176,14 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
       >
         {c.specialties.map((item, i) => (
           <div key={item.key} className="shrink-0">
-            <Chip
-              label={item.label}
-              variant="text"
-              size="sm"
-              state={i === 0 ? 'selected' : 'idle'}
-            />
+            <Slot id={`Chip-${i}`}>
+              <Chip
+                label={item.label}
+                variant="text"
+                size="small"
+                state={i === 0 ? 'selected' : 'idle'}
+              />
+            </Slot>
           </div>
         ))}
       </div>
@@ -282,38 +285,41 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
       {/* Recent doctors — ListItem DS */}
       <div>
         {c.recentDoctors.map((item, i) => (
-          <ListItem
-            key={item.key}
-            title={item.title}
-            description={item.description}
-            size="small"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={<Icon name="account-outline" size={20} color="var(--color-content-primary)" />}
-            divider={i < c.recentDoctors.length - 1}
-          />
+          <Slot key={item.key} id={`ListItem-${i}`}>
+            <ListItem
+              title={item.title}
+              description={item.description}
+              size="small"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={<Icon name="account-outline" size={20} color="var(--color-content-primary)" />}
+              divider={i < c.recentDoctors.length - 1}
+            />
+          </Slot>
         ))}
       </div>
 
       {/* Help card — BaseCard DS */}
       <div style={{ padding: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="sm"
-          filled={false}
-          category={c.helpCard.category}
-          showCategory
-          title={c.helpCard.title}
-          showTitle
-          subtitle={c.helpCard.subtitle}
-          showSubtitle
-          leftAsset
-          leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
-          rightAsset={false}
-          action="link"
-          linkLabel={c.helpCard.linkLabel}
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-0">
+          <BaseCard
+            size="small"
+            filled={false}
+            category={c.helpCard.category}
+            showCategory
+            title={c.helpCard.title}
+            showTitle
+            subtitle={c.helpCard.subtitle}
+            showSubtitle
+            leftAsset
+            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            rightAsset={false}
+            action="link"
+            linkLabel={c.helpCard.linkLabel}
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* Nav bar */}

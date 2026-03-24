@@ -3,7 +3,7 @@ import { Icon } from '../../icons/Icon'
 
 /* ── Types ───────────────────────────────────────────────────────── */
 export type ChipVariant = 'text' | 'icon' | 'image'
-export type ChipSize = 'sm' | 'md' | 'lg'
+export type ChipSize = 'small' | 'medium' | 'large'
 export type ChipState = 'idle' | 'pressed' | 'selected' | 'disabled'
 
 export interface ChipProps {
@@ -23,7 +23,7 @@ export interface ChipProps {
 
 /* ── Size map ────────────────────────────────────────────────────── */
 const sizeMap = {
-  sm: {
+  small: {
     py: 'var(--spacing-03)',          // 12px
     px: 'var(--spacing-05)',          // 20px
     plIcon: 'var(--spacing-03)',      // 12px
@@ -36,7 +36,7 @@ const sizeMap = {
     closeSize: 12,
     minW: 56,
   },
-  md: {
+  medium: {
     py: 'var(--spacing-04)',          // 16px
     px: 'var(--spacing-05)',          // 20px
     plIcon: 14,
@@ -49,7 +49,7 @@ const sizeMap = {
     closeSize: 16,
     minW: 80,
   },
-  lg: {
+  large: {
     py: 'var(--spacing-05)',          // 20px
     px: 'var(--spacing-06)',          // 24px
     plIcon: 18,
@@ -92,7 +92,7 @@ const stateMap = {
 export function Chip({
   label = 'Suggestion',
   variant = 'text',
-  size = 'sm',
+  size = 'small',
   state = 'idle',
   counter = '000',
   showCounter = false,
@@ -117,7 +117,7 @@ export function Chip({
     paddingTop: s.py,
     paddingBottom: s.py,
     paddingLeft: hasIcon ? s.plIcon : s.px,
-    paddingRight: affordanceIcon ? (size === 'sm' ? 18 : s.px) : s.px,
+    paddingRight: affordanceIcon ? (size === 'small' ? 18 : s.px) : s.px,
     borderRadius: 'var(--radius-pill)',
     border: `1px solid ${colors.border}`,
     backgroundColor: colors.bg,
@@ -125,7 +125,7 @@ export function Chip({
     fontFamily: 'var(--font-family-base)',
     fontWeight: 'var(--font-weight-regular)',
     letterSpacing: 'var(--letter-spacing-none)',
-    lineHeight: '1.24',
+    lineHeight: 'var(--line-height-title)',
     transition: 'all 0.15s ease',
   }
 

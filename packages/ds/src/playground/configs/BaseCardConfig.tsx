@@ -7,38 +7,38 @@ export const BaseCardConfig: ComponentConfig = {
   presets: [
     {
       label: 'Promoção com botão',
-      values: { category: 'Novidade', title: 'Frete grátis', subtitle: 'Aproveite frete grátis em pedidos acima de R$50', size: 'lg', filled: false, action: 'button', buttonLabel: 'Ver ofertas', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'truck-delivery-outline', rightIconName: 'link-variant' },
+      values: { category: 'Novidade', title: 'Frete grátis', subtitle: 'Aproveite frete grátis em pedidos acima de R$50', size: 'large', filled: false, action: 'button', buttonLabel: 'Ver ofertas', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'truck-delivery-outline', rightIconName: 'link-variant' },
     },
     {
       label: 'Suporte com link',
-      values: { category: 'Suporte', title: 'Precisa de ajuda?', subtitle: 'Fale com nosso atendimento', size: 'sm', filled: false, action: 'link', linkLabel: 'Falar com suporte', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'help-circle-outline', rightIconName: 'link-variant' },
+      values: { category: 'Suporte', title: 'Precisa de ajuda?', subtitle: 'Fale com nosso atendimento', size: 'small', filled: false, action: 'link', linkLabel: 'Falar com suporte', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'help-circle-outline', rightIconName: 'link-variant' },
     },
     {
       label: 'Consulta agendada',
-      values: { category: 'Próxima consulta', title: 'Terça, 04 de Março — 16h', subtitle: 'Online com Isabella', size: 'sm', filled: false, action: 'link', linkLabel: 'Ver consulta', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
+      values: { category: 'Próxima consulta', title: 'Terça, 04 de Março — 16h', subtitle: 'Online com Isabella', size: 'small', filled: false, action: 'link', linkLabel: 'Ver consulta', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
     },
     {
       label: 'Card com slot e 2 botões',
-      values: { category: 'Destaque', title: 'Conheça nossos planos', subtitle: 'Planos a partir de R$99/mês com cobertura completa', size: 'lg', filled: false, action: '2buttons', buttonLabel: 'Ver planos', buttonLabel2: 'Comparar', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: true, showSlot: true, leftIconName: 'shield-check-outline', rightIconName: 'chevron-right' },
+      values: { category: 'Destaque', title: 'Conheça nossos planos', subtitle: 'Planos a partir de R$99/mês com cobertura completa', size: 'large', filled: false, action: '2buttons', buttonLabel: 'Ver planos', buttonLabel2: 'Comparar', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: true, showSlot: true, leftIconName: 'shield-check-outline', rightIconName: 'chevron-right' },
     },
     {
       label: 'Card filled mínimo',
-      values: { category: 'Dica', title: 'Beba mais água', subtitle: 'Você bebeu apenas 3 copos hoje', size: 'sm', filled: true, action: 'none', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'water-outline', rightIconName: 'link-variant' },
+      values: { category: 'Dica', title: 'Beba mais água', subtitle: 'Você bebeu apenas 3 copos hoje', size: 'small', filled: true, action: 'none', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'water-outline', rightIconName: 'link-variant' },
     },
     {
       label: 'Médica com link',
-      values: { category: 'Minha médica', title: 'Isabella Moreira Hueb', subtitle: '', size: 'sm', filled: false, action: 'link', linkLabel: 'Agendar consulta', showCategory: true, showTitle: true, showSubtitle: false, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
+      values: { category: 'Minha médica', title: 'Isabella Moreira Hueb', subtitle: '', size: 'small', filled: false, action: 'link', linkLabel: 'Agendar consulta', showCategory: true, showTitle: true, showSubtitle: false, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
     },
     {
       label: 'FAQ com 2 links',
-      values: { category: 'Dúvidas', title: 'Como funciona o agendamento?', subtitle: 'Tire suas dúvidas sobre consultas online e presenciais', size: 'sm', filled: false, action: '2links', linkLabel: 'Saiba mais', linkLabel2: 'Fale conosco', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'frequently-asked-questions', rightIconName: 'link-variant' },
+      values: { category: 'Dúvidas', title: 'Como funciona o agendamento?', subtitle: 'Tire suas dúvidas sobre consultas online e presenciais', size: 'small', filled: false, action: '2links', linkLabel: 'Saiba mais', linkLabel2: 'Fale conosco', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'frequently-asked-questions', rightIconName: 'link-variant' },
     },
   ],
   controls: {
     category:      { type: 'text',        label: 'Category',       default: 'Category' },
     title:         { type: 'text',        label: 'Title',          default: 'Title' },
     subtitle:      { type: 'text',        label: 'Subtitle',       default: 'Subtitle' },
-    size:          { type: 'radio',       label: 'Size',           options: ['lg', 'sm'], default: 'lg' },
+    size:          { type: 'radio',       label: 'Size',           options: ['small', 'large'], default: 'large' },
     filled:        { type: 'boolean',     label: 'Filled',         default: false },
     action:        { type: 'radio',       label: 'Action',         options: ['none', 'button', '2buttons', 'link', '2links'], default: 'none' },
     buttonLabel:   { type: 'text',        label: 'Button label',   default: 'Button label', showWhen: { field: 'action', values: ['button', '2buttons'] } },
@@ -56,7 +56,7 @@ export const BaseCardConfig: ComponentConfig = {
   },
   render: (p) => {
     const size = p.size as string
-    const assetSize = size === 'lg' ? 24 : 20
+    const assetSize = size === 'large' ? 24 : 20
     const leftIconName = p.leftIconName as string
     const rightIconName = p.rightIconName as string
 

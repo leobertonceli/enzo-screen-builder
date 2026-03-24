@@ -65,7 +65,7 @@ function SendButton({ active, loading }: { active: boolean; loading: boolean }) 
       style={{
         width: 32, height: 32,
         borderRadius: 'var(--radius-pill)',
-        backgroundColor: active ? 'var(--color-brand)' : 'rgba(20,20,20,0.05)',
+        backgroundColor: active ? 'var(--color-brand)' : 'var(--color-black-05)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: active ? 'pointer' : 'default',
         flexShrink: 0,
@@ -75,7 +75,7 @@ function SendButton({ active, loading }: { active: boolean; loading: boolean }) 
       {loading ? (
         <div style={{
           width: 20, height: 20,
-          border: '2px solid rgba(20,20,20,0.1)',
+          border: '2px solid var(--color-black-10)',
           borderTopColor: 'var(--color-brand)',
           borderRadius: '50%',
           animation: 'ci-spin 0.8s linear infinite',
@@ -97,7 +97,7 @@ function MicButton({ active = false, disabled = false }: { active?: boolean; dis
     <div style={{
       width: 32, height: 32,
       borderRadius: 'var(--radius-pill)',
-      backgroundColor: active ? 'rgba(20,20,20,0.1)' : 'transparent',
+      backgroundColor: active ? 'var(--color-black-10)' : 'transparent',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       cursor: disabled ? 'default' : 'pointer',
       flexShrink: 0,
@@ -135,10 +135,10 @@ function AttachedItem({ item, onRemove }: { item: ChatInputAttachedItem; onRemov
 
   // Close button bg depends on type
   const closeBg = isDocument
-    ? 'rgba(20,20,20,0.05)'
+    ? 'var(--color-black-05)'
     : isVideo
-      ? 'rgba(20,20,20,0.1)'
-      : 'rgba(20,20,20,0.2)'
+      ? 'var(--color-black-10)'
+      : 'var(--color-black-20)'
 
   return (
     <div style={{ position: 'relative', width: 96, height: 96, flexShrink: 0 }}>
@@ -179,7 +179,7 @@ function AttachedItem({ item, onRemove }: { item: ChatInputAttachedItem; onRemov
             fontSize: 'var(--font-size-xs)',
             fontWeight: 'var(--font-weight-regular)',
             color: 'var(--color-gray-white)',
-            lineHeight: 1.24,
+            lineHeight: 'var(--line-height-title)',
           }}>{item.label || '30s'}</span>
         )}
 
@@ -192,15 +192,15 @@ function AttachedItem({ item, onRemove }: { item: ChatInputAttachedItem; onRemov
               fontSize: 'var(--font-size-xs)',
               fontWeight: 'var(--font-weight-regular)',
               color: 'var(--color-content-tertiary)',
-              lineHeight: 1.24,
+              lineHeight: 'var(--line-height-title)',
             }}>PDF</span>
             <span style={{
               position: 'absolute', left: 12, bottom: 8, width: 72,
               fontFamily: 'var(--font-family-base)',
-              fontSize: 12,
+              fontSize: 'var(--font-size-xs)',
               fontWeight: 'var(--font-weight-regular)',
               color: 'var(--color-content-secondary)',
-              lineHeight: 1.24,
+              lineHeight: 'var(--line-height-title)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>{item.label || 'Documento'}</span>
           </>
@@ -214,7 +214,7 @@ function AttachedItem({ item, onRemove }: { item: ChatInputAttachedItem; onRemov
           }}>
             <div style={{
               width: 32, height: 32,
-              border: '2px solid rgba(255,255,255,0.2)',
+              border: '2px solid var(--color-white-20)',
               borderTopColor: 'var(--color-gray-white)',
               borderRadius: '50%',
               animation: 'ci-spin 0.8s linear infinite',
@@ -257,7 +257,7 @@ function ReplyBanner({
       <div style={{
         display: 'flex', alignItems: 'center', gap: 12,
         height: 48,
-        backgroundColor: 'rgba(20,20,20,0.05)',
+        backgroundColor: 'var(--color-black-05)',
         borderRadius: 20,
         paddingLeft: 12, paddingRight: 8, paddingTop: 4, paddingBottom: 4,
         boxSizing: 'border-box',
@@ -267,7 +267,7 @@ function ReplyBanner({
           flex: 1, minWidth: 0,
           fontFamily: 'var(--font-family-base)',
           fontWeight: 'var(--font-weight-regular)',
-          lineHeight: 1.24,
+          lineHeight: 'var(--line-height-title)',
           whiteSpace: 'nowrap',
         }}>
           <span style={{
@@ -351,7 +351,7 @@ const textBase: CSSProperties = {
   fontFamily: 'var(--font-family-base)',
   fontSize: 'var(--font-size-sm)',
   fontWeight: 'var(--font-weight-regular)',
-  lineHeight: 1.24,
+  lineHeight: 'var(--line-height-title)',
   minHeight: TEXT_MIN_HEIGHT,
   display: 'block',
 }
@@ -388,7 +388,7 @@ export function ChatInput({
   return (
     <div style={{
       width,
-      backgroundColor: 'rgba(20,20,20,0.05)',
+      backgroundColor: 'var(--color-black-05)',
       borderRadius: 24,
       overflow: 'hidden',
       display: 'flex',

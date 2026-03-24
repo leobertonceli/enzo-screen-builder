@@ -1,6 +1,7 @@
 import { BaseCard } from '../components/BaseCard'
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 function MissingTag({ label }: { label: string }) {
   return (
@@ -63,23 +64,25 @@ export function EspecialistasScreenV2() {
 
       {/* Card — destaque/promo */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="lg"
-          filled={false}
-          category="Disponível hoje"
-          showCategory
-          title="Agende sua consulta"
-          showTitle
-          subtitle="Encontre o especialista ideal para você"
-          showSubtitle
-          leftAsset
-          leftIcon={<Icon name="stethoscope" size={24} color="var(--color-content-primary)" />}
-          rightAsset={false}
-          action="button"
-          buttonLabel="Buscar especialista"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-0">
+          <BaseCard
+            size="large"
+            filled={false}
+            category="Disponível hoje"
+            showCategory
+            title="Agende sua consulta"
+            showTitle
+            subtitle="Encontre o especialista ideal para você"
+            showSubtitle
+            leftAsset
+            leftIcon={<Icon name="stethoscope" size={24} color="var(--color-content-primary)" />}
+            rightAsset={false}
+            action="button"
+            buttonLabel="Buscar especialista"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* Título de seção */}
@@ -101,38 +104,41 @@ export function EspecialistasScreenV2() {
       {/* 2 ListItems */}
       <div>
         {consultas.map((item, i) => (
-          <ListItem
-            key={item.key}
-            title={item.title}
-            description={item.description}
-            size="small"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
-            divider={i < consultas.length - 1}
-          />
+          <Slot key={item.key} id={`ListItem-${i}`}>
+            <ListItem
+              title={item.title}
+              description={item.description}
+              size="small"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
+              divider={i < consultas.length - 1}
+            />
+          </Slot>
         ))}
       </div>
 
       {/* Mais um card — suporte */}
       <div style={{ padding: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="sm"
-          filled={false}
-          category="Dúvidas"
-          showCategory
-          title="Como agendar uma consulta?"
-          showTitle
-          subtitle="Tire suas dúvidas sobre consultas online e presenciais"
-          showSubtitle
-          leftAsset
-          leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
-          rightAsset={false}
-          action="link"
-          linkLabel="Saiba mais"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-1">
+          <BaseCard
+            size="small"
+            filled={false}
+            category="Dúvidas"
+            showCategory
+            title="Como agendar uma consulta?"
+            showTitle
+            subtitle="Tire suas dúvidas sobre consultas online e presenciais"
+            showSubtitle
+            leftAsset
+            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            rightAsset={false}
+            action="link"
+            linkLabel="Saiba mais"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* NavBar */}

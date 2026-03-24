@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { TemplateEditContext } from './TemplateEditContext'
 import { Controls } from './Controls'
 import { InspectOverlay } from './InspectOverlay'
 import { TokensPage } from './TokensPage'
+import type { TokensTab } from './TokensPage'
 import { IconsPage } from './IconsPage'
 import { ButtonConfig } from './configs/ButtonConfig'
 import { ListItemConfig } from './configs/ListItemConfig'
@@ -9,6 +11,8 @@ import { ChipConfig } from './configs/ChipConfig'
 import { BaseCardConfig } from './configs/BaseCardConfig'
 import { ChatInputConfig } from './configs/ChatInputConfig'
 import { LinkConfig } from './configs/LinkConfig'
+import { CardMFCConfig } from './configs/CardMFCConfig'
+import { ChatBubbleConfig } from './configs/ChatBubbleConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -27,7 +31,7 @@ import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -39,6 +43,8 @@ function getCategory(c: ComponentConfig): string {
   if (c.name === 'ListItem') return 'Lists'
   if (c.name === 'Chip') return 'Buttons'
   if (c.name === 'BaseCard') return 'Cards'
+  if (c.name === 'CardMFC') return 'Cards'
+  if (c.name === 'ChatBubble') return 'Chat'
   return 'Other'
 }
 
@@ -77,6 +83,8 @@ const COMPONENT_RADIUS: Record<string, number> = {
   ListItem: 16,
   ChatInput: 20,
   Link: 200,
+  CardMFC: 24,
+  ChatBubble: 24,
 }
 
 /* Components that don't have their own background — need white container in preview */
@@ -112,6 +120,44 @@ function injectLogoKeyframes() {
   `
   document.head.appendChild(style)
 }
+
+/* ── Edit mode CSS — injected once when editMode turns on ── */
+let editModeStyleEl: HTMLStyleElement | null = null
+function injectEditModeStyles() {
+  if (editModeStyleEl) return
+  editModeStyleEl = document.createElement('style')
+  editModeStyleEl.textContent = `
+    .edit-mode-preview span:hover,
+    .edit-mode-preview p:hover,
+    .edit-mode-preview h1:hover,
+    .edit-mode-preview h2:hover,
+    .edit-mode-preview h3:hover,
+    .edit-mode-preview button:hover,
+    .edit-mode-preview li:hover,
+    .edit-mode-preview div:hover {
+      outline: 1.5px dashed var(--color-brand) !important;
+      outline-offset: 2px;
+      cursor: text !important;
+    }
+    .edit-mode-preview [contenteditable="true"] {
+      outline: 1.5px solid var(--color-brand) !important;
+      outline-offset: 2px;
+      cursor: text !important;
+    }
+  `
+  document.head.appendChild(editModeStyleEl)
+}
+
+/* Check if an element has direct text content (not only child elements) */
+function hasDirectText(el: Element): boolean {
+  for (const node of Array.from(el.childNodes)) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) return true
+  }
+  return false
+}
+
+/* Tags we allow to be made contentEditable */
+const EDITABLE_TAGS = new Set(['SPAN', 'P', 'H1', 'H2', 'H3', 'BUTTON', 'LI'])
 
 /* ── Mouse-follow hook — elements gently drift toward cursor direction ── */
 function useMouseFollow() {
@@ -213,7 +259,7 @@ function Header({ page, onNavigate, menuOpen, onToggleMenu }: { page: Page; onNa
               <div style={{ position: 'absolute', width: 10, height: 10, backgroundColor: 'var(--color-gray-white)', animation: 'wl-sq2 3.5s ease-in-out infinite' }} />
             </div>
             <span style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-md)', whiteSpace: 'nowrap', lineHeight: 0 }}>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, lineHeight: 'normal' }}>Wonderland</span>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, lineHeight: 'normal' }}>Enzo</span>
               <span style={{ color: 'var(--color-gray-white)', lineHeight: 'normal' }}> {PAGE_LABELS[page]}</span>
             </span>
           </div>
@@ -319,6 +365,7 @@ export function Playground() {
   const [active, setActive] = useState<ActiveView>({ kind: 'grid' })
   const [activeCategory, setActiveCategory] = useState<Category>('All')
   const [inspectMode, setInspectMode] = useState(false)
+  const [editMode, setEditMode] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
   const templatePreviewRef = useRef<HTMLDivElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -332,6 +379,40 @@ export function Playground() {
   const [presetIndexMap, setPresetIndexMap] = useState<Record<string, number>>(
     () => Object.fromEntries(components.map((c) => [c.name, -1]))
   )
+
+  /* Inject edit-mode styles once when editMode is first enabled */
+  useEffect(() => {
+    if (editMode) injectEditModeStyles()
+  }, [editMode])
+
+  /* Edit mode — click handler on preview wrapper */
+  function handleEditClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (!editMode) return
+    const target = e.target as Element
+    // Walk up to find first editable candidate
+    let el: Element | null = target
+    while (el && el !== e.currentTarget) {
+      const tag = el.tagName
+      if (
+        (EDITABLE_TAGS.has(tag) && hasDirectText(el)) ||
+        (tag === 'DIV' && hasDirectText(el))
+      ) {
+        const htmlEl = el as HTMLElement
+        htmlEl.contentEditable = 'true'
+        htmlEl.focus()
+        htmlEl.onblur = () => { htmlEl.contentEditable = 'inherit'; htmlEl.onblur = null; htmlEl.onkeydown = null }
+        htmlEl.onkeydown = (ke: KeyboardEvent) => {
+          if (ke.key === 'Enter' || ke.key === 'Escape') {
+            ke.preventDefault()
+            htmlEl.blur()
+          }
+        }
+        e.stopPropagation()
+        return
+      }
+      el = el.parentElement
+    }
+  }
 
   function cyclePreset(comp: ComponentConfig) {
     if (!comp.presets || comp.presets.length === 0) return
@@ -361,18 +442,25 @@ export function Playground() {
     setPage(p)
     setActive({ kind: 'grid' })
     setInspectMode(false)
+    setEditMode(false)
+    setSlotOverrides({})
+    setSelectedSlot(null)
     window.scrollTo(0, 0)
   }
 
   function openComponent(index: number) {
     setActive({ kind: 'component', index })
     setInspectMode(false)
+    setEditMode(false)
     window.scrollTo(0, 0)
   }
 
   function backToGrid() {
     setActive({ kind: 'grid' })
     setInspectMode(false)
+    setEditMode(false)
+    setSlotOverrides({})
+    setSelectedSlot(null)
     window.scrollTo(0, 0)
   }
 
@@ -397,6 +485,9 @@ export function Playground() {
     { name: 'Settings', component: SettingsScreen },
   ]
   const [activeTemplate, setActiveTemplate] = useState<number | null>(null)
+  const [slotOverrides, setSlotOverrides] = useState<Record<string, React.ReactNode>>({})
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
+  const [slotPickerPos, setSlotPickerPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
 /* ── Grid page (scrollable) ── */
   if (page === 'components' && active.kind === 'grid') {
@@ -423,45 +514,54 @@ export function Playground() {
               <div
                 key={comp.name}
                 ref={parallax.setRef(i)}
-                onClick={() => openComponent(index)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && openComponent(index)}
-                style={{
-                  cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
-                  willChange: 'transform',
-                }}
+                style={{ willChange: 'transform' }}
               >
-                {/* Component preview */}
+                {/* Scale wrapper — card + label scale together so label never overlaps */}
                 <div
-                  className="playground-card"
-                  style={{
-                    backgroundColor: NEEDS_PREVIEW_BG.has(comp.name) ? 'var(--color-surface)' : 'transparent',
-                    borderRadius: radius,
-                    overflow: 'hidden',
-                    transition: 'transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)',
-                  }}
+                  onClick={() => openComponent(index)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && openComponent(index)}
                   onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
-                >
-                  <div style={{ pointerEvents: 'none' }}>
-                    {comp.render(valuesMap[comp.name])}
-                  </div>
-                </div>
-                {/* Name — appears on hover via CSS */}
-                <span
-                  className="playground-card-name"
                   style={{
-                    fontSize: 'var(--font-size-xs)',
-                    fontFamily: 'var(--font-family-base)',
-                    color: 'rgba(255,255,255,0.4)',
-                    opacity: 0,
-                    transform: 'translateY(-4px)',
-                    transition: 'opacity 0.2s, transform 0.2s',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 12,
+                    transition: 'transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)',
                   }}
                 >
-                  {comp.name}
-                </span>
+                  {/* Component preview */}
+                  <div
+                    className="playground-card"
+                    style={{
+                      backgroundColor: NEEDS_PREVIEW_BG.has(comp.name) ? 'var(--color-surface)' : 'transparent',
+                      borderRadius: radius,
+                      overflow: 'hidden',
+                      boxShadow: '0 0 0 1px rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <div style={{ pointerEvents: 'none' }}>
+                      {comp.render(valuesMap[comp.name])}
+                    </div>
+                  </div>
+                  {/* Name — appears on hover via CSS */}
+                  <span
+                    className="playground-card-name"
+                    style={{
+                      fontSize: 'var(--font-size-xs)',
+                      fontFamily: 'var(--font-family-base)',
+                      color: 'rgba(255,255,255,0.4)',
+                      opacity: 0,
+                      transform: 'translateY(4px)',
+                      transition: 'opacity 0.2s, transform 0.2s',
+                    }}
+                  >
+                    {comp.name}
+                  </span>
+                </div>
               </div>
             )
           })}
@@ -494,7 +594,7 @@ export function Playground() {
           style={{ backgroundColor: cBg, borderRadius: 20, position: 'relative', transition: 'background-color 0.25s ease' }}
         >
 
-          {/* Top bar: ← Component Name | Inspect | Gerar conteúdo | ↺ */}
+          {/* Top bar: ← Component Name | Edit | Gerar conteúdo | ↺ */}
           <div className="flex items-center shrink-0" style={{ padding: '20px 20px 0' }}>
             {/* Back arrow */}
             <button
@@ -507,27 +607,11 @@ export function Playground() {
               <Icon name="arrow-left" size={20} color={cText} />
             </button>
 
-            {/* Component label + name */}
-            <span className="ml-3" style={{ fontSize: 'var(--font-size-sm)', fontFamily: 'var(--font-family-base)', color: cTextSub }}>Component</span>
-            <span className="ml-4" style={{ fontSize: 'var(--font-size-sm)', fontFamily: 'var(--font-family-base)', color: cText, fontWeight: 'var(--font-weight-medium)' }}>{activeComponent.name}</span>
+            {/* Component name */}
+            <span className="ml-3" style={{ fontSize: 'var(--font-size-sm)', fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-regular)', color: cText }}>{activeComponent.name}</span>
 
             {/* Spacer */}
             <div style={{ flex: 1 }} />
-
-            {/* Inspect pill */}
-            <button
-              onClick={() => setInspectMode((v) => !v)}
-              style={{
-                height: 32, padding: '0 16px', borderRadius: 'var(--radius-pill)',
-                border: `1px solid ${inspectMode ? 'transparent' : cStroke}`,
-                backgroundColor: inspectMode ? 'var(--color-gray-white)' : cBtnBg,
-                color: inspectMode ? 'var(--color-gray-100)' : cText,
-                fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-base)',
-                cursor: 'pointer', transition: 'all 0.15s',
-              }}
-            >
-              Inspect
-            </button>
 
             {/* Gerar conteúdo pill */}
             {activeComponent.presets && activeComponent.presets.length > 0 && (
@@ -572,7 +656,11 @@ export function Playground() {
 
           {/* Preview area */}
           <div className="flex-1 flex items-center justify-center overflow-auto">
-            <div ref={previewRef} className="overflow-visible" style={{ cursor: inspectMode ? 'crosshair' : undefined }}>
+            <div
+              ref={previewRef}
+              className="overflow-visible"
+              style={{ cursor: inspectMode ? 'crosshair' : undefined }}
+            >
               {activeComponent.render(values)}
             </div>
           </div>
@@ -631,7 +719,7 @@ export function Playground() {
 
         {/* Back button — top-left */}
         <button
-          onClick={() => setActiveTemplate(null)}
+          onClick={() => { setActiveTemplate(null); setEditMode(false); setSlotOverrides({}); setSelectedSlot(null) }}
           className="flex items-center justify-center"
           style={{
             position: 'fixed', top: 24, left: 24, zIndex: 100,
@@ -646,11 +734,30 @@ export function Playground() {
           <Icon name="arrow-left" size={20} color="var(--color-gray-white)" />
         </button>
 
+        {/* Edit button — top-left, beside back button */}
+        <button
+          onClick={() => setEditMode((v) => !v)}
+          className="flex items-center justify-center"
+          style={{
+            position: 'fixed', top: 24, left: 72, zIndex: 100,
+            width: 40, height: 40, borderRadius: 'var(--radius-pill)',
+            backgroundColor: editMode ? 'var(--color-gray-white)' : 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            transition: 'background-color 0.15s',
+          }}
+          title={editMode ? 'Exit edit mode' : 'Edit text'}
+        >
+          <Icon name="pencil" size={18} color={editMode ? 'var(--color-gray-100)' : 'var(--color-gray-white)'} />
+        </button>
+
         {/* Template — centered zoom view with 812px max height and scroll */}
         <div className="flex-1 flex items-center justify-center overflow-auto" style={{ padding: 40 }}>
           <div
             ref={templatePreviewRef}
-            className="hide-scrollbar"
+            className={`hide-scrollbar${editMode ? ' edit-mode-preview' : ''}`}
             style={{
               width: 390,
               height: 812,
@@ -660,10 +767,119 @@ export function Playground() {
               cursor: inspectMode ? 'crosshair' : undefined,
               position: 'relative',
             }}
+            onClick={handleEditClick}
           >
-            <TemplateComponent />
+            <TemplateEditContext.Provider value={{
+              editMode,
+              selectedSlot,
+              selectSlot: (id, pos) => {
+                setSelectedSlot(id)
+                if (pos) setSlotPickerPos(pos)
+              },
+              getOverride: (id) => slotOverrides[id] ?? null,
+            }}>
+              <TemplateComponent />
+            </TemplateEditContext.Provider>
           </div>
         </div>
+
+        {/* Slot picker backdrop — closes popup when clicking outside */}
+        {selectedSlot !== null && (
+          <div
+            onClick={() => setSelectedSlot(null)}
+            style={{ position: 'fixed', inset: 0, zIndex: 299 }}
+          />
+        )}
+
+        {/* Slot component picker — floating popup near click */}
+        {selectedSlot !== null && (
+          <div
+            style={{
+              position: 'fixed',
+              left: Math.min(slotPickerPos.x + 8, window.innerWidth - 224),
+              top: Math.min(slotPickerPos.y + 8, window.innerHeight - 320),
+              zIndex: 300,
+              backgroundColor: 'rgba(20,20,20,0.85)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: 'var(--spacing-02)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              minWidth: 200,
+              boxShadow: 'var(--shadow-04)',
+            }}
+          >
+            {/* Header — slot name */}
+            <div style={{ padding: '6px 12px 4px' }}>
+              <span style={{
+                color: 'rgba(255,255,255,0.4)',
+                fontSize: 'var(--font-size-xs)',
+                fontFamily: 'var(--font-family-label)',
+              }}>
+                {selectedSlot}
+              </span>
+            </div>
+
+            {/* Component rows */}
+            {components.map((comp) => (
+              <button
+                key={comp.name}
+                onClick={() => {
+                  setSlotOverrides((prev) => ({ ...prev, [selectedSlot!]: (comp.slotRender ?? comp.render)(initValues(comp)) }))
+                  setSelectedSlot(null)
+                }}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-xs)',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: 'var(--font-size-sm)',
+                  fontFamily: 'var(--font-family-label)',
+                  color: 'var(--color-gray-white)',
+                  border: 'none',
+                  transition: 'background-color 0.12s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+              >
+                {comp.name}
+              </button>
+            ))}
+
+            {/* Divider before reset */}
+            <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.1)', margin: '2px 0' }} />
+
+            {/* Reset row */}
+            <button
+              onClick={() => {
+                setSlotOverrides((prev) => { const n = { ...prev }; delete n[selectedSlot!]; return n })
+                setSelectedSlot(null)
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+              style={{
+                width: '100%',
+                textAlign: 'left',
+                padding: '8px 12px',
+                borderRadius: 'var(--radius-xs)',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-sm)',
+                fontFamily: 'var(--font-family-label)',
+                color: 'rgba(255,255,255,0.4)',
+                border: 'none',
+                transition: 'background-color 0.12s',
+              }}
+            >
+              ↩ Reset
+            </button>
+          </div>
+        )}
 
         <InspectOverlay active={inspectMode} containerRef={templatePreviewRef} />
       </div>
@@ -728,7 +944,7 @@ export function Playground() {
                     fontFamily: 'var(--font-family-base)',
                     color: 'rgba(255,255,255,0.4)',
                     opacity: 0,
-                    transform: 'translateY(-4px)',
+                    transform: 'translateY(4px)',
                     transition: 'opacity 0.2s, transform 0.2s',
                   }}
                 >
@@ -758,14 +974,9 @@ export function Playground() {
             <IconsPage />
           </div>
         )}
-        {page === 'colors' && (
-          <div className="h-full overflow-y-auto">
-            <TokensPage />
-          </div>
-        )}
-        {page === 'typography' && (
-          <div className="h-full overflow-y-auto p-10">
-            <p style={{ fontSize: 'var(--font-size-sm)', fontFamily: 'var(--font-family-base)', color: 'var(--color-gray-70)' }}>Typography tokens — em breve</p>
+        {(page === 'colors' || page === 'typography') && (
+          <div className="h-full flex flex-col overflow-hidden">
+            <TokensPage initialTab={page === 'typography' ? 'typography' : 'colors'} />
           </div>
         )}
       </div>

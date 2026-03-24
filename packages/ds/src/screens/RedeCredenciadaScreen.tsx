@@ -1,6 +1,7 @@
 import { BaseCard } from '../components/BaseCard'
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 function MissingTag({ label }: { label: string }) {
   return (
@@ -67,23 +68,25 @@ export function RedeCredenciadaScreen() {
 
       {/* 2. Card grande com botão de ação */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="lg"
-          filled={false}
-          category="Encontre perto de você"
-          showCategory
-          title="Clínicas e hospitais"
-          showTitle
-          subtitle="Veja todos os estabelecimentos credenciados no seu plano"
-          showSubtitle
-          leftAsset
-          leftIcon={<Icon name="map-marker-outline" size={24} color="var(--color-content-primary)" />}
-          rightAsset={false}
-          action="button"
-          buttonLabel="Ver no mapa"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-0">
+          <BaseCard
+            size="large"
+            filled={false}
+            category="Encontre perto de você"
+            showCategory
+            title="Clínicas e hospitais"
+            showTitle
+            subtitle="Veja todos os estabelecimentos credenciados no seu plano"
+            showSubtitle
+            leftAsset
+            leftIcon={<Icon name="map-marker-outline" size={24} color="var(--color-content-primary)" />}
+            rightAsset={false}
+            action="button"
+            buttonLabel="Ver no mapa"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* 3. Seção "Especialidades" */}
@@ -105,38 +108,41 @@ export function RedeCredenciadaScreen() {
       {/* 6 itens de lista */}
       <div>
         {especialidades.map((item, i) => (
-          <ListItem
-            key={item.key}
-            title={item.title}
-            description={item.description}
-            size="small"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
-            divider={i < especialidades.length - 1}
-          />
+          <Slot key={item.key} id={`ListItem-${i}`}>
+            <ListItem
+              title={item.title}
+              description={item.description}
+              size="small"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
+              divider={i < especialidades.length - 1}
+            />
+          </Slot>
         ))}
       </div>
 
       {/* 4. Card pequeno com link de ajuda */}
       <div style={{ padding: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="sm"
-          filled={false}
-          category="Dúvidas"
-          showCategory
-          title="Como usar a rede credenciada?"
-          showTitle
-          subtitle="Entenda como funciona o atendimento no seu plano"
-          showSubtitle
-          leftAsset
-          leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
-          rightAsset={false}
-          action="link"
-          linkLabel="Saiba mais"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-1">
+          <BaseCard
+            size="small"
+            filled={false}
+            category="Dúvidas"
+            showCategory
+            title="Como usar a rede credenciada?"
+            showTitle
+            subtitle="Entenda como funciona o atendimento no seu plano"
+            showSubtitle
+            leftAsset
+            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            rightAsset={false}
+            action="link"
+            linkLabel="Saiba mais"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* NavBar */}

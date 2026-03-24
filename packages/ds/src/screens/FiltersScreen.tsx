@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Chip } from '../components/Chip'
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 const categories = [
   { id: 'all', label: 'Todos', icon: 'view-grid' },
@@ -129,16 +130,17 @@ export function FiltersScreen() {
           backgroundColor: 'var(--color-surface)',
         }}
       >
-        {categories.map((cat) => (
-          <Chip
-            key={cat.id}
-            label={cat.label}
-            variant="icon"
-            size="md"
-            state={selectedCategory === cat.id ? 'selected' : 'idle'}
-            iconElement={<Icon name={cat.icon} size={20} />}
-            onClick={() => setSelectedCategory(cat.id)}
-          />
+        {categories.map((cat, i) => (
+          <Slot key={cat.id} id={`Chip-${i}`}>
+            <Chip
+              label={cat.label}
+              variant="icon"
+              size="medium"
+              state={selectedCategory === cat.id ? 'selected' : 'idle'}
+              iconElement={<Icon name={cat.icon} size={20} />}
+              onClick={() => setSelectedCategory(cat.id)}
+            />
+          </Slot>
         ))}
       </div>
 
@@ -172,23 +174,24 @@ export function FiltersScreen() {
         }}
       >
         {filteredResults.map((item, index) => (
-          <ListItem
-            key={item.id}
-            title={item.title}
-            description={item.description}
-            size="large"
-            leftSide="icon"
-            icon={
-              <Icon
-                name={item.icon}
-                size={24}
-                color="var(--color-content-primary)"
-              />
-            }
-            rightAsset="text"
-            rightText={item.rightText}
-            divider={index < filteredResults.length - 1}
-          />
+          <Slot key={item.id} id={`ListItem-${index}`}>
+            <ListItem
+              title={item.title}
+              description={item.description}
+              size="large"
+              leftSide="icon"
+              icon={
+                <Icon
+                  name={item.icon}
+                  size={24}
+                  color="var(--color-content-primary)"
+                />
+              }
+              rightAsset="text"
+              rightText={item.rightText}
+              divider={index < filteredResults.length - 1}
+            />
+          </Slot>
         ))}
 
         {filteredResults.length === 0 && (

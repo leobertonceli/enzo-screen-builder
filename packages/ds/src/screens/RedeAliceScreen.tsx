@@ -1,6 +1,7 @@
 import { ListItem } from '../components/ListItem'
 import { BaseCard } from '../components/BaseCard'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 /* ── Asset URLs from Figma ── */
 const doctorImage = 'https://www.figma.com/api/mcp/asset/27e3e5d6-bc49-414f-8522-3a43b9554682'
@@ -204,15 +205,16 @@ export function RedeAliceScreen() {
       {/* ═══ LISTA — usa ListItem do DS ✅ ═══ */}
       <div className="flex flex-col" style={{ marginTop: 'var(--spacing-08)' }}>
         {menuItems.map((item, index) => (
-          <ListItem
-            key={item.title}
-            title={item.title}
-            size="small"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={<Icon name={item.icon} size={24} color="var(--color-content-primary)" />}
-            divider={index < menuItems.length - 1}
-          />
+          <Slot key={item.title} id={`ListItem-${index}`}>
+            <ListItem
+              title={item.title}
+              size="small"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={<Icon name={item.icon} size={24} color="var(--color-content-primary)" />}
+              divider={index < menuItems.length - 1}
+            />
+          </Slot>
         ))}
       </div>
 
@@ -221,27 +223,29 @@ export function RedeAliceScreen() {
         className="flex justify-center"
         style={{ padding: 'var(--spacing-06) var(--spacing-06) 0' }}
       >
-        <BaseCard
-          size="sm"
-          filled={false}
-          showCategory={false}
-          title="Precisa de ajuda com sua rede credenciada?"
-          showTitle
-          showSubtitle={false}
-          leftAsset
-          leftIcon={
-            <img
-              src={logoAliceIA}
-              alt="Alice IA"
-              style={{ width: 20, height: 20, borderRadius: 'var(--radius-sm)' }}
-            />
-          }
-          rightAsset={false}
-          action="link"
-          linkLabel="Falar no Alice Agora"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-0">
+          <BaseCard
+            size="small"
+            filled={false}
+            showCategory={false}
+            title="Precisa de ajuda com sua rede credenciada?"
+            showTitle
+            showSubtitle={false}
+            leftAsset
+            leftIcon={
+              <img
+                src={logoAliceIA}
+                alt="Alice IA"
+                style={{ width: 20, height: 20, borderRadius: 'var(--radius-sm)' }}
+              />
+            }
+            rightAsset={false}
+            action="link"
+            linkLabel="Falar no Alice Agora"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* ═══ NAVBAR — não temos no DS ═══ */}

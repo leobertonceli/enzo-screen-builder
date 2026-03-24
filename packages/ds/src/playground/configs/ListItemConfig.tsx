@@ -37,7 +37,7 @@ export const ListItemConfig: ComponentConfig = {
   controls: {
     title:       { type: 'text',        label: 'Title',       default: 'Title' },
     description: { type: 'text',        label: 'Description', default: 'Description that can go up to two lines of text' },
-    size:        { type: 'radio',       label: 'Size',        options: ['large', 'small'], default: 'large' },
+    size:        { type: 'radio',       label: 'Size',        options: ['small', 'large'], default: 'large' },
     state:       { type: 'select',      label: 'State',       options: ['default', 'pressed', 'loading'], default: 'default' },
     leftSide:    { type: 'radio',       label: 'Left side',   options: ['none', 'icon', 'image'], default: 'none' },
     leftIcon:    { type: 'icon-picker', label: 'Left icon',   default: 'heart-outline', showWhen: { field: 'leftSide', values: ['icon'] } },

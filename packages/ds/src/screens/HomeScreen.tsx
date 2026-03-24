@@ -107,7 +107,7 @@ export function HomeScreen() {
           {categories.map((cat) => (
             <BaseCard
               key={cat.key}
-              size="sm"
+              size="small"
               filled
               category={cat.category}
               showCategory

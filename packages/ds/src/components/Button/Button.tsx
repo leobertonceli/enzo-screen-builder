@@ -3,7 +3,7 @@ import { cn } from '../../utils/cn'
 import { Icon } from '../../icons/Icon'
 
 export type ButtonStyle = 'primary' | 'secondary' | 'tertiary'
-export type ButtonSize = 'lg' | 'md' | 'sm'
+export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonState = 'enabled' | 'pressed' | 'disabled' | 'loading'
 export type ButtonType = 'text' | 'left-icon' | 'right-icon' | 'only-icon'
 
@@ -39,64 +39,64 @@ const colorMap: Record<'light' | 'dark', Record<ButtonStyle, Record<'enabled' | 
     primary: {
       enabled:  { bg: 'var(--color-brand)', color: 'var(--color-gray-white)' },
       pressed:  { bg: 'var(--color-brand-pressed)', color: 'var(--color-gray-white)' },
-      disabled: { bg: 'rgba(20,20,20,0.05)', color: 'rgba(20,20,20,0.2)' },
+      disabled: { bg: 'var(--color-black-05)', color: 'var(--color-black-20)' },
     },
     secondary: {
-      enabled:  { bg: 'transparent', color: 'var(--color-brand)', border: 'rgba(20,20,20,0.15)' },
-      pressed:  { bg: 'transparent', color: 'var(--color-brand-pressed)', border: 'rgba(20,20,20,0.2)' },
-      disabled: { bg: 'transparent', color: 'rgba(20,20,20,0.2)', border: 'rgba(20,20,20,0.15)' },
+      enabled:  { bg: 'transparent', color: 'var(--color-brand)', border: 'var(--color-black-15)' },
+      pressed:  { bg: 'transparent', color: 'var(--color-brand-pressed)', border: 'var(--color-black-20)' },
+      disabled: { bg: 'transparent', color: 'var(--color-black-20)', border: 'var(--color-black-15)' },
     },
     tertiary: {
       enabled:  { bg: 'transparent', color: 'var(--color-brand)' },
       pressed:  { bg: 'transparent', color: 'var(--color-brand-pressed)' },
-      disabled: { bg: 'transparent', color: 'rgba(20,20,20,0.2)' },
+      disabled: { bg: 'transparent', color: 'var(--color-black-20)' },
     },
   },
   dark: {
     primary: {
       enabled:  { bg: 'var(--color-gray-white)', color: 'var(--color-content-primary)' },
       pressed:  { bg: 'var(--color-gray-20)', color: 'var(--color-content-primary)' },
-      disabled: { bg: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' },
+      disabled: { bg: 'var(--color-white-05)', color: 'var(--color-white-20)' },
     },
     secondary: {
-      enabled:  { bg: 'transparent', color: 'var(--color-gray-white)', border: 'rgba(255,255,255,0.2)' },
-      pressed:  { bg: 'transparent', color: 'var(--color-gray-20)', border: 'rgba(255,255,255,0.3)' },
-      disabled: { bg: 'transparent', color: 'rgba(255,255,255,0.2)', border: 'rgba(255,255,255,0.1)' },
+      enabled:  { bg: 'transparent', color: 'var(--color-gray-white)', border: 'var(--color-white-20)' },
+      pressed:  { bg: 'transparent', color: 'var(--color-gray-20)', border: 'var(--color-white-30)' },
+      disabled: { bg: 'transparent', color: 'var(--color-white-20)', border: 'var(--color-white-10)' },
     },
     tertiary: {
       enabled:  { bg: 'transparent', color: 'var(--color-gray-white)' },
       pressed:  { bg: 'transparent', color: 'var(--color-gray-20)' },
-      disabled: { bg: 'transparent', color: 'rgba(255,255,255,0.2)' },
+      disabled: { bg: 'transparent', color: 'var(--color-white-20)' },
     },
   },
 }
 
 /* ── Size map ────────────────────────────────────────────────────── */
 const sizeMap = {
-  lg: {
-    button: 'h-[56px] px-6 py-4 min-w-[112px]',
-    icon:   'h-[56px] w-[56px]',
-    radius: 'var(--radius-md)',
-    style:  { fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-md)', lineHeight: '1.24', letterSpacing: 'var(--letter-spacing-none)' } satisfies CSSProperties,
+  small: {
+    button: 'h-[40px] px-4 py-3 min-w-[80px]',
+    icon:   'h-[40px] w-[40px]',
+    radius: 'var(--radius-sm)',
+    style:  { fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)', lineHeight: '1.16', letterSpacing: 'var(--letter-spacing-none)' } satisfies CSSProperties,
   },
-  md: {
+  medium: {
     button: 'h-[48px] px-5 py-4 min-w-[96px]',
     icon:   'h-[48px] w-[48px]',
     radius: 'var(--radius-sm)',
     style:  { fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)', lineHeight: '1.16', letterSpacing: 'var(--letter-spacing-none)' } satisfies CSSProperties,
   },
-  sm: {
-    button: 'h-[40px] px-4 py-3 min-w-[80px]',
-    icon:   'h-[40px] w-[40px]',
-    radius: 'var(--radius-sm)',
-    style:  { fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)', lineHeight: '1.16', letterSpacing: 'var(--letter-spacing-none)' } satisfies CSSProperties,
+  large: {
+    button: 'h-[56px] px-6 py-4 min-w-[112px]',
+    icon:   'h-[56px] w-[56px]',
+    radius: 'var(--radius-md)',
+    style:  { fontFamily: 'var(--font-family-base)', fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-md)', lineHeight: 'var(--line-height-title)', letterSpacing: 'var(--letter-spacing-none)' } satisfies CSSProperties,
   },
 }
 
 export function Button({
   label = 'Button label',
   style = 'primary',
-  size = 'lg',
+  size = 'large',
   state = 'enabled',
   type = 'text',
   darkMode = false,

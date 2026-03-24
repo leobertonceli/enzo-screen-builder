@@ -1,6 +1,7 @@
 import { ChatInput } from '../components/ChatInput/ChatInput'
 import { Chip } from '../components/Chip'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 /* ── Out-of-DS label ──────────────────────────────────────────── */
 function MissingTag({ label }: { label: string }) {
@@ -132,14 +133,16 @@ export function AliceAgoraScreen() {
           gap: 'var(--spacing-02)',
           padding: '0 var(--spacing-06)',
         }}>
-          {suggestions.map((s) => (
+          {suggestions.map((s, i) => (
             <div key={s} className="shrink-0">
-              <Chip
-                label={s}
-                variant="text"
-                size="sm"
-                state="idle"
-              />
+              <Slot id={`Chip-${i}`}>
+                <Chip
+                  label={s}
+                  variant="text"
+                  size="small"
+                  state="idle"
+                />
+              </Slot>
             </div>
           ))}
         </div>
@@ -167,13 +170,15 @@ export function AliceAgoraScreen() {
         backgroundColor: 'var(--color-surface)',
         flexShrink: 0,
       }}>
-        <ChatInput
-          state="idle"
-          placeholder="Pergunte para a Alice..."
-          showMic
-          showPlus={false}
-          width="100%"
-        />
+        <Slot id="ChatInput">
+          <ChatInput
+            state="idle"
+            placeholder="Pergunte para a Alice..."
+            showMic
+            showPlus={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* Nav bar placeholder */}

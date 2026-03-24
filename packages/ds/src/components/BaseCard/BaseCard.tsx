@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import { Button } from '../Button'
 
 /* ── Types ───────────────────────────────────────────────────────── */
-export type CardSize = 'lg' | 'sm'
+export type CardSize = 'small' | 'large'
 export type CardAction = 'none' | 'button' | '2buttons' | 'link' | '2links'
 
 export interface BaseCardProps {
@@ -32,18 +32,7 @@ export interface BaseCardProps {
 
 /* ── Size map ────────────────────────────────────────────────────── */
 const sizeMap = {
-  lg: {
-    padding: 'var(--spacing-06)',         // 24px
-    gap: 'var(--spacing-06)',             // 24px
-    categorySize: 'var(--font-size-sm)',  // 14px
-    titleSize: 'var(--font-size-lg)',     // 20px
-    subtitleSize: 'var(--font-size-sm)',  // 14px
-    titleLineHeight: '1.16',
-    assetSize: 24,
-    linkGap: 24,
-    dividerH: 16,
-  },
-  sm: {
+  small: {
     padding: 'var(--spacing-05)',         // 20px
     gap: 'var(--spacing-06)',             // 24px
     categorySize: 'var(--font-size-xs)',  // 12px
@@ -54,11 +43,22 @@ const sizeMap = {
     linkGap: 20,
     dividerH: 12,
   },
+  large: {
+    padding: 'var(--spacing-06)',         // 24px
+    gap: 'var(--spacing-06)',             // 24px
+    categorySize: 'var(--font-size-sm)',  // 14px
+    titleSize: 'var(--font-size-lg)',     // 20px
+    subtitleSize: 'var(--font-size-sm)',  // 14px
+    titleLineHeight: '1.16',
+    assetSize: 24,
+    linkGap: 24,
+    dividerH: 16,
+  },
 } as const
 
 /* ── Component ───────────────────────────────────────────────────── */
 export function BaseCard({
-  size = 'lg',
+  size = 'large',
   filled = false,
   category = 'Category',
   showCategory = true,
@@ -96,7 +96,7 @@ export function BaseCard({
     cursor: onClick ? 'pointer' : undefined,
     ...(filled
       ? { backgroundColor: 'var(--color-surface-bg)' }
-      : { border: '1px solid rgba(20,20,20,0.1)', backgroundColor: 'var(--color-surface)' }
+      : { border: '1px solid var(--color-black-10)', backgroundColor: 'var(--color-surface)' }
     ),
     ...(hasLinks
       ? { paddingTop: s.padding, paddingLeft: s.padding, paddingRight: s.padding, paddingBottom: 'var(--spacing-04)' }
@@ -109,7 +109,7 @@ export function BaseCard({
     color: 'var(--color-brand)',
     fontWeight: 'var(--font-weight-regular)',
     letterSpacing: 'var(--letter-spacing-none)',
-    lineHeight: '1.24',
+    lineHeight: 'var(--line-height-title)',
   }
 
   const titleStyle: CSSProperties = {
@@ -125,7 +125,7 @@ export function BaseCard({
     color: 'var(--color-content-secondary)',
     fontWeight: 'var(--font-weight-regular)',
     letterSpacing: 'var(--letter-spacing-none)',
-    lineHeight: '1.24',
+    lineHeight: 'var(--line-height-title)',
   }
 
   const linkStyle: CSSProperties = {
@@ -141,7 +141,7 @@ export function BaseCard({
     border: 'none',
   }
 
-  const btnSize = size === 'lg' ? 'md' : 'sm' as const
+  const btnSize = size === 'large' ? 'medium' : 'small' as const
 
   return (
     <div className={className} style={containerStyle} onClick={onClick}>
@@ -192,13 +192,13 @@ export function BaseCard({
                 width: '100%',
                 height: '100%',
                 borderRadius: 'var(--radius-lg)',
-                border: '1px dashed #8000F0',
-                backgroundColor: '#F7F0FF',
+                border: '1px dashed var(--color-violet-50)',
+                backgroundColor: 'var(--color-violet-00)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 'var(--font-size-xs)',
-                color: '#8000F0',
+                color: 'var(--color-violet-50)',
                 fontFamily: 'var(--font-family-base)',
               }}
             >

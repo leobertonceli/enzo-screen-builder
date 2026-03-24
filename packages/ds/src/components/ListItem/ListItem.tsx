@@ -65,7 +65,7 @@ export function ListItem({
     : 'py-5'
 
   const rootHeight = isLoading ? (isLarge ? 'h-[89px]' : 'h-[74px]') : ''
-  const rootBg = isPressed ? 'bg-[var(--color-surface-subtle)]' : 'bg-[var(--color-surface)]'
+  const rootBg = isPressed ? 'var(--color-surface-subtle)' : 'var(--color-surface)'
   const hasDescription = description !== undefined
   const rootAlign = isLoading && leftSide === 'icon' ? 'items-start' : 'items-center'
 
@@ -74,16 +74,18 @@ export function ListItem({
       onClick={onClick}
       className={cn(
         'flex relative',
-        divider && 'border-b border-[var(--color-divider)]',
         rootWidth,
         rootPadding,
         rootHeight,
-        rootBg,
         rootAlign,
         isLarge ? 'gap-4' : leftSide === 'none' ? 'gap-0' : 'gap-3',
         onClick && 'cursor-pointer select-none',
         className,
       )}
+      style={{
+        backgroundColor: rootBg,
+        borderBottom: divider ? '1px solid var(--color-divider)' : undefined,
+      }}
     >
       {/* Loading skeleton */}
       {isLoading && (
@@ -91,21 +93,24 @@ export function ListItem({
           {leftSide !== 'none' && (
             <div
               className={cn(
-                'bg-[var(--color-surface-subtle)] shrink-0',
+                'shrink-0',
                 leftSide === 'image'
-                  ? isLarge
-                    ? 'size-10 rounded-full'
-                    : 'size-8 rounded-3xl'
-                  : isLarge
-                  ? 'size-5 rounded-full'
-                  : 'size-4 rounded-3xl',
+                  ? isLarge ? 'size-10 rounded-full' : 'size-8 rounded-3xl'
+                  : isLarge ? 'size-5 rounded-full' : 'size-4 rounded-3xl',
               )}
+              style={{ backgroundColor: 'var(--color-surface-subtle)' }}
             />
           )}
           <div className="flex flex-1 flex-col gap-1 min-w-0">
-            <div className={cn('bg-[var(--color-surface-subtle)] rounded-full w-[120px]', isLarge ? 'h-5' : 'h-4')} />
+            <div
+              className={cn('rounded-full w-[120px]', isLarge ? 'h-5' : 'h-4')}
+              style={{ backgroundColor: 'var(--color-surface-subtle)' }}
+            />
             {description !== undefined && (
-              <div className={cn('bg-[var(--color-surface-subtle)] rounded-full w-full', isLarge ? 'h-5' : 'h-4')} />
+              <div
+                className={cn('rounded-full w-full', isLarge ? 'h-5' : 'h-4')}
+                style={{ backgroundColor: 'var(--color-surface-subtle)' }}
+              />
             )}
           </div>
         </>
@@ -118,15 +123,16 @@ export function ListItem({
           {leftSide === 'image' && (
             <div
               className={cn(
-                'shrink-0 overflow-hidden bg-[var(--color-brand)]',
+                'shrink-0 overflow-hidden',
                 isLarge ? 'size-10 rounded-xl' : 'size-8 rounded-lg',
                 hasDescription && 'self-start',
               )}
+              style={{ backgroundColor: 'var(--color-brand)' }}
             >
               {imageSrc ? (
                 <img src={imageSrc} alt={imageAlt} className="size-full object-cover" />
               ) : (
-                <div className="size-full bg-[var(--color-brand)]" />
+                <div className="size-full" style={{ backgroundColor: 'var(--color-brand)' }} />
               )}
             </div>
           )}
@@ -182,7 +188,7 @@ export function ListItem({
                   style={{
                     fontFamily: 'var(--font-family-base)',
                     fontSize: 'var(--font-size-sm)',
-                    lineHeight: '1.24',
+                    lineHeight: 'var(--line-height-title)',
                     color: 'var(--color-content-primary)',
                   }}
                 >

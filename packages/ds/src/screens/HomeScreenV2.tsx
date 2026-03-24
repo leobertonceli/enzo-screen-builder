@@ -120,7 +120,7 @@ export function HomeScreenV2() {
         {categories.map((cat) => (
           <BaseCard
             key={cat.key}
-            size="lg"
+            size="large"
             filled={false}
             category={cat.category}
             showCategory

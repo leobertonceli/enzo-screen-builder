@@ -53,7 +53,7 @@
 
 /* ═══════════════════════════════════════════════
    Design Tokens — Global App DS
-   Sourced from:
+   Sourced from: globalTokens.json
    · Global Colors (z4zjxF4d3UWFZvHrdL93Yx)
    · Type Tokens   (N2Mrca2Hq8zf39FaVuI2l4)
    ═══════════════════════════════════════════════ */
@@ -78,13 +78,173 @@
   --color-magenta-10: #FCC0E8;
   --color-magenta-20: #F59DD3;
   --color-magenta-30: #F770CA;
-  --color-magenta-40: #EC5BB4;
+  --color-magenta-40: #EC5CB4;
   --color-magenta-50: #E738AD;
-  --color-magenta-60: #BE0380;   /* brand primary */
-  --color-magenta-70: #960169;   /* brand pressed */
+  --color-magenta-60: #BE0380;
+  --color-magenta-70: #960169;
   --color-magenta-80: #750153;
   --color-magenta-90: #5B0043;
   --color-magenta-100:#40002D;
+
+  /* ── Red ─────────────────────────────────────── */
+  --color-red-00:  #FFE3EB;
+  --color-red-10:  #FCC0D0;
+  --color-red-20:  #FA98B2;
+  --color-red-30:  #F76F94;
+  --color-red-40:  #FF4D7C;
+  --color-red-50:  #EB003F;
+  --color-red-60:  #E0003C;
+  --color-red-70:  #B50030;
+  --color-red-80:  #960028;
+  --color-red-90:  #800022;
+  --color-red-100: #69001C;
+
+  /* ── Fuchsia ─────────────────────────────────── */
+  --color-fuchsia-00:  #FDE3FF;
+  --color-fuchsia-10:  #F8C0FC;
+  --color-fuchsia-20:  #F398FA;
+  --color-fuchsia-30:  #EE6FF7;
+  --color-fuchsia-40:  #E947F5;
+  --color-fuchsia-50:  #E000F0;
+  --color-fuchsia-60:  #D100E0;
+  --color-fuchsia-70:  #A900B5;
+  --color-fuchsia-80:  #8C0096;
+  --color-fuchsia-90:  #770080;
+  --color-fuchsia-100: #620069;
+
+  /* ── Violet ──────────────────────────────────── */
+  --color-violet-00:  #F7F0FF;
+  --color-violet-10:  #E0C0FC;
+  --color-violet-20:  #CC98FA;
+  --color-violet-30:  #B86FF7;
+  --color-violet-40:  #A447F5;
+  --color-violet-50:  #8000F0;
+  --color-violet-60:  #7800E0;
+  --color-violet-70:  #6100B5;
+  --color-violet-80:  #500096;
+  --color-violet-90:  #440080;
+  --color-violet-100: #380069;
+
+  /* ── Blue ────────────────────────────────────── */
+  --color-blue-00:  #F0F4FF;
+  --color-blue-10:  #C0D0FC;
+  --color-blue-20:  #98B2FA;
+  --color-blue-30:  #6189FA;
+  --color-blue-40:  #4775F5;
+  --color-blue-50:  #1F59F9;
+  --color-blue-60:  #003CE0;
+  --color-blue-70:  #0030B5;
+  --color-blue-80:  #002896;
+  --color-blue-90:  #002280;
+  --color-blue-100: #001C69;
+
+  /* ── Turquoise ───────────────────────────────── */
+  --color-turquoise-00:  #E3FFFD;
+  --color-turquoise-10:  #C0FCF8;
+  --color-turquoise-20:  #98FAF3;
+  --color-turquoise-30:  #6FF7EE;
+  --color-turquoise-40:  #47F5E9;
+  --color-turquoise-50:  #00F0E0;
+  --color-turquoise-60:  #00E0D1;
+  --color-turquoise-70:  #00B5A9;
+  --color-turquoise-80:  #00968C;
+  --color-turquoise-90:  #008077;
+  --color-turquoise-100: #006962;
+
+  /* ── Green ───────────────────────────────────── */
+  --color-green-00:  #E3FFE6;
+  --color-green-10:  #C0FCC8;
+  --color-green-20:  #98FAA5;
+  --color-green-30:  #6FF781;
+  --color-green-40:  #47F55E;
+  --color-green-50:  #00F020;
+  --color-green-60:  #3CDA52;
+  --color-green-70:  #00B518;
+  --color-green-80:  #009618;
+  --color-green-90:  #008011;
+  --color-green-100: #00690E;
+
+  /* ── Lime ────────────────────────────────────── */
+  --color-lime-00:  #F6FFE3;
+  --color-lime-10:  #E8FCC0;
+  --color-lime-20:  #D9FA98;
+  --color-lime-30:  #CAF76F;
+  --color-lime-40:  #BBF547;
+  --color-lime-50:  #A0F000;
+  --color-lime-60:  #96E000;
+  --color-lime-70:  #79B500;
+  --color-lime-80:  #649600;
+  --color-lime-90:  #558000;
+  --color-lime-100: #466900;
+
+  /* ── Yellow ──────────────────────────────────── */
+  --color-yellow-00:  #FFFAE7;
+  --color-yellow-10:  #FCF1C2;
+  --color-yellow-20:  #FAE89D;
+  --color-yellow-30:  #F7DD74;
+  --color-yellow-40:  #F6D44E;
+  --color-yellow-50:  #FBC800;
+  --color-yellow-60:  #ECBD00;
+  --color-yellow-70:  #C09900;
+  --color-yellow-80:  #A28200;
+  --color-yellow-90:  #8F7200;
+  --color-yellow-100: #7B6300;
+
+  /* ── Orange ──────────────────────────────────── */
+  --color-orange-00:  #FFF6E7;
+  --color-orange-10:  #FCE9C2;
+  --color-orange-20:  #FADB9D;
+  --color-orange-30:  #F7CB74;
+  --color-orange-40:  #F6BE4E;
+  --color-orange-50:  #FBA700;
+  --color-orange-60:  #EC9D00;
+  --color-orange-70:  #C08000;
+  --color-orange-80:  #A16C01;
+  --color-orange-90:  #8F5F00;
+  --color-orange-100: #7B5200;
+
+  /* ── Transparent — White ─────────────────────── */
+  --color-white-00:  rgba(255,255,255,0);
+  --color-white-05:  #FFFFFF0D;
+  --color-white-10:  #FFFFFF1A;
+  --color-white-15:  #FFFFFF26;
+  --color-white-20:  #FFFFFF33;
+  --color-white-30:  #FFFFFF4D;
+  --color-white-40:  #FFFFFF66;
+  --color-white-50:  #FFFFFF80;
+  --color-white-60:  #FFFFFF99;
+  --color-white-70:  #FFFFFFB3;
+  --color-white-80:  #FFFFFFCC;
+  --color-white-90:  #FFFFFFE6;
+
+  /* ── Transparent — Black ─────────────────────── */
+  --color-black-05:  #1414140D;
+  --color-black-10:  #1414141A;
+  --color-black-15:  #14141426;
+  --color-black-20:  #14141433;
+  --color-black-30:  #1414144D;
+  --color-black-40:  #14141466;
+  --color-black-50:  #14141480;
+  --color-black-60:  #14141499;
+  --color-black-70:  #141414B3;
+  --color-black-80:  #141414CC;
+  --color-black-90:  #141414E6;
+
+  /* ── Off colors (acessibilidade / daltonismo) ── */
+  --color-off-magenta-00:  #F2E9EE;
+  --color-off-magenta-20:  #E2D6E0;
+  --color-off-magenta-50:  #D0C4CE;
+  --color-off-magenta-100: #4B0824;
+
+  --color-off-blue-00:  #F5F6FA;
+  --color-off-blue-20:  #DEE2ED;
+  --color-off-blue-50:  #CFD4E0;
+  --color-off-blue-100: #222735;
+
+  --color-off-gray-00:  #F3F2F0;
+  --color-off-gray-20:  #DDDDD5;
+  --color-off-gray-50:  #C4C0B6;
+  --color-off-gray-100: #141414;
 
   /* ── Semantic aliases ────────────────────────── */
   --color-brand:             var(--color-magenta-60);
@@ -106,20 +266,20 @@
   --color-dark-surface-hover:var(--color-gray-90);
 
   /* ── Font families ───────────────────────────── */
-  /* gl-font-family-base = Haffer (UI components: buttons, titles, list items) */
+  /* Haffer — UI components: buttons, titles, list items */
   --font-family-base:    "Haffer", system-ui, sans-serif;
-  /* DM Sans for labels/paragraphs (content text) */
+  /* DM Sans — labels, parágrafos, content text */
   --font-family-label:   "DM Sans", system-ui, sans-serif;
 
   /* ── Font sizes ──────────────────────────────── */
-  --font-size-xs:    12px;   /* gl-font-size-xs  */
-  --font-size-sm:    14px;   /* gl-font-size-sm  */
-  --font-size-md:    16px;   /* gl-font-size-md  */
-  --font-size-lg:    20px;   /* gl-font-size-lg  */
-  --font-size-xl:    24px;   /* gl-font-size-xl  */
-  --font-size-xxl:   32px;   /* gl-font-size-xxl */
-  --font-size-xxxl:  48px;   /* gl-font-size-xxxl  */
-  --font-size-xxxxl: 64px;   /* gl-font-size-xxxxl */
+  --font-size-xs:    12px;   /* gl-font-size-sm  */
+  --font-size-sm:    14px;   /* gl-font-size-md  */
+  --font-size-md:    16px;   /* gl-font-size-lg  */
+  --font-size-lg:    20px;   /* gl-font-size-xl  */
+  --font-size-xl:    24px;   /* gl-font-size-2xl */
+  --font-size-xxl:   32px;   /* gl-font-size-3xl */
+  --font-size-xxxl:  48px;   /* gl-font-size-4xl */
+  --font-size-xxxxl: 64px;   /* gl-font-size-5xl */
 
   /* ── Font weights ────────────────────────────── */
   --font-weight-light:    300;
@@ -128,43 +288,84 @@
   --font-weight-semibold: 600;
 
   /* ── Line heights ────────────────────────────── */
-  --line-height-heading:  1;       /* Heading/Large, Small */
-  --line-height-title:    1.24;    /* Title/Large, Medium  */
-  --line-height-title-sm: 1.32;    /* Title/Small          */
-  --line-height-label:    1.44;    /* Label/Large, Medium  */
-  --line-height-label-sm: 1.24;    /* Label/Small          */
-  --line-height-para-lg:  1.52;    /* Paragraph/Large      */
-  --line-height-para-md:  1.64;    /* Paragraph/Medium     */
+  --line-height-heading:  1;       /* gl-line-height-rule-01 — Heading/Large, Small */
+  --line-height-title:    1.24;    /* gl-line-height-rule-02 — Title/Large, Medium  */
+  --line-height-title-sm: 1.32;    /* gl-line-height-rule-03 — Title/Small          */
+  --line-height-label:    1.44;    /* gl-line-height-rule-04 — Label/Large, Medium  */
+  --line-height-label-sm: 1.24;    /* gl-line-height-rule-02 — Label/Small          */
+  --line-height-para-lg:  1.52;    /* gl-line-height-rule-05 — Paragraph/Large      */
+  --line-height-para-md:  1.64;    /* gl-line-height-rule-06 — Paragraph/Medium     */
 
   /* ── Composite text tokens — Button ──────────── */
-  /* Haffer Medium 14px (sm/md buttons) */
   --button-font-sm: var(--font-weight-medium) var(--font-size-sm) / 1.16 var(--font-family-base);
-  /* Haffer Medium 16px (lg buttons) */
   --button-font-lg: var(--font-weight-medium) var(--font-size-md) / 1.24 var(--font-family-base);
 
   /* ── Letter spacing ──────────────────────────── */
-  --letter-spacing-none:   0px;
-  --letter-spacing-button: 0.5px;
-  --letter-spacing-para:   0.2px;
+  --letter-spacing-none:     0px;    /* gl-letter-spacing-rule-01 */
+  --letter-spacing-button:   0.5px;  /* gl-letter-spacing-rule-02 */
+  --letter-spacing-para:     0.2px;
   --letter-spacing-label-sm: 0.01em;
 
   /* ── Border radius ───────────────────────────── */
-  --radius-none: 0px;
-  --radius-xs:   8px;
-  --radius-sm:   12px;
-  --radius-md:   16px;
-  --radius-lg:   20px;
-  --radius-xl:   24px;
-  --radius-pill: 1000px;
+  --radius-none: 0px;    /* gl-border-radius-none */
+  --radius-xxs:  4px;    /* gl-border-radius-xxs  — novo */
+  --radius-xs:   8px;    /* gl-border-radius-xs   */
+  --radius-sm:   12px;   /* gl-border-radius-sm   */
+  --radius-md:   16px;   /* gl-border-radius-md   */
+  --radius-lg:   20px;   /* gl-border-radius-lg   */
+  --radius-xl:   24px;   /* gl-border-radius-xg   */
+  --radius-xxl:  32px;   /* gl-border-radius-xxg  — novo */
+  --radius-pill: 1000px; /* gl-border-radius-pill */
 
-  /* ── Spacing ─────────────────────────────────── */
-  --spacing-01: 4px;
-  --spacing-02: 8px;
-  --spacing-03: 12px;
-  --spacing-04: 16px;
-  --spacing-05: 20px;
-  --spacing-06: 24px;
-  --spacing-08: 32px;
+  /* ── Border widths ───────────────────────────── */
+  --border-width-none: 0px;
+  --border-width-xs:   1px;
+  --border-width-sm:   1.5px;
+  --border-width-md:   2px;
+  --border-width-lg:   4px;
+
+  /* ── Spacing (base: 4px) ─────────────────────── */
+  --spacing-01: 4px;    /* gl-spacing-01  */
+  --spacing-02: 8px;    /* gl-spacing-02  */
+  --spacing-03: 12px;   /* gl-spacing-03  */
+  --spacing-04: 16px;   /* gl-spacing-04  */
+  --spacing-05: 20px;   /* gl-spacing-05  */
+  --spacing-06: 24px;   /* gl-spacing-06  */
+  --spacing-08: 32px;   /* gl-spacing-08  */
+  --spacing-10: 40px;   /* gl-spacing-10  */
+  --spacing-12: 48px;   /* gl-spacing-12  */
+  --spacing-16: 64px;   /* gl-spacing-16  */
+  --spacing-20: 80px;   /* gl-spacing-20  */
+  --spacing-24: 96px;   /* gl-spacing-24  */
+  --spacing-32: 128px;  /* gl-spacing-32  */
+  --spacing-40: 160px;  /* gl-spacing-40  */
+
+  /* ── Icon container spacing ──────────────────── */
+  --spacing-container-icon-01: 6px;
+  --spacing-container-icon-02: 10px;
+  --spacing-container-icon-03: 14px;
+  --spacing-container-icon-04: 18px;
+  --spacing-container-icon-05: 22px;
+  --spacing-container-icon-06: 28px;
+
+  /* ── Opacity ─────────────────────────────────── */
+  --opacity-semi-transparent: 0.16;
+  --opacity-medium:           0.4;
+  --opacity-intense:          0.64;
+  --opacity-semi-opaque:      0.80;
+
+  /* ── Shadows ─────────────────────────────────── */
+  --shadow-01: 0px 4px 8px  #00000014;  /* gl-shadow-level-01 */
+  --shadow-02: 0px 8px 16px #00000014;  /* gl-shadow-level-02 */
+  --shadow-03: 0px 16px 32px #00000014; /* gl-shadow-level-03 */
+  --shadow-04: 0px 32px 64px #00000014; /* gl-shadow-level-04 */
+
+  /* ── Elevation (z-index scale) ───────────────── */
+  --elevation-01: 10;  /* gl-elevation-level-01 */
+  --elevation-02: 20;  /* gl-elevation-level-02 */
+  --elevation-03: 30;  /* gl-elevation-level-03 */
+  --elevation-04: 40;  /* gl-elevation-level-04 */
+  --elevation-05: 50;  /* gl-elevation-level-05 */
 }
 
 /* Global resets */

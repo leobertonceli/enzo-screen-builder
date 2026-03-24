@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
 
-export type LinkSize = 'lg' | 'sm'
+export type LinkSize = 'small' | 'large'
 export type LinkContext = 'on-light' | 'on-dark'
 export type LinkIcon = 'none' | 'left' | 'right'
 
@@ -22,19 +22,19 @@ const sizeMap: Record<LinkSize, {
   gap: string
   minWidth: number
 }> = {
-  lg: {
-    fontSize: 'var(--font-size-md)',       // 16px
-    lineHeight: '1.24',
-    iconSize: 24,
-    gap: 'var(--spacing-03)',              // 12px
-    minWidth: 112,
-  },
-  sm: {
+  small: {
     fontSize: 'var(--font-size-sm)',       // 14px
     lineHeight: '1.16',
     iconSize: 16,
     gap: 'var(--spacing-02)',              // 8px
     minWidth: 80,
+  },
+  large: {
+    fontSize: 'var(--font-size-md)',       // 16px
+    lineHeight: 'var(--line-height-title)',
+    iconSize: 24,
+    gap: 'var(--spacing-03)',              // 12px
+    minWidth: 112,
   },
 }
 
@@ -48,13 +48,13 @@ const colorMap: Record<LinkContext, Record<'enabled' | 'pressed', ColorEntry>> =
   },
   'on-dark': {
     enabled: { color: 'var(--color-gray-white)' },
-    pressed: { color: 'rgba(255,255,255,0.7)' },
+    pressed: { color: 'var(--color-white-70)' },
   },
 }
 
 export function Link({
   label = 'Link label',
-  size = 'lg',
+  size = 'large',
   context = 'on-light',
   icon = 'none',
   onClick,

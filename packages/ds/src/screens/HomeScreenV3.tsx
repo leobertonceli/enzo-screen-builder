@@ -94,7 +94,7 @@ export function HomeScreenV3() {
             <Chip
               label={item.label}
               variant="icon"
-              size="sm"
+              size="small"
               state="idle"
               iconElement={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
             />
@@ -111,7 +111,7 @@ export function HomeScreenV3() {
         }}
       >
         <BaseCard
-          size="lg"
+          size="large"
           filled={false}
           category="Novidade"
           showCategory
@@ -171,7 +171,7 @@ export function HomeScreenV3() {
         }}
       >
         <BaseCard
-          size="sm"
+          size="small"
           filled={false}
           category="Suporte"
           showCategory

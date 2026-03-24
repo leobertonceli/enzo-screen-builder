@@ -2,6 +2,7 @@ import { BaseCard } from '../components/BaseCard'
 import { Chip } from '../components/Chip'
 import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
+import { Slot } from '../playground/TemplateEditContext'
 
 function MissingTag({ label }: { label: string }) {
   return (
@@ -107,41 +108,45 @@ export function HomeScreenV4() {
 
       {/* ── Próxima consulta — BaseCard DS ── */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
-        <BaseCard
-          size="sm"
-          filled={false}
-          category="Próxima consulta"
-          showCategory
-          title="Terça, 04 de Março — 16h"
-          showTitle
-          subtitle="Online com Isabella"
-          showSubtitle
-          leftAsset={false}
-          rightAsset={false}
-          action="link"
-          linkLabel="Ver consulta"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-0">
+          <BaseCard
+            size="small"
+            filled={false}
+            category="Próxima consulta"
+            showCategory
+            title="Terça, 04 de Março — 16h"
+            showTitle
+            subtitle="Online com Isabella"
+            showSubtitle
+            leftAsset={false}
+            rightAsset={false}
+            action="link"
+            linkLabel="Ver consulta"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* ── Minha médica — BaseCard DS ── */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-06)' }}>
-        <BaseCard
-          size="sm"
-          filled={false}
-          category="Minha médica"
-          showCategory
-          title="Isabella Moreira Hueb"
-          showTitle
-          showSubtitle={false}
-          leftAsset={false}
-          rightAsset={false}
-          action="link"
-          linkLabel="Agendar consulta"
-          showSlot={false}
-          width="100%"
-        />
+        <Slot id="BaseCard-1">
+          <BaseCard
+            size="small"
+            filled={false}
+            category="Minha médica"
+            showCategory
+            title="Isabella Moreira Hueb"
+            showTitle
+            showSubtitle={false}
+            leftAsset={false}
+            rightAsset={false}
+            action="link"
+            linkLabel="Agendar consulta"
+            showSlot={false}
+            width="100%"
+          />
+        </Slot>
       </div>
 
       {/* ── Score card — fora do DS ── */}
@@ -245,16 +250,17 @@ export function HomeScreenV4() {
       {/* ── Exame list items — ListItem DS ── */}
       <div>
         {exameItems.map((item, i) => (
-          <ListItem
-            key={item.key}
-            title={item.title}
-            description={item.description}
-            size="small"
-            leftSide="icon"
-            rightAsset="icon"
-            icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
-            divider={i < exameItems.length - 1}
-          />
+          <Slot key={item.key} id={`ListItem-${i}`}>
+            <ListItem
+              title={item.title}
+              description={item.description}
+              size="small"
+              leftSide="icon"
+              rightAsset="icon"
+              icon={<Icon name={item.icon} size={20} color="var(--color-content-primary)" />}
+              divider={i < exameItems.length - 1}
+            />
+          </Slot>
         ))}
       </div>
 
@@ -289,15 +295,17 @@ export function HomeScreenV4() {
           { key: 'rede', label: 'Rede credenciada', icon: 'map-marker-outline' },
           { key: 'autorizacoes', label: 'Autorizações', icon: 'file-check-outline' },
           { key: 'reembolsos', label: 'Reembolsos', icon: 'cash-refund' },
-        ].map((item) => (
+        ].map((item, i) => (
           <div key={item.key} className="shrink-0">
-            <Chip
-              label={item.label}
-              variant="icon"
-              size="sm"
-              state="idle"
-              iconElement={<Icon name={item.icon} size={16} color="var(--color-content-primary)" />}
-            />
+            <Slot id={`Chip-${i}`}>
+              <Chip
+                label={item.label}
+                variant="icon"
+                size="small"
+                state="idle"
+                iconElement={<Icon name={item.icon} size={16} color="var(--color-content-primary)" />}
+              />
+            </Slot>
           </div>
         ))}
       </div>
