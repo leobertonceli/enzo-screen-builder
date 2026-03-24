@@ -47,7 +47,7 @@ export const ListItemConfig: ComponentConfig = {
     rightText:   { type: 'text',        label: 'Right text',  default: 'Text', showWhen: { field: 'rightAsset', values: ['text', 'text-icon'] } },
     divider:     { type: 'boolean',     label: 'Divider',     default: true },
   },
-  render: (p) => {
+  render: (p, onChange) => {
     const leftIconName = p.leftIcon as string
     const leftIconEl = leftIconName ? <Icon name={leftIconName} size={20} color="var(--color-content-primary)" /> : undefined
 
@@ -68,6 +68,7 @@ export const ListItemConfig: ComponentConfig = {
           divider={p.divider as boolean}
           icon={leftIconEl}
           rightIconElement={rightIconEl}
+          onChange={onChange}
         />
       </div>
     )

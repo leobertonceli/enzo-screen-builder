@@ -15,6 +15,7 @@ import { CardMFCConfig } from './configs/CardMFCConfig'
 import { ChatBubbleConfig } from './configs/ChatBubbleConfig'
 import { TagConfig } from './configs/TagConfig'
 import { NavBarConfig } from './configs/NavBarConfig'
+import { TextFieldConfig } from './configs/TextFieldConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -33,7 +34,7 @@ import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -49,6 +50,7 @@ function getCategory(c: ComponentConfig): string {
   if (c.name === 'ChatBubble') return 'Chat'
   if (c.name === 'Tag') return 'Badges'
   if (c.name === 'NavBar') return 'Navigation'
+  if (c.name === 'TextField') return 'Text Field'
   return 'Other'
 }
 
@@ -91,6 +93,7 @@ const COMPONENT_RADIUS: Record<string, number> = {
   ChatBubble: 24,
   Tag: 200,
   NavBar: 0,
+  TextField: 12,
 }
 
 /* Components that don't have their own background — need white container in preview */
@@ -666,7 +669,7 @@ export function Playground() {
               className="overflow-visible"
               style={{ cursor: inspectMode ? 'crosshair' : undefined }}
             >
-              {activeComponent.render(values)}
+              {activeComponent.render(values, handleChange)}
             </div>
           </div>
 

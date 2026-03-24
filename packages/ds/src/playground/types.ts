@@ -13,8 +13,8 @@ export interface ComponentPreset {
 export interface ComponentConfig {
   name: string
   controls: Record<string, ControlDef>
-  render: (props: Record<string, unknown>) => React.ReactNode
+  render: (props: Record<string, unknown>, onChange?: (key: string, val: unknown) => void) => React.ReactNode
   /** Optional render used when dropping into a template slot. Falls back to render if not provided. */
-  slotRender?: (props: Record<string, unknown>) => React.ReactNode
+  slotRender?: (props: Record<string, unknown>, onChange?: (key: string, val: unknown) => void) => React.ReactNode
   presets?: ComponentPreset[]
 }

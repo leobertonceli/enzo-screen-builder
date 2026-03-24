@@ -28,6 +28,7 @@ export interface ListItemProps {
   divider?: boolean
   onClick?: () => void
   className?: string
+  onChange?: (key: string, val: unknown) => void
 }
 
 const ChevronRight = () => (
@@ -50,6 +51,7 @@ export function ListItem({
   divider = true,
   onClick,
   className,
+  onChange,
 }: ListItemProps) {
   const isLoading = state === 'loading'
   const isPressed = state === 'pressed'
@@ -149,24 +151,36 @@ export function ListItem({
           {/* Content */}
           <div className={cn('flex flex-1 flex-col gap-1 min-w-0 justify-center', isLarge ? 'min-h-[41px]' : 'min-h-[35px]')}>
             <p
-              className="truncate font-normal"
+              className={onChange ? 'font-normal' : 'truncate font-normal'}
+              contentEditable={!!onChange || undefined}
+              suppressContentEditableWarning
+              onBlur={onChange ? (e) => onChange('title', (e.currentTarget as HTMLElement).textContent ?? '') : undefined}
+              onKeyDown={onChange ? (e) => { if (e.key === 'Enter') { e.preventDefault(); (e.currentTarget as HTMLElement).blur() } } : undefined}
+              onClick={onChange ? (e) => e.stopPropagation() : undefined}
               style={{
                 fontFamily: 'var(--font-family-base)',
                 fontSize: isLarge ? 'var(--font-size-md)' : 'var(--font-size-sm)',
                 lineHeight: 'var(--line-height-title)',
                 color: 'var(--color-content-primary)',
+                outline: 'none',
               }}
             >
               {title}
             </p>
             {description !== undefined && (
               <p
-                className="font-normal line-clamp-2"
+                className={onChange ? 'font-normal' : 'font-normal line-clamp-2'}
+                contentEditable={!!onChange || undefined}
+                suppressContentEditableWarning
+                onBlur={onChange ? (e) => onChange('description', (e.currentTarget as HTMLElement).textContent ?? '') : undefined}
+                onKeyDown={onChange ? (e) => { if (e.key === 'Enter') { e.preventDefault(); (e.currentTarget as HTMLElement).blur() } } : undefined}
+                onClick={onChange ? (e) => e.stopPropagation() : undefined}
                 style={{
                   fontFamily: 'var(--font-family-base)',
                   fontSize: isLarge ? 'var(--font-size-md)' : 'var(--font-size-sm)',
                   lineHeight: 'var(--line-height-title)',
                   color: 'var(--color-content-secondary)',
+                  outline: 'none',
                 }}
               >
                 {description}
@@ -184,12 +198,18 @@ export function ListItem({
             )}>
               {(rightAsset === 'text' || rightAsset === 'text-icon') && (
                 <span
-                  className="font-normal text-right whitespace-nowrap"
+                  className={onChange ? 'font-normal text-right' : 'font-normal text-right whitespace-nowrap'}
+                  contentEditable={!!onChange || undefined}
+                  suppressContentEditableWarning
+                  onBlur={onChange ? (e) => onChange('rightText', (e.currentTarget as HTMLElement).textContent ?? '') : undefined}
+                  onKeyDown={onChange ? (e) => { if (e.key === 'Enter') { e.preventDefault(); (e.currentTarget as HTMLElement).blur() } } : undefined}
+                  onClick={onChange ? (e) => e.stopPropagation() : undefined}
                   style={{
                     fontFamily: 'var(--font-family-base)',
                     fontSize: 'var(--font-size-sm)',
                     lineHeight: 'var(--line-height-title)',
                     color: 'var(--color-content-primary)',
+                    outline: 'none',
                   }}
                 >
                   {rightText}
