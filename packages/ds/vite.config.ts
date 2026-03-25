@@ -13,7 +13,7 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  base: '/enzo-screen-builder/',
+  base: '/screen-builder/',
   plugins: [react(), tailwindcss()],
   server: {
     fs: {
