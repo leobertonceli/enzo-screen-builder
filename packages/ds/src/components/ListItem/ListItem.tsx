@@ -126,10 +126,10 @@ export function ListItem({
             <div
               className={cn(
                 'shrink-0 overflow-hidden',
-                isLarge ? 'size-10 rounded-xl' : 'size-8 rounded-lg',
+                isLarge ? 'size-10' : 'size-8',
                 hasDescription && 'self-start',
               )}
-              style={{ backgroundColor: 'var(--color-brand)' }}
+              style={{ borderRadius: 'var(--radius-xs)', backgroundColor: 'var(--color-brand)' }}
             >
               {imageSrc ? (
                 <img src={imageSrc} alt={imageAlt} className="size-full object-cover" />

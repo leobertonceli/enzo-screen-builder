@@ -18,6 +18,8 @@ export interface BaseCardProps {
   rightAsset?: boolean
   leftIcon?: ReactNode
   rightIcon?: ReactNode
+  leftImage?: string
+  rightImage?: string
   action?: CardAction
   slot?: ReactNode
   showSlot?: boolean
@@ -40,6 +42,7 @@ const sizeMap = {
     subtitleSize: 'var(--font-size-xs)',  // 12px
     titleLineHeight: '1.24',
     assetSize: 20,
+    imageSize: 40,
     linkGap: 20,
     dividerH: 12,
   },
@@ -51,6 +54,7 @@ const sizeMap = {
     subtitleSize: 'var(--font-size-sm)',  // 14px
     titleLineHeight: '1.16',
     assetSize: 24,
+    imageSize: 48,
     linkGap: 24,
     dividerH: 16,
   },
@@ -70,6 +74,8 @@ export function BaseCard({
   rightAsset = true,
   leftIcon,
   rightIcon,
+  leftImage,
+  rightImage,
   action = 'none',
   slot,
   showSlot = true,
@@ -149,11 +155,13 @@ export function BaseCard({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)', width: '100%', position: 'relative' }}>
         {/* Left asset */}
         {leftAsset && (
-          <div className="flex items-center" style={{ width: s.assetSize, height: s.assetSize }}>
-            {leftIcon || (
-              <div style={{ width: s.assetSize, height: s.assetSize, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-surface-subtle)', overflow: 'hidden' }} />
-            )}
-          </div>
+          leftImage
+            ? <img src={leftImage} alt="" style={{ width: s.imageSize, height: s.imageSize, borderRadius: 'var(--radius-xs)', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
+            : <div className="flex items-center" style={{ width: s.assetSize, height: s.assetSize }}>
+                {leftIcon || (
+                  <div style={{ width: s.assetSize, height: s.assetSize, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-surface-subtle)', overflow: 'hidden' }} />
+                )}
+              </div>
         )}
 
         {/* Text group */}
@@ -165,11 +173,13 @@ export function BaseCard({
 
         {/* Right asset — positioned absolute top-right */}
         {rightAsset && (
-          <div className="flex items-center" style={{ position: 'absolute', top: 0, right: 0, width: s.assetSize, height: s.assetSize }}>
-            {rightIcon || (
-              <div style={{ width: s.assetSize, height: s.assetSize, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-surface-subtle)', overflow: 'hidden' }} />
-            )}
-          </div>
+          rightImage
+            ? <img src={rightImage} alt="" style={{ position: 'absolute', top: 0, right: 0, width: s.imageSize, height: s.imageSize, borderRadius: 'var(--radius-xs)', objectFit: 'cover' }} />
+            : <div className="flex items-center" style={{ position: 'absolute', top: 0, right: 0, width: s.assetSize, height: s.assetSize }}>
+                {rightIcon || (
+                  <div style={{ width: s.assetSize, height: s.assetSize, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-surface-subtle)', overflow: 'hidden' }} />
+                )}
+              </div>
         )}
       </div>
 

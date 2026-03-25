@@ -145,12 +145,19 @@ export function Controls({ controls, values, onChange }: ControlsProps) {
 
   /* Separate toggles to put at the end */
   const toggleEntries = entries.filter(([, def]) => def.type === 'boolean')
-  /* Find controls that are children of toggles (showWhen points to a boolean field) */
-  const toggleChildKeys = new Set(
+  /* Find controls that are direct children of toggles (showWhen points to a boolean field) */
+  const directToggleChildKeys = new Set(
     entries
       .filter(([, def]) => def.showWhen && controls[def.showWhen.field]?.type === 'boolean')
       .map(([key]) => key)
   )
+  /* Also include grandchildren: controls whose showWhen points to a direct toggle child */
+  const toggleChildKeys = new Set([
+    ...directToggleChildKeys,
+    ...entries
+      .filter(([, def]) => def.showWhen && directToggleChildKeys.has(def.showWhen.field))
+      .map(([key]) => key),
+  ])
   const nonToggleEntries = entries.filter(([key, def]) => def.type !== 'boolean' && !toggleChildKeys.has(key))
 
   return (
@@ -322,8 +329,69 @@ export function Controls({ controls, values, onChange }: ControlsProps) {
                   </button>
                 </div>
 
-                {/* Render child controls (icon-picker, text, select) below this toggle */}
+                {/* Render child controls (radio, icon-picker, text) below this toggle */}
                 {childControls.map(([childKey, childDef]) => {
+                  if (childDef.type === 'radio') {
+                    /* radio child + its own grandchildren (icon-picker / text) */
+                    const grandChildren = entries.filter(
+                      ([, d]) => d.showWhen?.field === childKey && isVisible(d)
+                    )
+                    return (
+                      <div key={childKey} className="flex flex-col" style={{ gap: 'var(--spacing-03)' }}>
+                        <div className="flex flex-wrap" style={{ gap: 'var(--spacing-01)' }}>
+                          {childDef.options.map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => onChange(childKey, opt)}
+                              className="transition-colors"
+                              style={{
+                                height: 32,
+                                paddingLeft: 'var(--spacing-04)',
+                                paddingRight: 'var(--spacing-04)',
+                                borderRadius: 'var(--radius-pill)',
+                                fontSize: 'var(--font-size-xs)',
+                                fontFamily: 'var(--font-family-base)',
+                                ...(values[childKey] === opt
+                                  ? { backgroundColor: 'var(--color-content-primary)', color: 'var(--color-gray-white)', border: 'none' }
+                                  : { backgroundColor: 'transparent', color: 'var(--color-content-primary)', border: '1px solid var(--color-stroke)' }
+                                ),
+                              }}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                        {grandChildren.map(([gcKey, gcDef]) => {
+                          if (gcDef.type === 'icon-picker') {
+                            return <IconPickerControl key={gcKey} value={values[gcKey] as string} onChange={(v) => onChange(gcKey, v)} />
+                          }
+                          if (gcDef.type === 'text') {
+                            return (
+                              <input
+                                key={gcKey}
+                                className="w-full outline-none transition-colors"
+                                placeholder={gcDef.label}
+                                value={values[gcKey] as string}
+                                onChange={(e) => onChange(gcKey, e.target.value)}
+                                style={{
+                                  height: 48,
+                                  border: '1px solid var(--color-stroke)',
+                                  borderRadius: 'var(--radius-sm)',
+                                  paddingLeft: 'var(--spacing-04)',
+                                  paddingRight: 'var(--spacing-04)',
+                                  fontSize: 'var(--font-size-xs)',
+                                  fontFamily: 'var(--font-family-base)',
+                                  color: 'var(--color-content-primary)',
+                                  backgroundColor: 'var(--color-surface)',
+                                }}
+                              />
+                            )
+                          }
+                          return null
+                        })}
+                      </div>
+                    )
+                  }
                   if (childDef.type === 'icon-picker') {
                     return (
                       <IconPickerControl

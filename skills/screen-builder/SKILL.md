@@ -164,14 +164,18 @@ export function ScreenName() {
 ## Component usage guidelines
 
 1. **BaseCard**: Never place two BaseCards side by side (no grid/row layout). Always stack vertically. Prefer the `outlined` (filled={false}) version over filled. The component already handles all internal spacing (padding, gap between text/slot/actions) — never add extra spacing wrappers.
+   **Use the minimum props needed.** BaseCard doesn't require category + title + subtitle every time. Many real cards only need a title, or title + action. Ask: "what information does this card actually need?" and use only those props.
+   - Only title → `showCategory={false}`, `showSubtitle={false}`
+   - Card with photo → use `leftImage="url"` instead of `leftIcon`
+   - Help card → title + subtitle + linkLabel (no category, no icon needed)
 2. **Page titles**: Always use `fontSize: 'var(--font-size-xl)'` (24px) with `fontWeight: 'var(--font-weight-regular)'` (400), `fontFamily: 'var(--font-family-base)'`.
 3. **All DS components are black boxes.** Trust their internal layout. Your job is to choose the right props and place them in the page — not to style their insides.
 4. **Horizontal scroll lists**: When placing components (Chips, Buttons, etc.) in a horizontal `flex` container with `overflow-x-auto`, always wrap each item in a `<div className="shrink-0">` to prevent flex shrinking from compressing the component and breaking its layout. Also hide the scrollbar with `scrollbarWidth: 'none'`.
 5. **Icon colors default to #141414.** Use `color="var(--color-content-primary)"` (#141414) for all icons by default. Only change the icon color when it represents a status (success, error, warning, pending) or when the design explicitly requires a different color. Never use brand color on icons just for decoration.
 6. **Prefer small component sizes.** Based on real app screens, the most common sizes are:
    - **ListItem**: `size="small"` is the default for screens. Use `size="large"` only when the design explicitly calls for it.
-   - **BaseCard**: `size="sm"` is the default for screens. Use `size="lg"` only when the design explicitly calls for it.
-   - **Chip**: `size="sm"` is the default for screens.
+   - **BaseCard**: `size="small"` is the default for screens. Use `size="large"` only when the design explicitly calls for it.
+   - **Chip**: `size="small"` is the default for screens.
    - **Icon sizes**: 24px for ListItem large, 20px for ListItem small. Match the icon size to the component size.
    - **ListItem divider**: The last ListItem in a group must have `divider={false}`. Only items that have another item below them get a divider.
 7. **Page titles with colored name.** A common pattern is page titles with a highlighted word in brand color: `"Minha saúde "` + `<span style={{ color: 'var(--color-brand)' }}>Diogo</span>`. The base title is `--color-content-primary`, the highlighted word is `--color-brand`.

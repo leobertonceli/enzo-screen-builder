@@ -1,5 +1,6 @@
 import { ListItem } from '../../components/ListItem'
 import { Icon } from '../../icons/Icon'
+import { placeholders } from '../../assets/placeholders'
 import type { ComponentConfig } from '../types'
 
 export const ListItemConfig: ComponentConfig = {
@@ -7,7 +8,11 @@ export const ListItemConfig: ComponentConfig = {
   presets: [
     {
       label: 'Meus pedidos',
-      values: { title: 'Meus pedidos', description: 'Acompanhe seus pedidos recentes', size: 'small', state: 'default', leftSide: 'icon', leftIcon: 'clipboard-text-outline', fullWidth: true, rightAsset: 'icon', rightIcon: 'chevron-right', rightText: 'Text', divider: true },
+      values: { title: 'Meus pedidos', description: 'Acompanhe seus pedidos recentes', size: 'small', state: 'default', leftSide: 'icon', leftIcon: 'clipboard-text-outline', imageSrc: placeholders.person, fullWidth: true, rightAsset: 'icon', rightIcon: 'chevron-right', rightText: 'Text', divider: true },
+    },
+    {
+      label: 'Médica com foto',
+      values: { title: 'Isabella Moreira Hueb', description: 'Clínica Geral • Disponível hoje', size: 'large', state: 'default', leftSide: 'image', leftIcon: 'heart-outline', imageSrc: placeholders.person, fullWidth: true, rightAsset: 'icon', rightIcon: 'chevron-right', rightText: 'Text', divider: true },
     },
     {
       label: 'Favoritos',
@@ -67,6 +72,7 @@ export const ListItemConfig: ComponentConfig = {
           rightText={p.rightText as string}
           divider={p.divider as boolean}
           icon={leftIconEl}
+          imageSrc={p.leftSide === 'image' ? placeholders.person : undefined}
           rightIconElement={rightIconEl}
           onChange={onChange}
         />

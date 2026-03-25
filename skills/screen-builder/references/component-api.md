@@ -133,7 +133,7 @@ import { BaseCard } from '../components/BaseCard'
 
 | Prop | Type | Default | Options |
 |------|------|---------|---------|
-| size | CardSize | "lg" | "lg" (24px padding, 20px title), "sm" (20px padding, 16px title) |
+| size | CardSize | "large" | "large" (24px padding, 20px title), "small" (20px padding, 16px title) |
 | filled | boolean | false | true = #F3F2F0 bg, false = outlined with border |
 | category | string | "Category" | Magenta colored category text |
 | showCategory | boolean | true | |
@@ -141,10 +141,12 @@ import { BaseCard } from '../components/BaseCard'
 | showTitle | boolean | true | |
 | subtitle | string | "Subtitle" | Secondary colored |
 | showSubtitle | boolean | true | |
-| leftAsset | boolean | true | Show left icon area |
-| rightAsset | boolean | true | Show right icon (absolute top-right) |
-| leftIcon | ReactNode | — | Custom left icon |
-| rightIcon | ReactNode | — | Custom right icon |
+| leftAsset | boolean | true | Show left asset area |
+| rightAsset | boolean | true | Show right asset (absolute top-right) |
+| leftIcon | ReactNode | — | Custom left icon element |
+| rightIcon | ReactNode | — | Custom right icon element |
+| leftImage | string | — | Image URL for left asset — renders a photo (40px small, 48px large) with radius-xs |
+| rightImage | string | — | Image URL for right asset — renders a photo (40px small, 48px large) with radius-xs |
 | action | CardAction | "none" | "none", "button", "2buttons", "link", "2links" |
 | slot | ReactNode | — | Custom slot content (images, charts, etc.) |
 | showSlot | boolean | true | Show slot area |

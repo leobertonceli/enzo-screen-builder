@@ -16,16 +16,15 @@ export interface GeneratedTemplate {
   layout: GeneratedLayout
   pageTitle: string
 
-  // search layout — search bar + chip filters + cards
+  // search layout — search bar + chip filters + BaseCards
   searchPlaceholder?: string
   filters?: { key: string; label: string }[]
   cards?: {
     key: string
+    category?: string  // BaseCard category label
     title: string
     subtitle?: string
-    description?: string
-    status?: string
-    imageUrl?: string
+    linkLabel?: string // BaseCard CTA
   }[]
 
   // list / settings layout — sections with list items
@@ -174,11 +173,10 @@ Return ONLY valid JSON with this schema:
   "filters": [{ "key": "unique-key", "label": "Filter label" }],
   "cards": [{
     "key": "unique-key",
+    "category": "Short category label (e.g. specialty, type)",
     "title": "Card title",
-    "subtitle": "Subtitle",
-    "description": "Brief description",
-    "status": "Status or extra info",
-    "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=80&fit=crop&crop=face"
+    "subtitle": "One short subtitle line",
+    "linkLabel": "Short CTA (e.g. Agendar, Ver mais)"
   }],
 
   // IF layout === "list" or "settings":

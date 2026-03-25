@@ -29,10 +29,8 @@ import { EspecialistasScreen } from '../screens/EspecialistasScreen'
 import { EspecialistasScreenV2 } from '../screens/EspecialistasScreenV2'
 import { RedeCredenciadaScreen } from '../screens/RedeCredenciadaScreen'
 import { AliceAgoraScreen } from '../screens/AliceAgoraScreen'
+import { AgendarConsultaScreen } from '../screens/AgendarConsultaScreen'
 import type { ComponentConfig } from './types'
-import { DynamicScreen } from '../screens/DynamicScreen'
-import { generateComponentContent, generateTemplateContent } from '../services/ai'
-import type { GeneratedTemplate } from '../services/ai'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
@@ -486,6 +484,7 @@ export function Playground() {
 
   /* templates config */
   const templates = [
+    { name: 'Agendar Consulta', component: AgendarConsultaScreen },
     { name: 'Alice Agora', component: AliceAgoraScreen },
     { name: 'Teste — AI Content', component: EspecialistasScreen },
     { name: 'Rede Credenciada', component: RedeCredenciadaScreen },
@@ -502,41 +501,8 @@ export function Playground() {
   const [slotOverrides, setSlotOverrides] = useState<Record<string, React.ReactNode>>({})
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [slotPickerPos, setSlotPickerPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [expandedSlotComp, setExpandedSlotComp] = useState<string | null>(null)
 
-  /* ── New template input (fixed bottom bar) ── */
-  const [templatePrompt, setTemplatePrompt] = useState('')
-  const [isGeneratingTemplate, setIsGeneratingTemplate] = useState(false)
-  const [templateError, setTemplateError] = useState('')
-  const [dynamicTemplates, setDynamicTemplates] = useState<{ name: string; template: GeneratedTemplate }[]>(() => {
-    try {
-      const stored = localStorage.getItem('sb-dynamic-templates')
-      return stored ? JSON.parse(stored) : []
-    } catch { return [] }
-  })
-
-  useEffect(() => {
-    try { localStorage.setItem('sb-dynamic-templates', JSON.stringify(dynamicTemplates)) } catch {}
-  }, [dynamicTemplates])
-
-  async function handleCreateTemplate() {
-    if (!templatePrompt.trim() || isGeneratingTemplate) return
-    setIsGeneratingTemplate(true)
-    setTemplateError('')
-    try {
-      const content = await generateTemplateContent(templatePrompt.trim())
-      if (content) {
-        setDynamicTemplates((prev) => [...prev, { name: content.pageTitle, template: content }])
-        setTemplatePrompt('')
-      } else {
-        setTemplateError('Não foi possível gerar a tela. Tente novamente.')
-      }
-    } catch (e) {
-      console.error('Template generation failed:', e)
-      setTemplateError('Erro ao gerar tela. Verifique a API key.')
-    } finally {
-      setIsGeneratingTemplate(false)
-    }
-  }
 
 /* ── Grid page (scrollable) ── */
   if (page === 'components' && active.kind === 'grid') {
@@ -552,7 +518,8 @@ export function Playground() {
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
-            gap: 160,
+            columnGap: 160,
+            rowGap: 80,
             padding: '200px 64px 64px',
           }}
         >
@@ -565,7 +532,6 @@ export function Playground() {
                 ref={parallax.setRef(i)}
                 style={{ willChange: 'transform' }}
               >
-                {/* Scale wrapper — card + label scale together so label never overlaps */}
                 <div
                   onClick={() => openComponent(index)}
                   role="button"
@@ -582,7 +548,6 @@ export function Playground() {
                     transition: 'transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)',
                   }}
                 >
-                  {/* Component preview */}
                   <div
                     className="playground-card"
                     style={{
@@ -595,7 +560,6 @@ export function Playground() {
                       {comp.render(valuesMap[comp.name])}
                     </div>
                   </div>
-                  {/* Name — appears on hover via CSS */}
                   <span
                     className="playground-card-name"
                     style={{
@@ -759,9 +723,7 @@ export function Playground() {
 
   /* ── Templates page — detail view (dark bg, centered, back button only) ── */
   if (page === 'templates' && activeTemplate !== null) {
-    const isDynamic = activeTemplate >= templates.length
-    const dynamicTmpl = isDynamic ? dynamicTemplates[activeTemplate - templates.length] : null
-    const tmpl = isDynamic ? null : templates[activeTemplate]
+    const tmpl = templates[activeTemplate]
     const TemplateComponent = tmpl?.component ?? null
 
     return (
@@ -828,10 +790,7 @@ export function Playground() {
               },
               getOverride: (id) => slotOverrides[id] ?? null,
             }}>
-              {isDynamic && dynamicTmpl
-                ? <DynamicScreen template={dynamicTmpl.template} />
-                : TemplateComponent ? <TemplateComponent /> : null
-              }
+              {TemplateComponent ? <TemplateComponent /> : null}
             </TemplateEditContext.Provider>
           </div>
         </div>
@@ -839,7 +798,7 @@ export function Playground() {
         {/* Slot picker backdrop — closes popup when clicking outside */}
         {selectedSlot !== null && (
           <div
-            onClick={() => setSelectedSlot(null)}
+            onClick={() => { setSelectedSlot(null); setExpandedSlotComp(null) }}
             style={{ position: 'fixed', inset: 0, zIndex: 299 }}
           />
         )}
@@ -877,32 +836,74 @@ export function Playground() {
             </div>
 
             {/* Component rows */}
-            {components.map((comp) => (
-              <button
-                key={comp.name}
-                onClick={() => {
-                  setSlotOverrides((prev) => ({ ...prev, [selectedSlot!]: (comp.slotRender ?? comp.render)(initValues(comp)) }))
-                  setSelectedSlot(null)
-                }}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  padding: '8px 12px',
-                  borderRadius: 'var(--radius-xs)',
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  fontSize: 'var(--font-size-sm)',
-                  fontFamily: 'var(--font-family-label)',
-                  color: 'var(--color-gray-white)',
-                  border: 'none',
-                  transition: 'background-color 0.12s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
-              >
-                {comp.name}
-              </button>
-            ))}
+            {components.map((comp) => {
+              const hasPresets = comp.presets && comp.presets.length > 0
+              const isExpanded = expandedSlotComp === comp.name
+
+              const rowStyle: React.CSSProperties = {
+                width: '100%',
+                textAlign: 'left',
+                padding: '8px 12px',
+                borderRadius: 'var(--radius-xs)',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-sm)',
+                fontFamily: 'var(--font-family-label)',
+                color: 'var(--color-gray-white)',
+                border: 'none',
+                transition: 'background-color 0.12s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }
+
+              return (
+                <div key={comp.name}>
+                  <button
+                    onClick={() => {
+                      if (hasPresets) {
+                        setExpandedSlotComp(isExpanded ? null : comp.name)
+                      } else {
+                        setSlotOverrides((prev) => ({ ...prev, [selectedSlot!]: (comp.slotRender ?? comp.render)(initValues(comp)) }))
+                        setSelectedSlot(null)
+                        setExpandedSlotComp(null)
+                      }
+                    }}
+                    style={rowStyle}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                  >
+                    <span>{comp.name}</span>
+                    {hasPresets && (
+                      <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, transform: isExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s' }}>▶</span>
+                    )}
+                  </button>
+
+                  {/* Preset sub-rows */}
+                  {isExpanded && comp.presets!.map((preset) => (
+                    <button
+                      key={preset.label}
+                      onClick={() => {
+                        const vals = { ...initValues(comp), ...preset.values }
+                        setSlotOverrides((prev) => ({ ...prev, [selectedSlot!]: (comp.slotRender ?? comp.render)(vals) }))
+                        setSelectedSlot(null)
+                        setExpandedSlotComp(null)
+                      }}
+                      style={{
+                        ...rowStyle,
+                        paddingLeft: 24,
+                        fontSize: 'var(--font-size-xs)',
+                        color: 'rgba(255,255,255,0.6)',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              )
+            })}
 
             {/* Divider before reset */}
             <div style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.1)', margin: '2px 0' }} />
@@ -912,6 +913,7 @@ export function Playground() {
               onClick={() => {
                 setSlotOverrides((prev) => { const n = { ...prev }; delete n[selectedSlot!]; return n })
                 setSelectedSlot(null)
+                setExpandedSlotComp(null)
               }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)' }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
@@ -942,7 +944,6 @@ export function Playground() {
   /* ── Templates grid page ── */
   if (page === 'templates' && activeTemplate === null) {
     return (
-      <>
       <div className="min-h-screen" style={{ fontFamily: 'var(--font-family-base)', backgroundColor: 'var(--color-gray-100)' }}>
         <Header page={page} onNavigate={(p) => { setActiveTemplate(null); navigateTo(p) }} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
 
@@ -953,45 +954,10 @@ export function Playground() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 80,
-            padding: '200px 64px 160px',
+            padding: '200px 64px 64px',
           }}
         >
-          {/* ── Dynamic AI-generated templates ── */}
-          {dynamicTemplates.map((tmpl, i) => (
-            <div
-              key={`dynamic-${i}`}
-              onClick={() => setActiveTemplate(templates.length + i)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setActiveTemplate(templates.length + i)}
-              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, willChange: 'transform' }}
-            >
-              <div
-                className="playground-card"
-                style={{
-                  width: 200, height: Math.round(812 * 0.512),
-                  borderRadius: 'var(--radius-lg)', overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-                  transition: 'transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.06)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
-              >
-                <div className="hide-scrollbar" style={{ pointerEvents: 'none', transform: 'scale(0.512)', transformOrigin: 'top left', width: 390, height: 812, overflow: 'hidden' }}>
-                  <DynamicScreen template={tmpl.template} />
-                </div>
-              </div>
-              <span
-                className="playground-card-name"
-                style={{ fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-base)', color: 'rgba(255,255,255,0.4)', opacity: 0, transform: 'translateY(4px)', transition: 'opacity 0.2s, transform 0.2s' }}
-              >
-                {tmpl.name}
-              </span>
-            </div>
-          ))}
-
-          {/* ── Static templates ── */}
+          {/* ── Templates ── */}
           {templates.map((tmpl, i) => {
             const TemplateComponent = tmpl.component
             // Use offset indices so parallax depths differ from components
@@ -1045,90 +1011,6 @@ export function Playground() {
           })}
         </div>
       </div>
-
-      {/* ── Fixed bottom input bar ── */}
-      {templateError && (
-        <div style={{
-          position: 'fixed', bottom: 108, left: 0, right: 0, zIndex: 201,
-          display: 'flex', justifyContent: 'center', pointerEvents: 'none',
-        }}>
-          <span style={{
-            fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-label)',
-            color: 'rgba(255,80,80,0.9)', backgroundColor: 'rgba(20,20,20,0.85)',
-            padding: '6px 14px', borderRadius: 'var(--radius-pill)',
-            border: '1px solid rgba(255,80,80,0.2)',
-          }}>{templateError}</span>
-        </div>
-      )}
-      <div
-        style={{
-          position: 'fixed', bottom: 32, left: 0, right: 0,
-          zIndex: 200,
-          display: 'flex', justifyContent: 'center',
-          padding: '0 64px',
-          pointerEvents: 'none',
-          transition: 'transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1)',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.015)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
-      >
-        <div style={{
-          position: 'relative',
-          height: 64,
-          width: '100%',
-          maxWidth: 720,
-          borderRadius: 'var(--radius-pill)',
-          backgroundColor: 'rgba(20,20,20,0.8)',
-          backdropFilter: 'blur(22px)',
-          WebkitBackdropFilter: 'blur(22px)',
-          border: '1px solid rgba(255,255,255,0.05)',
-          display: 'flex',
-          alignItems: 'center',
-          pointerEvents: 'auto',
-        }}>
-          <input
-            value={templatePrompt}
-            onChange={(e) => setTemplatePrompt(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleCreateTemplate() }}
-            disabled={isGeneratingTemplate}
-            placeholder="Crie a tela que você quiser"
-            style={{
-              flex: 1,
-              background: 'none', border: 'none', outline: 'none',
-              fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-              color: 'var(--color-gray-white)',
-              padding: '0 64px 0 24px',
-              height: '100%',
-              borderRadius: 'var(--radius-pill)',
-            }}
-          />
-          <button
-            onClick={handleCreateTemplate}
-            disabled={!templatePrompt.trim() || isGeneratingTemplate}
-            style={{
-              position: 'absolute', right: 8, top: 8,
-              width: 48, height: 48,
-              borderRadius: 'var(--radius-pill)',
-              border: 'none',
-              backgroundColor: templatePrompt.trim() || isGeneratingTemplate ? 'var(--color-gray-white)' : 'rgba(255,255,255,0.05)',
-              cursor: templatePrompt.trim() && !isGeneratingTemplate ? 'pointer' : 'default',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background-color 0.2s',
-            }}
-          >
-            {isGeneratingTemplate
-              ? (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-spin">
-                  <circle cx="10" cy="10" r="8" stroke="var(--color-gray-100)" strokeWidth="2" strokeOpacity="0.3" />
-                  <path d="M10 2A8 8 0 0 1 18 10" stroke="var(--color-gray-100)" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              )
-              : <Icon name="auto-fix" size={20} color={templatePrompt.trim() ? 'var(--color-gray-100)' : 'rgba(255,255,255,0.3)'} />
-            }
-          </button>
-        </div>
-      </div>
-      </>
     )
   }
 

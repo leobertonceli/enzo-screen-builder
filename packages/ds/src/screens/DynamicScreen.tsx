@@ -4,6 +4,18 @@ import { ListItem } from '../components/ListItem'
 import { Icon } from '../icons/Icon'
 import type { GeneratedTemplate } from '../services/ai'
 
+function MissingTag({ label }: { label: string }) {
+  return (
+    <div style={{
+      position: 'absolute', top: 'var(--spacing-02)', right: 'var(--spacing-02)',
+      backgroundColor: '#E53935', color: 'var(--color-gray-white)',
+      fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-base)',
+      fontWeight: 'var(--font-weight-medium)', padding: '2px 8px',
+      borderRadius: 'var(--radius-pill)', zIndex: 10, lineHeight: '1.4',
+    }}>{label}</div>
+  )
+}
+
 interface Props {
   template: GeneratedTemplate
 }
@@ -20,42 +32,41 @@ export function DynamicScreen({ template }: Props) {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* Status bar placeholder */}
+      {/* Status bar */}
       <div style={{ height: 44, backgroundColor: 'var(--color-surface)', flexShrink: 0 }} />
 
-      {/* Header */}
+      {/* Nav bar */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '0 var(--spacing-05)',
-        height: 56,
-        gap: 'var(--spacing-04)',
+        padding: 'var(--spacing-04) var(--spacing-06)',
         flexShrink: 0,
       }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 'var(--radius-pill)',
-          backgroundColor: 'var(--color-gray-10)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Icon name="arrow-left" size={20} color="var(--color-content-primary)" />
-        </div>
-        <span style={{
+        <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+      </div>
+
+      {/* Page title */}
+      <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-04)' }}>
+        <h1 style={{
           fontFamily: 'var(--font-family-base)',
-          fontSize: 'var(--font-size-md)',
-          fontWeight: 'var(--font-weight-semibold)',
+          fontSize: 'var(--font-size-xl)',
+          fontWeight: 'var(--font-weight-regular)',
           color: 'var(--color-content-primary)',
-          flex: 1,
+          margin: 0,
         }}>
           {template.pageTitle}
-        </span>
+        </h1>
       </div>
 
       {/* Body */}
-      <div className="hide-scrollbar" style={{ flex: 1, overflowY: 'auto', padding: 'var(--spacing-04) var(--spacing-05)' }}>
+      <div className="hide-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingBottom: 'var(--spacing-06)' }}>
         {layout === 'search' && <SearchLayout template={template} />}
         {(layout === 'list' || layout === 'settings') && <ListLayout template={template} />}
         {layout === 'home' && <HomeLayout template={template} />}
       </div>
+
+      {/* Nav bar bottom placeholder */}
+      <div style={{ height: 64, flexShrink: 0, borderTop: '1px solid var(--color-divider)' }} />
     </div>
   )
 }
@@ -67,69 +78,84 @@ function SearchLayout({ template }: { template: GeneratedTemplate }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-05)' }}>
-      {/* Search bar */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 'var(--spacing-03)',
-        backgroundColor: 'var(--color-gray-05)',
-        borderRadius: 'var(--radius-xs)',
-        padding: '10px var(--spacing-04)',
-        border: '1px solid var(--color-border-subtle)',
-      }}>
-        <Icon name="magnify" size={20} color="var(--color-content-secondary)" />
-        <span style={{ fontSize: 'var(--font-size-sm)', fontFamily: 'var(--font-family-label)', color: 'var(--color-content-tertiary)' }}>
-          {searchPlaceholder ?? 'Buscar...'}
-        </span>
+
+      {/* SearchBar — fora do DS */}
+      <div style={{ position: 'relative', padding: '0 var(--spacing-06)' }}>
+        <MissingTag label="SearchBar — fora do DS" />
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 'var(--spacing-03)',
+          padding: 'var(--spacing-04)',
+          borderRadius: 'var(--radius-sm)',
+          border: '1px solid var(--color-stroke)',
+          backgroundColor: 'var(--color-surface)',
+        }}>
+          <Icon name="magnify" size={20} color="var(--color-content-tertiary)" />
+          <span style={{
+            fontFamily: 'var(--font-family-label)',
+            fontSize: 'var(--font-size-sm)',
+            fontWeight: 'var(--font-weight-regular)',
+            color: 'var(--color-content-tertiary)',
+          }}>
+            {searchPlaceholder ?? 'Buscar...'}
+          </span>
+        </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters — Chip (DS) */}
       {filters.length > 0 && (
-        <div style={{ display: 'flex', gap: 'var(--spacing-02)', flexWrap: 'wrap' }}>
+        <div
+          className="flex overflow-x-auto"
+          style={{
+            paddingLeft: 'var(--spacing-06)',
+            paddingRight: 'var(--spacing-06)',
+            gap: 'var(--spacing-02)',
+            scrollbarWidth: 'none',
+          }}
+        >
           {filters.map((f, i) => (
-            <Chip key={f.key} label={f.label} selected={i === 0} size="small" />
+            <div key={f.key} className="shrink-0">
+              <Chip
+                label={f.label}
+                variant="text"
+                size="small"
+                state={i === 0 ? 'selected' : 'idle'}
+              />
+            </div>
           ))}
         </div>
       )}
 
-      {/* Cards */}
-      {cards.map((card) => (
-        <div key={card.key} style={{
-          borderRadius: 'var(--radius-sm)',
-          border: '1px solid var(--color-border-subtle)',
-          overflow: 'hidden',
-        }}>
-          {card.imageUrl && (
-            <img
-              src={card.imageUrl}
-              alt=""
-              style={{ width: '100%', height: 80, objectFit: 'cover', display: 'block' }}
+      {/* Result cards — BaseCard (DS) */}
+      {cards.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)', padding: '0 var(--spacing-06)' }}>
+          {cards.map((card) => (
+            <BaseCard
+              key={card.key}
+              size="small"
+              filled={false}
+              category={card.category ?? card.status}
+              showCategory={!!(card.category ?? card.status)}
+              title={card.title}
+              showTitle
+              subtitle={card.subtitle ?? card.description}
+              showSubtitle={!!(card.subtitle ?? card.description)}
+              leftAsset={false}
+              rightAsset={false}
+              action={card.linkLabel ? 'link' : 'none'}
+              linkLabel={card.linkLabel ?? ''}
+              showSlot={false}
+              width="100%"
             />
-          )}
-          <div style={{ padding: 'var(--spacing-04)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 'var(--font-size-md)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-content-primary)', fontFamily: 'var(--font-family-base)' }}>
-                {card.title}
-              </span>
-              {card.status && (
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-brand)', fontFamily: 'var(--font-family-label)', fontWeight: 'var(--font-weight-medium)' }}>
-                  {card.status}
-                </span>
-              )}
-            </div>
-            {card.subtitle && (
-              <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-content-secondary)', fontFamily: 'var(--font-family-label)' }}>
-                {card.subtitle}
-              </span>
-            )}
-            {card.description && (
-              <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-content-tertiary)', fontFamily: 'var(--font-family-label)' }}>
-                {card.description}
-              </span>
-            )}
-          </div>
+          ))}
         </div>
-      ))}
+      )}
 
-      {helpCard && <HelpCardBlock helpCard={helpCard} />}
+      {/* Help card — BaseCard (DS) */}
+      {helpCard && (
+        <div style={{ padding: '0 var(--spacing-06)' }}>
+          <HelpCardBlock helpCard={helpCard} />
+        </div>
+      )}
     </div>
   )
 }
@@ -140,23 +166,26 @@ function ListLayout({ template }: { template: GeneratedTemplate }) {
   const { sections = [], helpCard } = template
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-05)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)' }}>
       {sections.map((section, si) => (
-        <div key={si} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
+        <div key={si}>
+          {/* Section title */}
           {section.title && (
-            <span style={{
-              fontSize: 'var(--font-size-xs)',
-              fontFamily: 'var(--font-family-label)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-content-secondary)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              padding: 'var(--spacing-02) 0',
-            }}>
-              {section.title}
-            </span>
+            <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-family-base)',
+                fontSize: 'var(--font-size-md)',
+                fontWeight: 'var(--font-weight-medium)',
+                color: 'var(--color-content-primary)',
+                margin: 0,
+              }}>
+                {section.title}
+              </h2>
+            </div>
           )}
-          <div style={{ borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--color-border-subtle)' }}>
+
+          {/* ListItems — DS */}
+          <div>
             {section.items.map((item, ii) => (
               <ListItem
                 key={item.key}
@@ -175,7 +204,12 @@ function ListLayout({ template }: { template: GeneratedTemplate }) {
         </div>
       ))}
 
-      {helpCard && <HelpCardBlock helpCard={helpCard} />}
+      {/* Help card — BaseCard (DS) */}
+      {helpCard && (
+        <div style={{ padding: '0 var(--spacing-06)' }}>
+          <HelpCardBlock helpCard={helpCard} />
+        </div>
+      )}
     </div>
   )
 }
@@ -183,57 +217,104 @@ function ListLayout({ template }: { template: GeneratedTemplate }) {
 // ─── Home layout ──────────────────────────────────────────────────────────────
 
 function HomeLayout({ template }: { template: GeneratedTemplate }) {
-  const { greeting, userName, quickActions = [], helpCard } = template
+  const { greeting, userName, quickActions = [], sections = [], helpCard } = template
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-08)' }}>
+
       {/* Greeting */}
       {(greeting || userName) && (
-        <div>
-          <p style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-content-primary)', margin: 0, fontFamily: 'var(--font-family-base)' }}>
+        <div style={{ padding: '0 var(--spacing-06)' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-family-base)',
+            fontSize: 'var(--font-size-xl)',
+            fontWeight: 'var(--font-weight-regular)',
+            color: 'var(--color-content-primary)',
+            margin: 0,
+          }}>
             {greeting} <span style={{ color: 'var(--color-brand)' }}>{userName}.</span>
-          </p>
+          </h1>
         </div>
       )}
 
-      {/* Quick actions grid */}
+      {/* Quick actions — ListItem (DS) */}
       {quickActions.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-03)' }}>
-          {quickActions.map((action) => (
-            <div key={action.key} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-02)',
-              padding: 'var(--spacing-04) var(--spacing-03)',
-              borderRadius: 'var(--radius-sm)',
-              backgroundColor: 'var(--color-gray-05)',
-              border: '1px solid var(--color-border-subtle)',
-              cursor: 'pointer',
+        <div>
+          <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
+            <h2 style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-md)',
+              fontWeight: 'var(--font-weight-medium)',
+              color: 'var(--color-content-primary)',
+              margin: 0,
             }}>
-              <div style={{
-                width: 40, height: 40,
-                borderRadius: 'var(--radius-xs)',
-                backgroundColor: 'var(--color-brand-subtle, rgba(190,3,128,0.08))',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Icon name={action.icon || 'star-outline'} size={22} color="var(--color-brand)" />
-              </div>
-              <span style={{
-                fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-label)',
-                color: 'var(--color-content-primary)', textAlign: 'center', lineHeight: 1.3,
-                fontWeight: 'var(--font-weight-medium)',
-              }}>
-                {action.label}
-              </span>
-            </div>
-          ))}
+              Acesso rápido
+            </h2>
+          </div>
+          <div>
+            {quickActions.map((action, i) => (
+              <ListItem
+                key={action.key}
+                title={action.label}
+                size="small"
+                leftSide="icon"
+                icon={<Icon name={action.icon || 'star-outline'} size={20} color="var(--color-content-primary)" />}
+                rightAsset="icon"
+                rightIconElement={<Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />}
+                divider={i < quickActions.length - 1}
+                fullWidth
+              />
+            ))}
+          </div>
         </div>
       )}
 
-      {helpCard && <HelpCardBlock helpCard={helpCard} />}
+      {/* Extra sections (if any) — same as ListLayout */}
+      {sections.map((section, si) => (
+        <div key={si}>
+          {section.title && (
+            <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
+              <h2 style={{
+                fontFamily: 'var(--font-family-base)',
+                fontSize: 'var(--font-size-md)',
+                fontWeight: 'var(--font-weight-medium)',
+                color: 'var(--color-content-primary)',
+                margin: 0,
+              }}>
+                {section.title}
+              </h2>
+            </div>
+          )}
+          <div>
+            {section.items.map((item, ii) => (
+              <ListItem
+                key={item.key}
+                title={item.title}
+                description={item.description}
+                size="small"
+                leftSide={item.icon ? 'icon' : 'none'}
+                icon={item.icon ? <Icon name={item.icon} size={20} color="var(--color-content-primary)" /> : undefined}
+                rightAsset="icon"
+                rightIconElement={<Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />}
+                divider={ii < section.items.length - 1}
+                fullWidth
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Help card — BaseCard (DS) */}
+      {helpCard && (
+        <div style={{ padding: '0 var(--spacing-06)' }}>
+          <HelpCardBlock helpCard={helpCard} />
+        </div>
+      )}
     </div>
   )
 }
 
-// ─── Shared blocks ────────────────────────────────────────────────────────────
+// ─── Shared ───────────────────────────────────────────────────────────────────
 
 function HelpCardBlock({ helpCard }: { helpCard: NonNullable<GeneratedTemplate['helpCard']> }) {
   return (
@@ -251,6 +332,7 @@ function HelpCardBlock({ helpCard }: { helpCard: NonNullable<GeneratedTemplate['
       leftAsset={false}
       rightAsset={false}
       showSlot={false}
+      width="100%"
     />
   )
 }

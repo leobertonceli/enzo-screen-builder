@@ -1,5 +1,6 @@
 import { BaseCard } from '../../components/BaseCard/BaseCard'
 import { Icon } from '../../icons/Icon'
+import { placeholders } from '../../assets/placeholders'
 import type { ComponentConfig } from '../types'
 
 export const BaseCardConfig: ComponentConfig = {
@@ -51,21 +52,23 @@ export const BaseCardConfig: ComponentConfig = {
     leftAsset:     { type: 'boolean',     label: 'Left asset',     default: true },
     rightAsset:    { type: 'boolean',     label: 'Right asset',    default: true },
     showSlot:      { type: 'boolean',     label: 'Slot',           default: false },
-    leftIconName:  { type: 'icon-picker', label: 'Left icon',      default: 'link-variant', showWhen: { field: 'leftAsset', values: ['true'] } },
-    rightIconName: { type: 'icon-picker', label: 'Right icon',     default: 'link-variant', showWhen: { field: 'rightAsset', values: ['true'] } },
+    leftAssetType: { type: 'radio',       label: 'Left type',  options: ['icon', 'image'], default: 'icon', showWhen: { field: 'leftAsset', values: ['true'] } },
+    leftIconName:  { type: 'icon-picker', label: 'Left icon',  default: 'link-variant', showWhen: { field: 'leftAssetType', values: ['icon'] } },
+    rightAssetType:{ type: 'radio',       label: 'Right type', options: ['icon', 'image'], default: 'icon', showWhen: { field: 'rightAsset', values: ['true'] } },
+    rightIconName: { type: 'icon-picker', label: 'Right icon', default: 'link-variant', showWhen: { field: 'rightAssetType', values: ['icon'] } },
   },
   render: (p) => {
     const size = p.size as string
     const assetSize = size === 'large' ? 24 : 20
-    const leftIconName = p.leftIconName as string
-    const rightIconName = p.rightIconName as string
+    const leftAssetType = p.leftAssetType as string
+    const rightAssetType = p.rightAssetType as string
 
-    const leftIcon = leftIconName
-      ? <Icon name={leftIconName} size={assetSize} color="var(--color-content-primary)" />
+    const leftIcon = leftAssetType !== 'image' && p.leftIconName
+      ? <Icon name={p.leftIconName as string} size={assetSize} color="var(--color-content-primary)" />
       : undefined
 
-    const rightIcon = rightIconName
-      ? <Icon name={rightIconName} size={assetSize} color="var(--color-content-primary)" />
+    const rightIcon = rightAssetType !== 'image' && p.rightIconName
+      ? <Icon name={p.rightIconName as string} size={assetSize} color="var(--color-content-primary)" />
       : undefined
 
     return (
@@ -82,6 +85,8 @@ export const BaseCardConfig: ComponentConfig = {
           rightAsset={p.rightAsset as boolean}
           leftIcon={leftIcon}
           rightIcon={rightIcon}
+          leftImage={leftAssetType === 'image' ? placeholders.person : undefined}
+          rightImage={rightAssetType === 'image' ? placeholders.person : undefined}
           action={p.action as any}
           showSlot={p.showSlot as boolean}
           buttonLabel={p.buttonLabel as string}
