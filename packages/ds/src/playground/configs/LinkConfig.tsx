@@ -23,7 +23,7 @@ export const LinkConfig: ComponentConfig = {
   ],
   controls: {
     label: { type: 'text', label: 'Label', default: 'Link label' },
-    size: { type: 'radio', label: 'Size', options: ['small', 'large'], default: 'large' },
+    size: { type: 'radio', label: 'Size', options: ['small', 'large'], default: 'small' },
     context: { type: 'radio', label: 'Context', options: ['on-light', 'on-dark'], default: 'on-light' },
     icon: { type: 'radio', label: 'Icon', options: ['none', 'left', 'right'], default: 'none' },
   },

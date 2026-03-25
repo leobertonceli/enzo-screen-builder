@@ -1,44 +1,56 @@
-import type { EspecialistasContent } from '../screens/EspecialistasScreen'
+import skillMd from '../../../../skills/screen-builder/SKILL.md?raw'
+import componentApi from '../../../../skills/screen-builder/references/component-api.md?raw'
+import designTokens from '../../../../skills/screen-builder/references/design-tokens.md?raw'
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY as string
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+const GROQ_MODEL = 'llama-3.3-70b-versatile'
 
-interface GroqMessage {
-  role: 'system' | 'user' | 'assistant'
-  content: string
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────────────────────
 
-interface GroqResponse {
-  choices: { message: { content: string } }[]
-}
+export type GeneratedLayout = 'search' | 'list' | 'home' | 'settings'
 
-async function callGroq(prompt: string, userMessage: string): Promise<string> {
-  const messages: GroqMessage[] = [
-    { role: 'system', content: prompt },
-    { role: 'user', content: userMessage },
-  ]
+export interface GeneratedTemplate {
+  layout: GeneratedLayout
+  pageTitle: string
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages,
-      temperature: 0.9,
-      max_tokens: 1024,
-    }),
-  })
+  // search layout — search bar + chip filters + cards
+  searchPlaceholder?: string
+  filters?: { key: string; label: string }[]
+  cards?: {
+    key: string
+    title: string
+    subtitle?: string
+    description?: string
+    status?: string
+    imageUrl?: string
+  }[]
 
-  if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Groq API error: ${res.status} — ${err}`)
+  // list / settings layout — sections with list items
+  sections?: {
+    title?: string
+    items: { key: string; title: string; description?: string; icon?: string; badge?: string }[]
+  }[]
+
+  // home layout — greeting + quick actions
+  greeting?: string
+  userName?: string
+  quickActions?: { key: string; label: string; icon: string }[]
+
+  // shared optional card
+  helpCard?: {
+    category: string
+    title: string
+    subtitle: string
+    linkLabel: string
   }
-
-  const data = (await res.json()) as GroqResponse
-  return data.choices[0].message.content
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseJSON<T>(raw: string): T | null {
   try {
@@ -49,6 +61,55 @@ function parseJSON<T>(raw: string): T | null {
     return null
   }
 }
+
+async function callGroq(system: string, user: string): Promise<string> {
+  const res = await fetch(GROQ_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      max_tokens: 1024,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Groq API error ${res.status}: ${err}`)
+  }
+
+  const data = await res.json()
+  return data.choices?.[0]?.message?.content ?? ''
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// System prompt — built from skill files
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SKILL_SYSTEM_PROMPT = `${skillMd}
+
+---
+
+## Component API Reference
+
+${componentApi}
+
+---
+
+## Design Tokens
+
+${designTokens}
+`
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Exported functions
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Generate content for a specific component based on its controls
@@ -83,55 +144,80 @@ Seja criativo e varie o contexto. Gere conteúdo DIFERENTE a cada vez.`,
 }
 
 /**
- * Generate full screen content for EspecialistasScreen
+ * Generate a full screen template from a user description.
+ * Uses the Wonderland DS skill context to produce varied, well-composed screens.
  */
-export async function generateEspecialistasContent(customPrompt?: string): Promise<EspecialistasContent | null> {
-  const context = customPrompt
-    ? `O usuário quer: "${customPrompt}"`
-    : 'Gere conteúdo variado e criativo para uma tela de especialistas médicos.'
-
+export async function generateTemplateContent(userPrompt: string): Promise<GeneratedTemplate | null> {
   const raw = await callGroq(
-    'Você é um assistente criativo para um app de saúde. Responda APENAS com JSON válido, sem markdown, sem blocos de código. Use português brasileiro.',
-    `${context}
+    `${SKILL_SYSTEM_PROMPT}
 
-Gere o conteúdo completo para uma tela de busca de médicos especialistas. Retorne um JSON com exatamente esta estrutura:
+---
+
+## Your task
+
+You will receive a user description of a screen. Based on the description and the DS rules above, generate a JSON object that describes the screen content.
+
+Choose the most appropriate layout:
+- "search": search bar + chip filters + result cards (e.g. find doctors, pharmacies, exams)
+- "list": sections with list items (e.g. settings, history, favorites, orders)
+- "home": greeting + quick actions + cards (e.g. home, dashboard, my plan)
+- "settings": settings sections with toggles and items
+
+Return ONLY valid JSON with this schema:
 
 {
-  "pageTitle": "string (ex: Especialistas, Encontre seu médico, etc)",
-  "searchPlaceholder": "string (placeholder da busca)",
-  "specialties": [
-    { "key": "unique-key", "label": "Nome da especialidade" }
-  ],
-  "doctors": [
-    {
+  "layout": "search" | "list" | "home" | "settings",
+  "pageTitle": "Screen title",
+
+  // IF layout === "search":
+  "searchPlaceholder": "Search placeholder",
+  "filters": [{ "key": "unique-key", "label": "Filter label" }],
+  "cards": [{
+    "key": "unique-key",
+    "title": "Card title",
+    "subtitle": "Subtitle",
+    "description": "Brief description",
+    "status": "Status or extra info",
+    "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=80&fit=crop&crop=face"
+  }],
+
+  // IF layout === "list" or "settings":
+  "sections": [{
+    "title": "Section name (optional)",
+    "items": [{
       "key": "unique-key",
-      "name": "Nome do médico com título (Dr./Dra.)",
-      "specialty": "Especialidade",
-      "rating": "4.x",
-      "availability": "Disponível hoje / Próxima: Dia, hora",
-      "imageUrl": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80&h=80&fit=crop&crop=face"
-    }
-  ],
-  "recentSection": "string (título da seção de recentes)",
-  "recentDoctors": [
-    { "key": "unique-key", "title": "Nome do médico", "description": "Especialidade · Última consulta: data" }
-  ],
+      "title": "Item title",
+      "description": "Description",
+      "icon": "mdi-icon-name-without-prefix",
+      "badge": "Optional badge (e.g. New, 3)"
+    }]
+  }],
+
+  // IF layout === "home":
+  "greeting": "Greeting (e.g. Olá,)",
+  "userName": "User name (e.g. Marina)",
+  "quickActions": [{ "key": "key", "label": "Label", "icon": "mdi-icon-name" }],
+
+  // OPTIONAL in all layouts:
   "helpCard": {
-    "category": "categoria curta",
-    "title": "título da dúvida",
-    "subtitle": "subtítulo explicativo",
-    "linkLabel": "label do link"
+    "category": "Short category",
+    "title": "Card title",
+    "subtitle": "Explanatory subtitle",
+    "linkLabel": "Link label"
   }
 }
 
-Regras:
-- 5 a 6 especialidades
-- 3 médicos com dados realistas
-- 2 consultas recentes
-- Use sempre as mesmas URLs de imagem do Unsplash acima (só mude o photo ID se quiser variar)
-- Varie bastante o contexto: pode ser ortopedia, neurologia, pediatria, ginecologia, etc
-- Gere conteúdo DIFERENTE a cada vez`,
+Rules:
+- "search": 4-5 filters, 3-4 cards with realistic health data
+- "list"/"settings": 2-3 sections with 3-5 items each
+- "home": 4-6 quick actions with relevant MDI icons
+- Icons: always MDI without prefix (e.g. "heart-outline", "calendar-check", "pill", "stethoscope")
+- Content in Brazilian Portuguese, creative and relevant to health apps
+- Vary the screen type based on the description — do NOT always default to search
+- Always include helpCard with relevant content
+- Respond ONLY with the JSON, no markdown, no explanation`,
+    `Create a screen for: "${userPrompt}"`,
   )
 
-  return parseJSON<EspecialistasContent>(raw)
+  return parseJSON<GeneratedTemplate>(raw)
 }

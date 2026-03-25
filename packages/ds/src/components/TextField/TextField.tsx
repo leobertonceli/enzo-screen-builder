@@ -54,8 +54,8 @@ export function TextField({
   hasError = false,
   label = 'Label',
   value = '',
-  helperText = 'Helper text',
-  counter = '20/40',
+  helperText,
+  counter,
   leftIcon,
   rightIcon,
   width = 327,
@@ -150,32 +150,31 @@ export function TextField({
 
           {/* Value / caret row */}
           {isFloating ? (
-            <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+            isFocus ? (
+              /* Focus: only the blinking caret, left-aligned */
+              <span style={{
+                ...font,
+                fontSize: 'var(--font-size-sm)',
+                color: 'var(--color-brand)',
+                animation: 'tf-blink 1s step-start infinite',
+              }}>|</span>
+            ) : (
+              /* Filled: editable value */
               <p
-                {...editableProps(editable && !isFocus, (t) => onChange?.('value', t))}
+                {...editableProps(editable, (t) => onChange?.('value', t))}
                 style={{
                   ...font,
                   fontSize: 'var(--font-size-sm)',
                   color: valueColor,
-                  flex: '1 0 0',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  ...(editable && !isFocus ? { outline: 'none', cursor: 'text', minWidth: 4 } : {}),
+                  ...(editable ? { outline: 'none', cursor: 'text', minWidth: 4 } : {}),
                 }}
               >
                 {value}
               </p>
-              {isFocus && (
-                <span style={{
-                  ...font,
-                  fontSize: 'var(--font-size-sm)',
-                  color: 'var(--color-brand)',
-                  animation: 'tf-blink 1s step-start infinite',
-                  flexShrink: 0,
-                }}>|</span>
-              )}
-            </div>
+            )
           ) : (
             /* Placeholder label (Idle / Disable) */
             <p

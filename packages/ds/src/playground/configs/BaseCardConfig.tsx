@@ -38,7 +38,7 @@ export const BaseCardConfig: ComponentConfig = {
     category:      { type: 'text',        label: 'Category',       default: 'Category' },
     title:         { type: 'text',        label: 'Title',          default: 'Title' },
     subtitle:      { type: 'text',        label: 'Subtitle',       default: 'Subtitle' },
-    size:          { type: 'radio',       label: 'Size',           options: ['small', 'large'], default: 'large' },
+    size:          { type: 'radio',       label: 'Size',           options: ['small', 'large'], default: 'small' },
     filled:        { type: 'boolean',     label: 'Filled',         default: false },
     action:        { type: 'radio',       label: 'Action',         options: ['none', 'button', '2buttons', 'link', '2links'], default: 'none' },
     buttonLabel:   { type: 'text',        label: 'Button label',   default: 'Button label', showWhen: { field: 'action', values: ['button', '2buttons'] } },

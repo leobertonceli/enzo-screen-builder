@@ -16,6 +16,7 @@ import { ChatBubbleConfig } from './configs/ChatBubbleConfig'
 import { TagConfig } from './configs/TagConfig'
 import { NavBarConfig } from './configs/NavBarConfig'
 import { TextFieldConfig } from './configs/TextFieldConfig'
+import { CalloutConfig } from './configs/CalloutConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -29,12 +30,14 @@ import { EspecialistasScreenV2 } from '../screens/EspecialistasScreenV2'
 import { RedeCredenciadaScreen } from '../screens/RedeCredenciadaScreen'
 import { AliceAgoraScreen } from '../screens/AliceAgoraScreen'
 import type { ComponentConfig } from './types'
-import { generateComponentContent } from '../services/ai'
+import { DynamicScreen } from '../screens/DynamicScreen'
+import { generateComponentContent, generateTemplateContent } from '../services/ai'
+import type { GeneratedTemplate } from '../services/ai'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig, CalloutConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -51,6 +54,7 @@ function getCategory(c: ComponentConfig): string {
   if (c.name === 'Tag') return 'Badges'
   if (c.name === 'NavBar') return 'Navigation'
   if (c.name === 'TextField') return 'Text Field'
+  if (c.name === 'Callout') return 'Feedback'
   return 'Other'
 }
 
@@ -94,6 +98,7 @@ const COMPONENT_RADIUS: Record<string, number> = {
   Tag: 200,
   NavBar: 0,
   TextField: 12,
+  Callout: 20,
 }
 
 /* Components that don't have their own background — need white container in preview */
@@ -268,7 +273,7 @@ function Header({ page, onNavigate, menuOpen, onToggleMenu }: { page: Page; onNa
               <div style={{ position: 'absolute', width: 10, height: 10, backgroundColor: 'var(--color-gray-white)', animation: 'wl-sq2 3.5s ease-in-out infinite' }} />
             </div>
             <span style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-md)', whiteSpace: 'nowrap', lineHeight: 0 }}>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, lineHeight: 'normal' }}>Enzo</span>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, lineHeight: 'normal' }}>ScreenBuilder</span>
               <span style={{ color: 'var(--color-gray-white)', lineHeight: 'normal' }}> {PAGE_LABELS[page]}</span>
             </span>
           </div>
@@ -498,6 +503,41 @@ export function Playground() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [slotPickerPos, setSlotPickerPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
+  /* ── New template input (fixed bottom bar) ── */
+  const [templatePrompt, setTemplatePrompt] = useState('')
+  const [isGeneratingTemplate, setIsGeneratingTemplate] = useState(false)
+  const [templateError, setTemplateError] = useState('')
+  const [dynamicTemplates, setDynamicTemplates] = useState<{ name: string; template: GeneratedTemplate }[]>(() => {
+    try {
+      const stored = localStorage.getItem('sb-dynamic-templates')
+      return stored ? JSON.parse(stored) : []
+    } catch { return [] }
+  })
+
+  useEffect(() => {
+    try { localStorage.setItem('sb-dynamic-templates', JSON.stringify(dynamicTemplates)) } catch {}
+  }, [dynamicTemplates])
+
+  async function handleCreateTemplate() {
+    if (!templatePrompt.trim() || isGeneratingTemplate) return
+    setIsGeneratingTemplate(true)
+    setTemplateError('')
+    try {
+      const content = await generateTemplateContent(templatePrompt.trim())
+      if (content) {
+        setDynamicTemplates((prev) => [...prev, { name: content.pageTitle, template: content }])
+        setTemplatePrompt('')
+      } else {
+        setTemplateError('Não foi possível gerar a tela. Tente novamente.')
+      }
+    } catch (e) {
+      console.error('Template generation failed:', e)
+      setTemplateError('Erro ao gerar tela. Verifique a API key.')
+    } finally {
+      setIsGeneratingTemplate(false)
+    }
+  }
+
 /* ── Grid page (scrollable) ── */
   if (page === 'components' && active.kind === 'grid') {
     return (
@@ -719,8 +759,10 @@ export function Playground() {
 
   /* ── Templates page — detail view (dark bg, centered, back button only) ── */
   if (page === 'templates' && activeTemplate !== null) {
-    const tmpl = templates[activeTemplate]
-    const TemplateComponent = tmpl.component
+    const isDynamic = activeTemplate >= templates.length
+    const dynamicTmpl = isDynamic ? dynamicTemplates[activeTemplate - templates.length] : null
+    const tmpl = isDynamic ? null : templates[activeTemplate]
+    const TemplateComponent = tmpl?.component ?? null
 
     return (
       <div className="flex flex-col h-screen" style={{ fontFamily: 'var(--font-family-base)', backgroundColor: 'var(--color-gray-100)', position: 'relative' }}>
@@ -786,7 +828,10 @@ export function Playground() {
               },
               getOverride: (id) => slotOverrides[id] ?? null,
             }}>
-              <TemplateComponent />
+              {isDynamic && dynamicTmpl
+                ? <DynamicScreen template={dynamicTmpl.template} />
+                : TemplateComponent ? <TemplateComponent /> : null
+              }
             </TemplateEditContext.Provider>
           </div>
         </div>
@@ -897,6 +942,7 @@ export function Playground() {
   /* ── Templates grid page ── */
   if (page === 'templates' && activeTemplate === null) {
     return (
+      <>
       <div className="min-h-screen" style={{ fontFamily: 'var(--font-family-base)', backgroundColor: 'var(--color-gray-100)' }}>
         <Header page={page} onNavigate={(p) => { setActiveTemplate(null); navigateTo(p) }} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
 
@@ -907,9 +953,45 @@ export function Playground() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 80,
-            padding: '200px 64px 64px',
+            padding: '200px 64px 160px',
           }}
         >
+          {/* ── Dynamic AI-generated templates ── */}
+          {dynamicTemplates.map((tmpl, i) => (
+            <div
+              key={`dynamic-${i}`}
+              onClick={() => setActiveTemplate(templates.length + i)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setActiveTemplate(templates.length + i)}
+              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, willChange: 'transform' }}
+            >
+              <div
+                className="playground-card"
+                style={{
+                  width: 200, height: Math.round(812 * 0.512),
+                  borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+                  transition: 'transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.06)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+              >
+                <div className="hide-scrollbar" style={{ pointerEvents: 'none', transform: 'scale(0.512)', transformOrigin: 'top left', width: 390, height: 812, overflow: 'hidden' }}>
+                  <DynamicScreen template={tmpl.template} />
+                </div>
+              </div>
+              <span
+                className="playground-card-name"
+                style={{ fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-base)', color: 'rgba(255,255,255,0.4)', opacity: 0, transform: 'translateY(4px)', transition: 'opacity 0.2s, transform 0.2s' }}
+              >
+                {tmpl.name}
+              </span>
+            </div>
+          ))}
+
+          {/* ── Static templates ── */}
           {templates.map((tmpl, i) => {
             const TemplateComponent = tmpl.component
             // Use offset indices so parallax depths differ from components
@@ -963,6 +1045,90 @@ export function Playground() {
           })}
         </div>
       </div>
+
+      {/* ── Fixed bottom input bar ── */}
+      {templateError && (
+        <div style={{
+          position: 'fixed', bottom: 108, left: 0, right: 0, zIndex: 201,
+          display: 'flex', justifyContent: 'center', pointerEvents: 'none',
+        }}>
+          <span style={{
+            fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-label)',
+            color: 'rgba(255,80,80,0.9)', backgroundColor: 'rgba(20,20,20,0.85)',
+            padding: '6px 14px', borderRadius: 'var(--radius-pill)',
+            border: '1px solid rgba(255,80,80,0.2)',
+          }}>{templateError}</span>
+        </div>
+      )}
+      <div
+        style={{
+          position: 'fixed', bottom: 32, left: 0, right: 0,
+          zIndex: 200,
+          display: 'flex', justifyContent: 'center',
+          padding: '0 64px',
+          pointerEvents: 'none',
+          transition: 'transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1)',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.015)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+      >
+        <div style={{
+          position: 'relative',
+          height: 64,
+          width: '100%',
+          maxWidth: 720,
+          borderRadius: 'var(--radius-pill)',
+          backgroundColor: 'rgba(20,20,20,0.8)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          border: '1px solid rgba(255,255,255,0.05)',
+          display: 'flex',
+          alignItems: 'center',
+          pointerEvents: 'auto',
+        }}>
+          <input
+            value={templatePrompt}
+            onChange={(e) => setTemplatePrompt(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleCreateTemplate() }}
+            disabled={isGeneratingTemplate}
+            placeholder="Crie a tela que você quiser"
+            style={{
+              flex: 1,
+              background: 'none', border: 'none', outline: 'none',
+              fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
+              color: 'var(--color-gray-white)',
+              padding: '0 64px 0 24px',
+              height: '100%',
+              borderRadius: 'var(--radius-pill)',
+            }}
+          />
+          <button
+            onClick={handleCreateTemplate}
+            disabled={!templatePrompt.trim() || isGeneratingTemplate}
+            style={{
+              position: 'absolute', right: 8, top: 8,
+              width: 48, height: 48,
+              borderRadius: 'var(--radius-pill)',
+              border: 'none',
+              backgroundColor: templatePrompt.trim() || isGeneratingTemplate ? 'var(--color-gray-white)' : 'rgba(255,255,255,0.05)',
+              cursor: templatePrompt.trim() && !isGeneratingTemplate ? 'pointer' : 'default',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'background-color 0.2s',
+            }}
+          >
+            {isGeneratingTemplate
+              ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-spin">
+                  <circle cx="10" cy="10" r="8" stroke="var(--color-gray-100)" strokeWidth="2" strokeOpacity="0.3" />
+                  <path d="M10 2A8 8 0 0 1 18 10" stroke="var(--color-gray-100)" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              )
+              : <Icon name="auto-fix" size={20} color={templatePrompt.trim() ? 'var(--color-gray-100)' : 'rgba(255,255,255,0.3)'} />
+            }
+          </button>
+        </div>
+      </div>
+      </>
     )
   }
 

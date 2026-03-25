@@ -79,8 +79,8 @@ export const ChatInputConfig: ComponentConfig = {
     reply:        { type: 'boolean', label: 'Reply',          default: false, showWhen: { field: 'state', values: ['idle', 'focus', 'typing', 'loading'] } },
     replyName:    { type: 'text',    label: 'Reply name',     default: 'Clara Boris', showWhen: { field: 'reply', values: ['true'] } },
     replyMessage: { type: 'text',    label: 'Reply message',  default: 'Olá, como vai você?', showWhen: { field: 'reply', values: ['true'] } },
-    showMic:      { type: 'boolean', label: 'Mic button',     default: true },
-    showPlus:     { type: 'boolean', label: 'Plus button',    default: true, showWhen: { field: 'state', values: ['idle', 'focus', 'typing', 'loading', 'transcribing'] } },
+    showMic:      { type: 'boolean', label: 'Mic button',     default: false },
+    showPlus:     { type: 'boolean', label: 'Plus button',    default: false, showWhen: { field: 'state', values: ['idle', 'focus', 'typing', 'loading', 'transcribing'] } },
   },
   render: (p) => {
     const countStr = p.itemsCount as string

@@ -145,7 +145,7 @@ export function NavBar({
       paddingRight: 'var(--spacing-03)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      backgroundColor: 'rgba(255,255,255,0.7)',
+      backgroundColor: 'var(--color-gray-white)',
       width,
       boxSizing: 'border-box',
     }}>

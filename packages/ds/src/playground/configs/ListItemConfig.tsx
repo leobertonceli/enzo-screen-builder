@@ -37,7 +37,7 @@ export const ListItemConfig: ComponentConfig = {
   controls: {
     title:       { type: 'text',        label: 'Title',       default: 'Title' },
     description: { type: 'text',        label: 'Description', default: 'Description that can go up to two lines of text' },
-    size:        { type: 'radio',       label: 'Size',        options: ['small', 'large'], default: 'large' },
+    size:        { type: 'radio',       label: 'Size',        options: ['small', 'large'], default: 'small' },
     state:       { type: 'select',      label: 'State',       options: ['default', 'pressed', 'loading'], default: 'default' },
     leftSide:    { type: 'radio',       label: 'Left side',   options: ['none', 'icon', 'image'], default: 'none' },
     leftIcon:    { type: 'icon-picker', label: 'Left icon',   default: 'heart-outline', showWhen: { field: 'leftSide', values: ['icon'] } },
@@ -45,7 +45,7 @@ export const ListItemConfig: ComponentConfig = {
     rightAsset:  { type: 'radio',       label: 'Right asset', options: ['none', 'icon', 'text', 'text-icon'], default: 'icon' },
     rightIcon:   { type: 'icon-picker', label: 'Right icon',  default: 'chevron-right', showWhen: { field: 'rightAsset', values: ['icon', 'text-icon'] } },
     rightText:   { type: 'text',        label: 'Right text',  default: 'Text', showWhen: { field: 'rightAsset', values: ['text', 'text-icon'] } },
-    divider:     { type: 'boolean',     label: 'Divider',     default: true },
+    divider:     { type: 'boolean',     label: 'Divider',     default: false },
   },
   render: (p, onChange) => {
     const leftIconName = p.leftIcon as string

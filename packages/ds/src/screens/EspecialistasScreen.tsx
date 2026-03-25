@@ -119,22 +119,25 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
 
       {/* Page title */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-04)' }}>
-        <h1
-          style={{
-            fontFamily: 'var(--font-family-base)',
-            fontSize: 'var(--font-size-xl)',
-            fontWeight: 'var(--font-weight-regular)',
-            color: 'var(--color-content-primary)',
-            lineHeight: 'var(--line-height-title)',
-            margin: 0,
-          }}
-        >
-          {c.pageTitle}
-        </h1>
+        <Slot id="pageTitle">
+          <h1
+            style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-xl)',
+              fontWeight: 'var(--font-weight-regular)',
+              color: 'var(--color-content-primary)',
+              lineHeight: 'var(--line-height-title)',
+              margin: 0,
+            }}
+          >
+            {c.pageTitle}
+          </h1>
+        </Slot>
       </div>
 
       {/* Search bar — fora do DS */}
       <div style={{ padding: '0 var(--spacing-06)', paddingBottom: 'var(--spacing-04)' }}>
+        <Slot id="SearchBar">
         <div style={{ position: 'relative' }}>
           <MissingTag label="SearchBar — fora do DS" />
           <div
@@ -149,18 +152,21 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
             }}
           >
             <Icon name="magnify" size={20} color="var(--color-content-tertiary)" />
-            <span
-              style={{
-                fontFamily: 'var(--font-family-label)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-regular)',
-                color: 'var(--color-content-tertiary)',
-              }}
-            >
-              {c.searchPlaceholder}
-            </span>
+            <Slot id="searchPlaceholder">
+              <span
+                style={{
+                  fontFamily: 'var(--font-family-label)',
+                  fontSize: 'var(--font-size-sm)',
+                  fontWeight: 'var(--font-weight-regular)',
+                  color: 'var(--color-content-tertiary)',
+                }}
+              >
+                {c.searchPlaceholder}
+              </span>
+            </Slot>
           </div>
         </div>
+        </Slot>
       </div>
 
       {/* Specialty chips — horizontal scroll */}
@@ -194,7 +200,8 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
         style={{ padding: '0 var(--spacing-06)', gap: 'var(--spacing-03)' }}
       >
         {c.doctors.map((doc) => (
-          <div key={doc.key} style={{ position: 'relative' }}>
+          <Slot key={doc.key} id={`DoctorCard-${doc.key}`}>
+          <div style={{ position: 'relative' }}>
             <MissingTag label="DoctorCard — fora do DS" />
             <div
               style={{
@@ -224,37 +231,43 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
 
               {/* Info */}
               <div className="flex flex-col flex-1" style={{ gap: 2 }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-family-base)',
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-medium)',
-                    color: 'var(--color-content-primary)',
-                  }}
-                >
-                  {doc.name}
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-family-label)',
-                    fontSize: 'var(--font-size-xs)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-content-secondary)',
-                  }}
-                >
-                  {doc.specialty} · ⭐ {doc.rating}
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-family-label)',
-                    fontSize: 'var(--font-size-xs)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-brand)',
-                    marginTop: 'var(--spacing-01)',
-                  }}
-                >
-                  {doc.availability}
-                </span>
+                <Slot id={`doctor-${doc.key}-name`}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-family-base)',
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 'var(--font-weight-medium)',
+                      color: 'var(--color-content-primary)',
+                    }}
+                  >
+                    {doc.name}
+                  </span>
+                </Slot>
+                <Slot id={`doctor-${doc.key}-specialty`}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-family-label)',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: 'var(--font-weight-regular)',
+                      color: 'var(--color-content-secondary)',
+                    }}
+                  >
+                    {doc.specialty} · ⭐ {doc.rating}
+                  </span>
+                </Slot>
+                <Slot id={`doctor-${doc.key}-availability`}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-family-label)',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: 'var(--font-weight-regular)',
+                      color: 'var(--color-brand)',
+                      marginTop: 'var(--spacing-01)',
+                    }}
+                  >
+                    {doc.availability}
+                  </span>
+                </Slot>
               </div>
 
               {/* Chevron */}
@@ -263,23 +276,26 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
               </div>
             </div>
           </div>
+          </Slot>
         ))}
       </div>
 
       {/* Section — recent */}
       <div style={{ paddingLeft: 'var(--spacing-06)', paddingTop: 'var(--spacing-06)', paddingBottom: 'var(--spacing-03)' }}>
-        <h2
-          style={{
-            fontFamily: 'var(--font-family-base)',
-            fontSize: 'var(--font-size-md)',
-            fontWeight: 'var(--font-weight-medium)',
-            color: 'var(--color-content-primary)',
-            lineHeight: 'var(--line-height-title)',
-            margin: 0,
-          }}
-        >
-          {c.recentSection}
-        </h2>
+        <Slot id="recentSection">
+          <h2
+            style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-md)',
+              fontWeight: 'var(--font-weight-medium)',
+              color: 'var(--color-content-primary)',
+              lineHeight: 'var(--line-height-title)',
+              margin: 0,
+            }}
+          >
+            {c.recentSection}
+          </h2>
+        </Slot>
       </div>
 
       {/* Recent doctors — ListItem DS */}
@@ -323,16 +339,18 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
       </div>
 
       {/* Nav bar */}
-      <div style={{ position: 'relative' }}>
-        <MissingTag label="NavBar — fora do DS" />
-        <div
-          style={{
-            height: 64,
-            backgroundColor: 'var(--color-surface)',
-            borderTop: '1px solid var(--color-divider)',
-          }}
-        />
-      </div>
+      <Slot id="NavBar">
+        <div style={{ position: 'relative' }}>
+          <MissingTag label="NavBar — fora do DS" />
+          <div
+            style={{
+              height: 64,
+              backgroundColor: 'var(--color-surface)',
+              borderTop: '1px solid var(--color-divider)',
+            }}
+          />
+        </div>
+      </Slot>
     </div>
   )
 }

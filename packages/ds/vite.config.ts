@@ -15,6 +15,11 @@ const dirname =
 export default defineConfig({
   base: '/enzo-screen-builder/',
   plugins: [react(), tailwindcss()],
+  server: {
+    fs: {
+      allow: [path.resolve(dirname, '../..')],
+    },
+  },
   test: {
     projects: [
       {

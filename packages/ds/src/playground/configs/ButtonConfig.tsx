@@ -38,7 +38,7 @@ export const ButtonConfig: ComponentConfig = {
     label:    { type: 'text',        label: 'Label',     default: 'Button label' },
     darkMode: { type: 'boolean',     label: 'Dark mode',  default: false },
     style:    { type: 'radio',       label: 'Style',     options: ['primary', 'secondary', 'tertiary'], default: 'primary' },
-    size:     { type: 'radio',       label: 'Size',      options: ['small', 'medium', 'large'], default: 'large' },
+    size:     { type: 'radio',       label: 'Size',      options: ['small', 'medium', 'large'], default: 'small' },
     btnType:  { type: 'radio',       label: 'Type',      options: ['text', 'left-icon', 'right-icon', 'only-icon'], default: 'text' },
     state:    { type: 'select',      label: 'State',     options: ['enabled', 'pressed', 'disabled', 'loading'], default: 'enabled' },
     iconName: { type: 'icon-picker', label: 'Icon',      default: 'chevron-right', showWhen: { field: 'btnType', values: ['left-icon', 'right-icon', 'only-icon'] } },
