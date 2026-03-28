@@ -46,14 +46,7 @@ function injectKeyframes() {
   if (document.getElementById(STYLE_ID)) return
   const style = document.createElement('style')
   style.id = STYLE_ID
-  style.textContent = `
-    @keyframes ci-spin { to { transform: rotate(360deg); } }
-    @keyframes ci-blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-    @keyframes ci-bar {
-      0%, 100% { transform: scaleY(0.35); }
-      50% { transform: scaleY(1); }
-    }
-  `
+  style.textContent = `@keyframes ci-spin{to{transform:rotate(360deg)}}@keyframes ci-blink{0%,100%{opacity:1}50%{opacity:0}}@keyframes ci-bar{0%,100%{transform:scaleY(0.35)}50%{transform:scaleY(1)}}`
   document.head.appendChild(style)
 }
 

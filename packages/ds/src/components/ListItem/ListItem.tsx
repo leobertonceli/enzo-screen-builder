@@ -57,34 +57,28 @@ export function ListItem({
   const isPressed = state === 'pressed'
   const isLarge = size === 'large'
 
-  const rootWidth = fullWidth ? 'w-full min-w-[375px]' : 'w-full min-w-[327px]'
-  const rootPadding = fullWidth
-    ? isLarge
-      ? 'px-6 py-6'
-      : 'px-6 py-5'
-    : isLarge
-    ? 'py-6'
-    : 'py-5'
-
-  const rootHeight = isLoading ? (isLarge ? 'h-[89px]' : 'h-[74px]') : ''
   const rootBg = isPressed ? 'var(--color-surface-subtle)' : 'var(--color-surface)'
   const hasDescription = description !== undefined
-  const rootAlign = isLoading && leftSide === 'icon' ? 'items-start' : 'items-center'
+
+  // Inline styles for values that Tailwind v4 may not generate from dynamic class names
+  const paddingInline = fullWidth ? 'var(--spacing-06)' : undefined
+  const paddingBlock = isLarge ? 'var(--spacing-06)' : 'var(--spacing-05)'
+  const minWidth = fullWidth ? 375 : 327
+  const height = isLoading ? (isLarge ? 89 : 74) : undefined
+  const alignItems = isLoading && leftSide === 'icon' ? 'flex-start' : 'center'
+  const gap = isLarge ? 'var(--spacing-04)' : leftSide === 'none' ? '0' : 'var(--spacing-03)'
 
   return (
     <div
       onClick={onClick}
-      className={cn(
-        'flex relative',
-        rootWidth,
-        rootPadding,
-        rootHeight,
-        rootAlign,
-        isLarge ? 'gap-4' : leftSide === 'none' ? 'gap-0' : 'gap-3',
-        onClick && 'cursor-pointer select-none',
-        className,
-      )}
+      className={cn('flex relative w-full', onClick && 'cursor-pointer select-none', className)}
       style={{
+        paddingInline,
+        paddingBlock,
+        minWidth,
+        height,
+        alignItems,
+        gap,
         backgroundColor: rootBg,
         borderBottom: divider ? '1px solid var(--color-divider)' : undefined,
       }}

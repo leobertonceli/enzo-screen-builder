@@ -17,6 +17,24 @@ import { TagConfig } from './configs/TagConfig'
 import { NavBarConfig } from './configs/NavBarConfig'
 import { TextFieldConfig } from './configs/TextFieldConfig'
 import { CalloutConfig } from './configs/CalloutConfig'
+import { ShortcutConfig } from './configs/ShortcutConfig'
+import { BillBoardConfig } from './configs/BillBoardConfig'
+import { CardSectionConfig } from './configs/CardSectionConfig'
+import { NotificationCardConfig } from './configs/NotificationCardConfig'
+import { ProgressBarConfig } from './configs/ProgressBarConfig'
+import { RadioButtonConfig } from './configs/RadioButtonConfig'
+import { SnackbarConfig } from './configs/SnackbarConfig'
+import { TooltipConfig } from './configs/TooltipConfig'
+import { BadgeConfig } from './configs/BadgeConfig'
+import { DividerConfig } from './configs/DividerConfig'
+import { CheckboxConfig } from './configs/CheckboxConfig'
+import { TextAreaConfig } from './configs/TextAreaConfig'
+import { AvatarConfig } from './configs/AvatarConfig'
+import { TabsConfig } from './configs/TabsConfig'
+import { LoaderConfig } from './configs/LoaderConfig'
+import { ChatResponseConfig } from './configs/ChatResponseConfig'
+import { AppBarConfig } from './configs/AppBarConfig'
+import { ActionCardConfig } from './configs/ActionCardConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -29,13 +47,14 @@ import { EspecialistasScreen } from '../screens/EspecialistasScreen'
 import { EspecialistasScreenV2 } from '../screens/EspecialistasScreenV2'
 import { RedeCredenciadaScreen } from '../screens/RedeCredenciadaScreen'
 import { AliceAgoraScreen } from '../screens/AliceAgoraScreen'
-import { AgendarConsultaScreen } from '../screens/AgendarConsultaScreen'
+import { AgendarConsultaScreen }         from '../screens/AgendarConsultaScreen'
+import { AgendamentoFlowScreen }          from '../screens/AgendamentoFlowScreen'
 import type { ComponentConfig } from './types'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig, CalloutConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ShortcutConfig, BillBoardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig, TextAreaConfig, CalloutConfig, ProgressBarConfig, RadioButtonConfig, SnackbarConfig, TooltipConfig, BadgeConfig, DividerConfig, CheckboxConfig, AvatarConfig, TabsConfig, CardSectionConfig, NotificationCardConfig, LoaderConfig, ChatResponseConfig, AppBarConfig, ActionCardConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -170,6 +189,27 @@ function hasDirectText(el: Element): boolean {
 
 /* Tags we allow to be made contentEditable */
 const EDITABLE_TAGS = new Set(['SPAN', 'P', 'H1', 'H2', 'H3', 'BUTTON', 'LI'])
+
+/* ── Hook: scale phone proportionally to available viewport ── */
+const PHONE_W = 375
+const PHONE_H = 812
+const CHROME_V = 188  // top (80) + bottom (108) playground chrome
+const CHROME_H = 80   // left + right padding
+
+function usePhoneScale() {
+  const [scale, setScale] = useState(1)
+  useEffect(() => {
+    const update = () => {
+      const scaleH = (window.innerHeight - CHROME_V) / PHONE_H
+      const scaleW = (window.innerWidth  - CHROME_H) / PHONE_W
+      setScale(Math.min(1, scaleH, scaleW))
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+  return scale
+}
 
 /* ── Mouse-follow hook — elements gently drift toward cursor direction ── */
 function useMouseFollow() {
@@ -484,7 +524,8 @@ export function Playground() {
 
   /* templates config */
   const templates = [
-    { name: 'Agendar Consulta', component: AgendarConsultaScreen },
+    { name: 'Agendamento',      component: AgendamentoFlowScreen   },
+    { name: 'Agendar Consulta', component: AgendarConsultaScreen   },
     { name: 'Alice Agora', component: AliceAgoraScreen },
     { name: 'Teste — AI Content', component: EspecialistasScreen },
     { name: 'Rede Credenciada', component: RedeCredenciadaScreen },
@@ -497,6 +538,7 @@ export function Playground() {
     { name: 'Home (v1)', component: HomeScreen },
     { name: 'Settings', component: SettingsScreen },
   ]
+  const phoneScale = usePhoneScale()
   const [activeTemplate, setActiveTemplate] = useState<number | null>(null)
   const [slotOverrides, setSlotOverrides] = useState<Record<string, React.ReactNode>>({})
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
@@ -746,41 +788,115 @@ export function Playground() {
           <Icon name="arrow-left" size={20} color="var(--color-gray-white)" />
         </button>
 
-        {/* Edit button — top-left, beside back button */}
-        <button
-          onClick={() => setEditMode((v) => !v)}
-          className="flex items-center justify-center"
-          style={{
-            position: 'fixed', top: 24, left: 72, zIndex: 100,
-            width: 40, height: 40, borderRadius: 'var(--radius-pill)',
-            backgroundColor: editMode ? 'var(--color-gray-white)' : 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            transition: 'background-color 0.15s',
-          }}
-          title={editMode ? 'Exit edit mode' : 'Edit text'}
-        >
-          <Icon name="pencil" size={18} color={editMode ? 'var(--color-gray-100)' : 'var(--color-gray-white)'} />
-        </button>
-
-        {/* Template — centered zoom view with 812px max height and scroll */}
-        <div className="flex-1 flex items-center justify-center overflow-auto" style={{ padding: 40 }}>
-          <div
-            ref={templatePreviewRef}
-            className={`hide-scrollbar${editMode ? ' edit-mode-preview' : ''}`}
+        {/* Bottom action bar — Editar template + Exportar */}
+        <div style={{
+          position: 'fixed', bottom: 40, left: 0, right: 0, zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          gap: 'var(--spacing-02)',
+          pointerEvents: 'none',
+        }}>
+          <button
+            onClick={() => setEditMode((v) => !v)}
             style={{
-              width: 390,
-              height: 812,
-              borderRadius: 'var(--radius-xl)',
-              overflow: 'hidden auto',
-              boxShadow: '0 16px 64px rgba(0,0,0,0.3)',
-              cursor: inspectMode ? 'crosshair' : undefined,
-              position: 'relative',
+              pointerEvents: 'auto',
+              height: 56,
+              borderRadius: 'var(--radius-pill)',
+              padding: '0 var(--spacing-06)',
+              backgroundColor: editMode ? 'rgba(255,255,255,0.1)' : 'transparent',
+              border: '1px solid rgba(255,255,255,0.05)',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 'var(--font-weight-regular)',
+              color: 'var(--color-gray-white)',
+              transition: 'background-color 0.15s',
+              whiteSpace: 'nowrap',
             }}
-            onClick={handleEditClick}
           >
+            Editar template
+          </button>
+          <button
+            onClick={async () => {
+              const TemplateComponent = tmpl.component
+              const screenFnName = TemplateComponent.name || tmpl.name.replace(/\s/g, '')
+
+              // Fetch the pre-built interactive React bundle from public/export-preview.html.
+              // This gives a fully interactive prototype (useState, onClick, etc.) instead
+              // of a static DOM snapshot. The bundle reads window.__DS_SCREEN__ to know
+              // which screen to render, so we inject it before the deferred main script.
+              try {
+                const res = await fetch('/screen-builder/export-preview.html')
+                if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                let html = await res.text()
+
+                // Inject screen selector before the main deferred script
+                html = html.replace(
+                  '<script defer>',
+                  `<script>window.__DS_SCREEN__ = '${screenFnName}'</script>\n<script defer>`
+                )
+
+                // Update <title> to the screen name
+                html = html.replace(/<title>[^<]*<\/title>/, `<title>${screenFnName}</title>`)
+
+                const blob = new Blob([html], { type: 'text/html' })
+                const url  = URL.createObjectURL(blob)
+                const a    = document.createElement('a')
+                a.href     = url
+                a.download = `${screenFnName}.html`
+                a.click()
+                setTimeout(() => URL.revokeObjectURL(url), 1000)
+              } catch (err) {
+                console.error('Exportar: /export-preview.html não encontrado — rode npm run build:export primeiro', err)
+                alert('Arquivo de exportação não encontrado.\nRode: npm run build:export')
+              }
+            }}
+            style={{
+              pointerEvents: 'auto',
+              height: 56,
+              borderRadius: 'var(--radius-pill)',
+              padding: '0 var(--spacing-06)',
+              backgroundColor: 'transparent',
+              border: '1px solid rgba(255,255,255,0.15)',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 'var(--font-weight-regular)',
+              color: 'var(--color-gray-white)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Exportar
+          </button>
+        </div>
+
+        {/* Template — proportionally scaled to viewport */}
+        <div className="flex-1 flex items-center justify-center" style={{ padding: '80px 40px 108px' }}>
+          {/* Outer shell: sized to scaled dimensions, acts as layout anchor */}
+          <div style={{
+            width:  PHONE_W * phoneScale,
+            height: PHONE_H * phoneScale,
+            flexShrink: 0,
+            position: 'relative',
+          }}>
+            {/* Inner: rendered at native 375×812, then scaled from top-left */}
+            <div
+              ref={templatePreviewRef}
+              className={`hide-scrollbar${editMode ? ' edit-mode-preview' : ''}`}
+              style={{
+                width: PHONE_W,
+                height: PHONE_H,
+                borderRadius: 'var(--radius-xl)',
+                overflow: 'hidden auto',
+                boxShadow: '0 16px 64px rgba(0,0,0,0.3)',
+                cursor: inspectMode ? 'crosshair' : undefined,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                transformOrigin: 'top left',
+                transform: `scale(${phoneScale})`,
+              }}
+              onClick={handleEditClick}
+            >
             <TemplateEditContext.Provider value={{
               editMode,
               selectedSlot,
@@ -792,6 +908,7 @@ export function Playground() {
             }}>
               {TemplateComponent ? <TemplateComponent /> : null}
             </TemplateEditContext.Provider>
+            </div>
           </div>
         </div>
 
