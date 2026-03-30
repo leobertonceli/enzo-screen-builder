@@ -14,8 +14,14 @@ import { HomeScreen }             from './screens/HomeScreen'
 import { HomeScreenV2 }           from './screens/HomeScreenV2'
 import { HomeScreenV3 }           from './screens/HomeScreenV3'
 import { HomeScreenV4 }           from './screens/HomeScreenV4'
-import { FiltersScreen }          from './screens/FiltersScreen'
-import { SettingsScreen }         from './screens/SettingsScreen'
+import { FiltersScreen }              from './screens/FiltersScreen'
+import { SettingsScreen }             from './screens/SettingsScreen'
+import { EscolhaEspecialistaScreen }          from './screens/EscolhaEspecialistaScreen'
+import { AgendamentoConsultaFlowScreen }      from './screens/AgendamentoConsultaFlowScreen'
+import { SolicitacaoExameFlowScreen }         from './screens/SolicitacaoExameFlowScreen'
+import { BuscaEspecialistasScreen }          from './screens/BuscaEspecialistasScreen'
+import { ExtratoCoparticipacaoScreen }       from './screens/ExtratoCoparticipacaoScreen'
+import { ReembolsoFlowScreen }               from './screens/ReembolsoFlowScreen'
 
 const SCREENS: Record<string, React.ComponentType> = {
   AgendamentoFlowScreen,
@@ -31,6 +37,12 @@ const SCREENS: Record<string, React.ComponentType> = {
   HomeScreenV4,
   FiltersScreen,
   SettingsScreen,
+  EscolhaEspecialistaScreen,
+  AgendamentoConsultaFlowScreen,
+  SolicitacaoExameFlowScreen,
+  BuscaEspecialistasScreen,
+  ExtratoCoparticipacaoScreen,
+  ReembolsoFlowScreen,
 }
 
 const PHONE_W  = 375

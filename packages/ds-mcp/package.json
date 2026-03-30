@@ -1,0 +1,13 @@
+{
+  "name": "wonderland-ds-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server for Wonderland Design System (Alice Health)",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.2"
+  }
+}

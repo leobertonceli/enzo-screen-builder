@@ -101,7 +101,9 @@
       "Bash(grep -r \"export-preview\\\\|exportPreview\" '/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds' --include=*.ts --include=*.tsx --include=*.html --include=*.mjs --include=*.json)",
       "Bash(head -3 grep -o '<script[^>]*>' \"/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds/dist-export/export.html\")",
       "Bash(node -e \":*)",
-      "Bash(node --input-type=module:*)"
+      "Bash(node --input-type=module:*)",
+      "Bash(node '/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds-mcp/server.mjs')",
+      "Bash(cd /Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds)"
     ]
   }
 }

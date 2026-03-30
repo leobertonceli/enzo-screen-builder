@@ -14,27 +14,15 @@ import { LinkConfig } from './configs/LinkConfig'
 import { CardMFCConfig } from './configs/CardMFCConfig'
 import { ChatBubbleConfig } from './configs/ChatBubbleConfig'
 import { TagConfig } from './configs/TagConfig'
-import { NavBarConfig } from './configs/NavBarConfig'
+import { BottomBarConfig } from './configs/BottomBarConfig'
 import { TextFieldConfig } from './configs/TextFieldConfig'
 import { CalloutConfig } from './configs/CalloutConfig'
 import { ShortcutConfig } from './configs/ShortcutConfig'
-import { BillBoardConfig } from './configs/BillBoardConfig'
-import { CardSectionConfig } from './configs/CardSectionConfig'
-import { NotificationCardConfig } from './configs/NotificationCardConfig'
-import { ProgressBarConfig } from './configs/ProgressBarConfig'
-import { RadioButtonConfig } from './configs/RadioButtonConfig'
-import { SnackbarConfig } from './configs/SnackbarConfig'
-import { TooltipConfig } from './configs/TooltipConfig'
 import { BadgeConfig } from './configs/BadgeConfig'
-import { DividerConfig } from './configs/DividerConfig'
 import { CheckboxConfig } from './configs/CheckboxConfig'
-import { TextAreaConfig } from './configs/TextAreaConfig'
 import { AvatarConfig } from './configs/AvatarConfig'
 import { TabsConfig } from './configs/TabsConfig'
-import { LoaderConfig } from './configs/LoaderConfig'
-import { ChatResponseConfig } from './configs/ChatResponseConfig'
-import { AppBarConfig } from './configs/AppBarConfig'
-import { ActionCardConfig } from './configs/ActionCardConfig'
+import { NavBarConfig } from './configs/NavBarConfig'
 import { Icon } from '../icons/Icon'
 import { SettingsScreen } from '../screens/SettingsScreen'
 import { HomeScreen } from '../screens/HomeScreen'
@@ -49,12 +37,18 @@ import { RedeCredenciadaScreen } from '../screens/RedeCredenciadaScreen'
 import { AliceAgoraScreen } from '../screens/AliceAgoraScreen'
 import { AgendarConsultaScreen }         from '../screens/AgendarConsultaScreen'
 import { AgendamentoFlowScreen }          from '../screens/AgendamentoFlowScreen'
+import { EscolhaEspecialistaScreen }      from '../screens/EscolhaEspecialistaScreen'
+import { AgendamentoConsultaFlowScreen } from '../screens/AgendamentoConsultaFlowScreen'
+import { SolicitacaoExameFlowScreen }   from '../screens/SolicitacaoExameFlowScreen'
+import { BuscaEspecialistasScreen }    from '../screens/BuscaEspecialistasScreen'
+import { ExtratoCoparticipacaoScreen } from '../screens/ExtratoCoparticipacaoScreen'
+import { ReembolsoFlowScreen }         from '../screens/ReembolsoFlowScreen'
 import type { ComponentConfig } from './types'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
 import menuIconIconography from '../assets/menu-icons/iconography.svg'
 
-const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ShortcutConfig, BillBoardConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, NavBarConfig, TextFieldConfig, TextAreaConfig, CalloutConfig, ProgressBarConfig, RadioButtonConfig, SnackbarConfig, TooltipConfig, BadgeConfig, DividerConfig, CheckboxConfig, AvatarConfig, TabsConfig, CardSectionConfig, NotificationCardConfig, LoaderConfig, ChatResponseConfig, AppBarConfig, ActionCardConfig]
+const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ShortcutConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, TagConfig, BottomBarConfig, TextFieldConfig, CalloutConfig, BadgeConfig, CheckboxConfig, AvatarConfig, TabsConfig, NavBarConfig]
 
 /* ── Category labels for filter pills ── */
 const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
@@ -69,6 +63,7 @@ function getCategory(c: ComponentConfig): string {
   if (c.name === 'CardMFC') return 'Cards'
   if (c.name === 'ChatBubble') return 'Chat'
   if (c.name === 'Tag') return 'Badges'
+  if (c.name === 'BottomBar') return 'Navigation'
   if (c.name === 'NavBar') return 'Navigation'
   if (c.name === 'TextField') return 'Text Field'
   if (c.name === 'Callout') return 'Feedback'
@@ -113,7 +108,7 @@ const COMPONENT_RADIUS: Record<string, number> = {
   CardMFC: 24,
   ChatBubble: 24,
   Tag: 200,
-  NavBar: 0,
+  BottomBar: 0,
   TextField: 12,
   Callout: 20,
 }
@@ -524,7 +519,13 @@ export function Playground() {
 
   /* templates config */
   const templates = [
-    { name: 'Agendamento',      component: AgendamentoFlowScreen   },
+    { name: 'Reembolso Flow',          component: ReembolsoFlowScreen },
+    { name: 'Extrato Coparticipação',  component: ExtratoCoparticipacaoScreen },
+    { name: 'Busca de Especialistas', component: BuscaEspecialistasScreen },
+    { name: 'Solicitação de Exame', component: SolicitacaoExameFlowScreen },
+    { name: 'Agendamento Consulta Flow', component: AgendamentoConsultaFlowScreen },
+    { name: 'Escolha Especialista', component: EscolhaEspecialistaScreen },
+    { name: 'Agendamento',          component: AgendamentoFlowScreen     },
     { name: 'Agendar Consulta', component: AgendarConsultaScreen   },
     { name: 'Alice Agora', component: AliceAgoraScreen },
     { name: 'Teste — AI Content', component: EspecialistasScreen },

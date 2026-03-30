@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { AppBar }   from '../components/AppBar/AppBar'
+import { NavBar }   from '../components/NavBar/NavBar'
 import { Button }   from '../components/Button/Button'
 import { ListItem } from '../components/ListItem/ListItem'
 import { Chip }     from '../components/Chip/Chip'
@@ -167,7 +167,7 @@ function DoctorCarouselCard({ doctor, onSelect }: { doctor: Doctor; onSelect: ()
 function StepMedico({ onSelect }: { onSelect: (d: Doctor) => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <AppBar type="section" title="" showRightIcons={false} onBack={() => {}} />
+      <NavBar type="page" showTitle={false} rightIcons={0} onBack={() => {}} />
 
       <div className="flex-1 overflow-y-auto hide-scrollbar">
 
@@ -249,7 +249,7 @@ function StepHorario({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
       {/* Back only — one navigation action per step (Rule J) */}
-      <AppBar type="section" title="" showRightIcons={false} onBack={onBack} />
+      <NavBar type="page" showTitle={false} rightIcons={0} onBack={onBack} />
 
       <div className="flex-1 overflow-y-auto hide-scrollbar">
         <div style={{ padding: '0 var(--spacing-06)', display: 'flex', flexDirection: 'column' }}>
@@ -385,7 +385,7 @@ function StepConfirmacao({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
       {/* Back only — confirmation step, one nav action (Rule J) */}
-      <AppBar type="section" title="" showRightIcons={false} onBack={onClose} />
+      <NavBar type="page" showTitle={false} rightIcons={0} onBack={onClose} />
 
       <div className="flex-1 overflow-y-auto hide-scrollbar">
         <div style={{ padding: '0 var(--spacing-06) var(--spacing-10)' }}>

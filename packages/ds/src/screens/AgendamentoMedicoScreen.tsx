@@ -1,4 +1,4 @@
-import { AppBar }    from '../components/AppBar/AppBar'
+import { NavBar }    from '../components/NavBar/NavBar'
 import { Chip }      from '../components/Chip/Chip'
 import { CardMFC }   from '../components/CardMFC/CardMFC'
 import { TextField } from '../components/TextField/TextField'
@@ -25,7 +25,7 @@ export function AgendamentoMedicoScreen() {
       flexDirection: 'column',
       fontFamily: 'var(--font-family-base)',
     }}>
-      <AppBar type="section" title="Escolha seu médico" showRightIcons={false} />
+      <NavBar type="page" title="Escolha seu médico" rightIcons={0} />
 
       <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 'var(--spacing-08)' }}>
         <div style={{

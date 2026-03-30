@@ -1,4 +1,4 @@
-import { AppBar }   from '../components/AppBar/AppBar'
+import { NavBar }   from '../components/NavBar/NavBar'
 import { Chip }     from '../components/Chip/Chip'
 import { BaseCard } from '../components/BaseCard/BaseCard'
 import { Button }   from '../components/Button/Button'
@@ -30,7 +30,7 @@ export function AgendamentoHorarioScreen() {
       flexDirection: 'column',
       fontFamily: 'var(--font-family-base)',
     }}>
-      <AppBar type="section" title="Quando?" showRightIcons={false} />
+      <NavBar type="page" title="Quando?" rightIcons={0} />
 
       {/* Subtitle — Dezembro 2024 */}
       <div style={{

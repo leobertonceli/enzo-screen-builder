@@ -1,5 +1,19 @@
 # Wonderland Design System — Project Rules
 
+## ⚠️ Before writing any UI code
+
+This project uses the **Wonderland Design System**. Before creating any screen, component, or UI element:
+
+- Check what components exist in `packages/ds/src/components/`
+- Read the component source to understand exact props and import paths
+- Check `packages/ds/src/index.css` for available design tokens
+
+**Never invent a UI element from scratch if a DS component already solves it.**
+
+> The `wonderland-ds` MCP server (`list_components`, `get_component`, `get_tokens`) exposes the same information as a stable API for external consumers outside the repo.
+
+---
+
 ## Rule #1: Always use design tokens
 
 **NEVER use hardcoded values** for colors, fonts, sizes, spacing, or radii.

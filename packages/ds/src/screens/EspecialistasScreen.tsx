@@ -244,16 +244,29 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
                   </span>
                 </Slot>
                 <Slot id={`doctor-${doc.key}-specialty`}>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-family-label)',
-                      fontSize: 'var(--font-size-xs)',
-                      fontWeight: 'var(--font-weight-regular)',
-                      color: 'var(--color-content-secondary)',
-                    }}
-                  >
-                    {doc.specialty} · ⭐ {doc.rating}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-family-label)',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 'var(--font-weight-regular)',
+                        color: 'var(--color-content-secondary)',
+                      }}
+                    >
+                      {doc.specialty} ·
+                    </span>
+                    <Icon name="star" size={12} color="var(--color-brand)" />
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-family-label)',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 'var(--font-weight-regular)',
+                        color: 'var(--color-content-secondary)',
+                      }}
+                    >
+                      {doc.rating}
+                    </span>
+                  </div>
                 </Slot>
                 <Slot id={`doctor-${doc.key}-availability`}>
                   <span

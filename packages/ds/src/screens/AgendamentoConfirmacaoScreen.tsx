@@ -1,4 +1,4 @@
-import { AppBar }  from '../components/AppBar/AppBar'
+import { NavBar }  from '../components/NavBar/NavBar'
 import { BaseCard } from '../components/BaseCard/BaseCard'
 import { Callout }  from '../components/Callout/Callout'
 import { Button }   from '../components/Button/Button'
@@ -35,7 +35,7 @@ export function AgendamentoConfirmacaoScreen() {
       flexDirection: 'column',
       fontFamily: 'var(--font-family-base)',
     }}>
-      <AppBar type="section" title="Confirmado!" showRightIcons={false} />
+      <NavBar type="page" title="Confirmado!" rightIcons={0} />
 
       <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 'var(--spacing-08)' }}>
         <div style={{

@@ -1,81 +1,86 @@
-// @refresh reset
-import React, { useState, useEffect } from 'react'
 import { NavBar } from '../../components/NavBar/NavBar'
-import type { NavBarSelected } from '../../components/NavBar/NavBar'
 import type { ComponentConfig } from '../types'
-import userPhoto from '../../assets/navbar-user-photo.png'
-
-function resolvePhoto(p: Record<string, unknown>) {
-  const url = p.userImageUrl as string
-  return url || (p.meuPlanoMode === 'photo' ? userPhoto : undefined)
-}
-
-function InteractiveNavBar(p: Record<string, unknown>) {
-  const [active, setActive] = useState(p.selected as NavBarSelected)
-  useEffect(() => { setActive(p.selected as NavBarSelected) }, [p.selected])
-  return (
-    <NavBar
-      selected={active}
-      onTabSelect={setActive}
-      tab1Label={p.tab1Label as string}
-      tab2Label={p.tab2Label as string}
-      tab3Label={p.tab3Label as string}
-      tab4Label={p.tab4Label as string}
-      tab1Icon={p.tab1Icon as string}
-      tab2Icon={p.tab2Icon as string}
-      tab3Icon={p.tab3Icon as string}
-      meuPlanoMode={p.meuPlanoMode as any}
-      userInitials={p.userInitials as string || undefined}
-      userImageUrl={resolvePhoto(p)}
-      width={375}
-    />
-  )
-}
-
-function SlotNavBar(p: Record<string, unknown>) {
-  const [active, setActive] = useState(p.selected as NavBarSelected)
-  useEffect(() => { setActive(p.selected as NavBarSelected) }, [p.selected])
-  return (
-    <NavBar
-      selected={active}
-      onTabSelect={setActive}
-      tab1Label={p.tab1Label as string}
-      tab2Label={p.tab2Label as string}
-      tab3Label={p.tab3Label as string}
-      tab4Label={p.tab4Label as string}
-      tab1Icon={p.tab1Icon as string}
-      tab2Icon={p.tab2Icon as string}
-      tab3Icon={p.tab3Icon as string}
-      meuPlanoMode={p.meuPlanoMode as any}
-      userInitials={p.userInitials as string || undefined}
-      userImageUrl={resolvePhoto(p)}
-      width="100%"
-    />
-  )
-}
 
 export const NavBarConfig: ComponentConfig = {
   name: 'NavBar',
   presets: [
-    { label: 'Alice Agora', values: { selected: 'Alice Agora', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Minha saúde', values: { selected: 'Minha saúde', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Rede Alice',  values: { selected: 'Rede Alice',  tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Meu plano — iniciais', values: { selected: 'Meu plano', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Meu plano — foto',    values: { selected: 'Meu plano', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'photo',    userInitials: '',   userImageUrl: '' } },
+    {
+      label: 'Page — só título',
+      values: { type: 'page', iconLeft: true, showTitle: true, title: 'Agendar consulta', showDescription: false, description: '', rightIcons: 0 },
+    },
+    {
+      label: 'Page — título + desc',
+      values: { type: 'page', iconLeft: true, showTitle: true, title: 'Dra. Isabella Moreira', showDescription: true, description: 'Clínica médica', rightIcons: 1 },
+    },
+    {
+      label: 'Page — 2 ícones',
+      values: { type: 'page', iconLeft: true, showTitle: true, title: 'Meu plano', showDescription: false, description: '', rightIcons: 2 },
+    },
+    {
+      label: 'Page — sem iconLeft',
+      values: { type: 'page', iconLeft: false, showTitle: true, title: 'Agendar consulta', showDescription: false, description: '', rightIcons: 0 },
+    },
+    {
+      label: 'Modal — título + desc',
+      values: { type: 'modal', showTitle: true, title: 'Filtros', showDescription: true, description: '3 filtros ativos', rightIcons: 1 },
+    },
+    {
+      label: 'Modal — só título',
+      values: { type: 'modal', showTitle: true, title: 'Selecionar data', showDescription: false, description: '', rightIcons: 0 },
+    },
   ],
   controls: {
-    selected:     { type: 'radio',       label: 'Active tab',  options: ['Alice Agora', 'Minha saúde', 'Rede Alice', 'Meu plano'], default: 'Alice Agora' },
-    tab1Label:    { type: 'text',        label: 'Tab 1 label', default: 'Alice Agora' },
-    tab1Icon:     { type: 'icon-picker', label: 'Tab 1 icon',  default: 'heart' },
-    tab2Label:    { type: 'text',        label: 'Tab 2 label', default: 'Minha saúde' },
-    tab2Icon:     { type: 'icon-picker', label: 'Tab 2 icon',  default: 'pulse' },
-    tab3Label:    { type: 'text',        label: 'Tab 3 label', default: 'Rede Alice' },
-    tab3Icon:     { type: 'icon-picker', label: 'Tab 3 icon',  default: 'map-marker' },
-    tab4Label:    { type: 'text',        label: 'Tab 4 label', default: 'Meu plano' },
-    meuPlanoMode: { type: 'radio',       label: 'Meu plano',   options: ['initials', 'photo'], default: 'initials', showWhen: { field: 'selected', values: ['Meu plano'] } },
-    userInitials: { type: 'text',        label: 'Iniciais',    default: 'LB',         showWhen: { field: 'meuPlanoMode', values: ['initials'] } },
-    userImageUrl: { type: 'text',        label: 'Photo URL',   default: '',           showWhen: { field: 'meuPlanoMode', values: ['photo'] } },
+    type: {
+      type: 'radio',
+      label: 'Type',
+      options: ['page', 'modal'],
+      default: 'page',
+    },
+    iconLeft: {
+      type: 'boolean',
+      label: 'Icon left',
+      default: true,
+      showWhen: { field: 'type', values: ['page'] },
+    },
+    showTitle: {
+      type: 'boolean',
+      label: 'Title',
+      default: true,
+    },
+    title: {
+      type: 'text',
+      label: 'Title text',
+      default: 'Agendar consulta',
+      showWhen: { field: 'showTitle', values: [true] },
+    },
+    showDescription: {
+      type: 'boolean',
+      label: 'Description',
+      default: false,
+    },
+    description: {
+      type: 'text',
+      label: 'Description text',
+      default: 'Clínica médica',
+      showWhen: { field: 'showDescription', values: [true] },
+    },
+    rightIcons: {
+      type: 'radio',
+      label: 'Right icons',
+      options: [0, 1, 2],
+      default: 0,
+    },
   },
-  render: (p) => <InteractiveNavBar {...p} />,
-  slotRender: (p) => <SlotNavBar {...p} />,
+  render: (p, onChange) => (
+    <NavBar
+      type={p.type as any}
+      iconLeft={p.iconLeft as boolean}
+      showTitle={p.showTitle as boolean}
+      title={p.title as string}
+      showDescription={p.showDescription as boolean}
+      description={p.description as string}
+      rightIcons={p.rightIcons as 0 | 1 | 2}
+      onChange={onChange}
+    />
+  ),
 }
