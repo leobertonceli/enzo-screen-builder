@@ -186,7 +186,7 @@ export function NavBar({
                   {title}
                 </span>
               )}
-              {showDescription && description && (
+              {showTitle && showDescription && description && (
                 <span
                   {...editable(onChange, 'description')}
                   style={{
@@ -241,26 +241,32 @@ export function NavBar({
           minWidth: 0,
         }}>
           {showTitle && title && (
-            <span style={{
-              ...truncate,
-              fontFamily: 'var(--font-family-base)',
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-content-primary)',
-              lineHeight: 'var(--line-height-title-sm)',
-            }}>
+            <span
+              {...editable(onChange, 'title')}
+              style={{
+                ...truncate,
+                fontFamily: 'var(--font-family-base)',
+                fontSize: 'var(--font-size-sm)',
+                fontWeight: 'var(--font-weight-regular)',
+                color: 'var(--color-content-primary)',
+                lineHeight: 'var(--line-height-title-sm)',
+              }}
+            >
               {title}
             </span>
           )}
-          {showDescription && description && (
-            <span style={{
-              ...truncate,
-              fontFamily: 'var(--font-family-base)',
-              fontSize: 'var(--font-size-xs)',
-              fontWeight: 'var(--font-weight-regular)',
-              color: 'var(--color-content-secondary)',
-              lineHeight: 'var(--line-height-title-sm)',
-            }}>
+          {showTitle && showDescription && description && (
+            <span
+              {...editable(onChange, 'description')}
+              style={{
+                ...truncate,
+                fontFamily: 'var(--font-family-base)',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: 'var(--font-weight-regular)',
+                color: 'var(--color-content-secondary)',
+                lineHeight: 'var(--line-height-title-sm)',
+              }}
+            >
               {description}
             </span>
           )}

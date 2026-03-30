@@ -51,18 +51,19 @@ export const NavBarConfig: ComponentConfig = {
       type: 'text',
       label: 'Title text',
       default: 'Agendar consulta',
-      showWhen: { field: 'showTitle', values: [true] },
+      showWhen: { field: 'showTitle', values: ['true'] },
     },
     showDescription: {
       type: 'boolean',
       label: 'Description',
       default: false,
+      showWhen: { field: 'showTitle', values: ['true'] },
     },
     description: {
       type: 'text',
       label: 'Description text',
       default: 'Clínica médica',
-      showWhen: { field: 'showDescription', values: [true] },
+      showWhen: { field: 'showDescription', values: ['true'] },
     },
     rightIcons: {
       type: 'radio',
