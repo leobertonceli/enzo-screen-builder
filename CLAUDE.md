@@ -82,10 +82,91 @@ Every component in the design system must work as a functional prototype, not ju
 - Stateful components (tabs, toggles, inputs, selectors) MUST manage their own internal state via `useState`
 - Accept an optional controlled prop (e.g. `selected`, `value`) and sync with `useEffect`
 - All clickable elements MUST have real `onClick` handlers — never decorative-only
-- Add CSS transitions (`transition: 'X 0.2s ease'`) on color, opacity, transform for state changes
+- Add CSS transitions on color, opacity, transform for state changes (see Rule #8 for timing)
 - This principle applies to every new or updated component going forward
 
-## Rule #7: Figma is the source of truth
+## Rule #8: Motion standards
+
+All state transitions must feel smooth and natural — never instant. Use these values consistently:
+
+### Easing
+- **Positional** (sliding, moving): `cubic-bezier(0.34, 1.4, 0.64, 1)` — spring with subtle overshoot
+- **Fade / color / opacity**: `ease` is fine
+
+### Duration
+- Position changes (slide): `0.35s`
+- Color, opacity, background, border: `0.3s`
+
+### Sliding indicator pattern
+When multiple items share an active indicator (tabs, bottom bar, segmented control):
+- **NEVER** put the indicator inside each item with show/hide
+- Use a **single absolutely-positioned element** in the parent that slides via `left` or `transform`
+- Example (Tabs): `left: calc(${activeIndex} / ${total} * 100%)`, `width: calc(100% / ${total})`
+- Example (BottomBar): `left: calc(${activeIndex} * 25% + 12.5%)`, `transform: translateX(-50%)`
+
+## Rule #9: Playground ↔ Component sync is bidirectional
+
+Interacting directly with a component in the playground **must** update the control panel — not just the other way around.
+
+### Simple components (no complex state)
+Pass `onChange` directly in the `render` function:
+```tsx
+render: (p, onChange) => (
+  <Tabs
+    activeIndex={Number(p.activeIndex)}
+    onChange={(i) => onChange('activeIndex', String(i))}
+  />
+)
+```
+
+### Complex components (TextField and similar)
+Use a wrapper component with `useRef(false)` to prevent update loops:
+```tsx
+const internalChangeRef = useRef(false)
+
+// Inside interaction handler — before calling onChange:
+internalChangeRef.current = true
+onChange('variant', newVariant)
+
+// Inside useEffect that syncs external → internal:
+if (internalChangeRef.current) {
+  internalChangeRef.current = false
+  return // skip — this change came from the component itself
+}
+```
+
+### Already implemented
+- ✅ TextField — syncs `variant` and `value`
+- ✅ Tabs — syncs `activeIndex`
+- ✅ BottomBar — syncs `selected`
+
+### Still pending
+- ⬜ Checkbox, Toggle, and other stateful components
+
+## Rule #10: Icons — always use DS icons
+
+Icons live in `packages/ds/src/icons/svg/{iconName}/Size={sm|md|lg|xlg}.svg`.
+
+- **Name format**: camelCase — `heartOutlined`, `chevronArrowRight`, `sorting`, `add`
+- **Size mapping**: `sm=12px`, `md=16px`, `lg=24px`, `xlg=32px` — `<Icon size={24} />` picks the right file automatically
+- `fill="#141414"` is replaced with `currentColor` at load time — `color` prop works as expected
+- Browse all 222 icons in `iconCatalog.ts` organized by category
+
+**Common mappings from old MDI names:**
+| MDI (never use)           | DS (use this)        |
+|---------------------------|----------------------|
+| `chevron-left/right`      | `chevronArrowLeft/Right` |
+| `plus`                    | `add`                |
+| `check`                   | `checkOutlined`      |
+| `heart-outline`           | `heartOutlined`      |
+| `account`                 | `user`               |
+| `arrow-up-down`           | `sorting`            |
+| `map-marker-outline`      | `localPin`           |
+| `credit-card-outline`     | `creditCard`         |
+| `bell-outline`            | `bell`               |
+| `file-document-outline`   | `paper`              |
+
+## Rule #11: Figma is the source of truth
 
 - Always check Figma for exact values before implementing or fixing components
 - File key for components: `kcmeyj2SAZqHF0s8Nayjor` (branch `KB95zjXOg5PPMX5uPPOyBW`)
