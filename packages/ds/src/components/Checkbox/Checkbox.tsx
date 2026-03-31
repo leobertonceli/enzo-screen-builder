@@ -41,7 +41,7 @@ export function Checkbox({ state = 'unselected', disabled = false, onChange, cla
         boxSizing: 'border-box',
       }}
     >
-      {isSelected && <Icon name="check" size={16} color="var(--color-gray-white)" />}
+      {isSelected && <Icon name="checkOutlined" size={16} color="var(--color-gray-white)" />}
       {isIndeterminate && (
         <div style={{ width: 12, height: 2, backgroundColor: 'var(--color-gray-white)', borderRadius: 1 }} />
       )}

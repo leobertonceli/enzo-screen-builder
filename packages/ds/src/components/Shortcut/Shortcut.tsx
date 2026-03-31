@@ -106,7 +106,7 @@ export function Shortcut({
           <>
             {/* Top: icon */}
             <div style={{ width: 24, height: 24 }}>
-              {icon ?? <Icon name="checkbox-marked-outline" size={24} color={iconColor} />}
+              {icon ?? <Icon name="checkOutlined" size={24} color={iconColor} />}
             </div>
 
             {/* Bottom: text + chevron */}
@@ -139,7 +139,7 @@ export function Shortcut({
                   {title}
                 </p>
               </div>
-              <Icon name="chevron-right" size={16} color={iconColor} />
+              <Icon name="chevronArrowRight" size={16} color={iconColor} />
             </div>
           </>
         )}
@@ -177,7 +177,7 @@ export function Shortcut({
           {/* Top: icon + badge */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ width: 24, height: 24 }}>
-              {icon ?? <Icon name="heart-outline" size={24} color={iconColor} />}
+              {icon ?? <Icon name="heartOutlined" size={24} color={iconColor} />}
             </div>
             {showBadge && <Badge count={badgeCount} />}
           </div>

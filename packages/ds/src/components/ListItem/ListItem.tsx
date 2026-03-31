@@ -32,7 +32,7 @@ export interface ListItemProps {
 }
 
 const ChevronRight = () => (
-  <Icon name="chevron-right" size={24} color="var(--color-content-primary)" />
+  <Icon name="chevronArrowRight" size={24} color="var(--color-content-primary)" />
 )
 
 export function ListItem({
@@ -137,7 +137,7 @@ export function ListItem({
           {leftSide === 'icon' && (
             <div className={cn('shrink-0 size-6 flex items-center justify-center', hasDescription && 'self-start')}>
               {icon ?? (
-                <Icon name="circle" size={24} color="var(--color-content-primary)" />
+                <Icon name="circleFill" size={24} color="var(--color-content-primary)" />
               )}
             </div>
           )}

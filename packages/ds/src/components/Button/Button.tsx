@@ -20,9 +20,9 @@ export interface ButtonProps {
   htmlType?: 'button' | 'submit' | 'reset'
 }
 
-const ChevronLeft = () => <Icon name="chevron-left" size={20} color="currentColor" />
-const ChevronRight = () => <Icon name="chevron-right" size={20} color="currentColor" />
-const PlusIcon = () => <Icon name="plus" size={20} color="currentColor" />
+const ChevronLeft = () => <Icon name="chevronArrowLeft" size={20} color="currentColor" />
+const ChevronRight = () => <Icon name="chevronArrowRight" size={20} color="currentColor" />
+const PlusIcon = () => <Icon name="add" size={20} color="currentColor" />
 
 const Spinner = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-spin">

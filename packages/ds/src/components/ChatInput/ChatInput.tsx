@@ -112,7 +112,7 @@ function PlusButton({ disabled = false }: { disabled?: boolean }) {
       flexShrink: 0,
       opacity: disabled ? 0.3 : 1,
     }}>
-      <Icon name="plus" size={20} color="var(--color-content-primary)" />
+      <Icon name="add" size={20} color="var(--color-content-primary)" />
     </div>
   )
 }

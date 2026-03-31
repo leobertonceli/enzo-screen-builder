@@ -142,7 +142,7 @@ export function NavBar({
           {iconLeft ? (
             <div style={{ paddingLeft: 'var(--spacing-04)', flexShrink: 0 }}>
               <button style={iconButtonStyle} onClick={onBack} aria-label="Voltar">
-                <Icon name="chevron-left" size={24} color="var(--color-content-primary)" />
+                <Icon name="chevronArrowLeft" size={24} color="var(--color-content-primary)" />
               </button>
             </div>
           ) : (

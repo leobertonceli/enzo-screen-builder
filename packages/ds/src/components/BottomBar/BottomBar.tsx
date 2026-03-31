@@ -142,7 +142,7 @@ export function BottomBar({
           {userInitials}
         </p>
       ) : (
-        <Icon name="account" size={16} color={isMeuPlano ? 'var(--color-gray-white)' : INACTIVE_COLOR} />
+        <Icon name="user" size={16} color={isMeuPlano ? 'var(--color-gray-white)' : INACTIVE_COLOR} />
       )}
     </div>
   )

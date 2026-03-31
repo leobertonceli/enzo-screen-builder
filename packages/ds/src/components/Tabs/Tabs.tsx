@@ -158,7 +158,7 @@ export function Tabs({
             }}
           >
             <Icon
-              name="arrow-up-down"
+              name="sorting"
               size={16}
               color={isActive ? 'var(--color-brand)' : 'var(--color-content-primary)'}
             />
