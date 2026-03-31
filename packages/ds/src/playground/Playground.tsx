@@ -42,7 +42,8 @@ import { AgendamentoConsultaFlowScreen } from '../screens/AgendamentoConsultaFlo
 import { SolicitacaoExameFlowScreen }   from '../screens/SolicitacaoExameFlowScreen'
 import { BuscaEspecialistasScreen }    from '../screens/BuscaEspecialistasScreen'
 import { ExtratoCoparticipacaoScreen } from '../screens/ExtratoCoparticipacaoScreen'
-import { ReembolsoFlowScreen }         from '../screens/ReembolsoFlowScreen'
+import { ReembolsoFlowScreen }              from '../screens/ReembolsoFlowScreen'
+import { CadastroDependenteFlowScreen }    from '../screens/CadastroDependenteFlowScreen'
 import type { ComponentConfig } from './types'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
@@ -519,6 +520,7 @@ export function Playground() {
 
   /* templates config */
   const templates = [
+    { name: 'Cadastro de Dependente',  component: CadastroDependenteFlowScreen },
     { name: 'Reembolso Flow',          component: ReembolsoFlowScreen },
     { name: 'Extrato Coparticipação',  component: ExtratoCoparticipacaoScreen },
     { name: 'Busca de Especialistas', component: BuscaEspecialistasScreen },

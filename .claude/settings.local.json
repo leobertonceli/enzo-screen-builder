@@ -103,7 +103,13 @@
       "Bash(node -e \":*)",
       "Bash(node --input-type=module:*)",
       "Bash(node '/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds-mcp/server.mjs')",
-      "Bash(cd /Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds)"
+      "Bash(cd /Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds)",
+      "Bash(find '/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds/src' -name ai* -o -name *ai*service*)",
+      "Bash(for comp:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds/src/components/$comp/**)",
+      "Bash(npx vite:*)",
+      "Bash(for size:*)"
     ]
   }
 }

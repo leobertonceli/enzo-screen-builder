@@ -28,7 +28,7 @@ export const TabsConfig: ComponentConfig = {
     { label: 'Filter — active',   values: { style: 'filter', activeIndex: '0', showBadge: true  } },
     { label: 'Filter — inactive', values: { style: 'filter', activeIndex: '0', showBadge: false } },
   ],
-  render: (p) => {
+  render: (p, onChange) => {
     const items = p.showBadge
       ? [{ label: 'Label', badge: 1 }, { label: 'Label', badge: 1 }, { label: 'Label', badge: 3 }]
       : [{ label: 'Label' }, { label: 'Label' }, { label: 'Label' }]
@@ -38,6 +38,7 @@ export const TabsConfig: ComponentConfig = {
           style={p.style as any}
           items={items}
           activeIndex={Number(p.activeIndex)}
+          onChange={(i) => onChange('activeIndex', String(i))}
         />
       </div>
     )

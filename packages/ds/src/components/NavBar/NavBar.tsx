@@ -24,20 +24,6 @@ export interface NavBarProps {
   onChange?: (key: string, val: unknown) => void
 }
 
-const statusBarStyle: CSSProperties = {
-  height: 44,
-  background: 'var(--color-surface)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingLeft: 'var(--spacing-06)',
-  paddingRight: 'var(--spacing-06)',
-  fontFamily: 'var(--font-family-base)',
-  fontSize: 'var(--font-size-xs)',
-  fontWeight: 'var(--font-weight-medium)',
-  color: 'var(--color-content-primary)',
-}
-
 const iconButtonStyle: CSSProperties = {
   width: 40,
   height: 40,
@@ -57,17 +43,23 @@ const truncate: CSSProperties = {
   whiteSpace: 'nowrap',
 }
 
-function StatusBar() {
-  return (
-    <div style={statusBarStyle}>
-      <span>9:41</span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-01)' }}>
-        <Icon name="signal-cellular-3" size={16} color="var(--color-content-primary)" />
-        <Icon name="wifi" size={16} color="var(--color-content-primary)" />
-        <Icon name="battery" size={16} color="var(--color-content-primary)" />
-      </div>
-    </div>
-  )
+// Shared title/description styles — identical across page and modal
+const titleStyle: CSSProperties = {
+  ...truncate,
+  fontFamily: 'var(--font-family-base)',
+  fontSize: 'var(--font-size-sm)',
+  fontWeight: 'var(--font-weight-regular)',
+  color: 'var(--color-content-primary)',
+  lineHeight: 'var(--line-height-title-sm)',
+}
+
+const descriptionStyle: CSSProperties = {
+  ...truncate,
+  fontFamily: 'var(--font-family-base)',
+  fontSize: 'var(--font-size-xs)',
+  fontWeight: 'var(--font-weight-regular)',
+  color: 'var(--color-content-secondary)',
+  lineHeight: 'var(--line-height-title-sm)',
 }
 
 function RightIcons({
@@ -131,14 +123,13 @@ export function NavBar({
   onRightIcon2,
   onChange,
 }: NavBarProps) {
-  const hasText = (showTitle && title) || (showDescription && description)
-  const contentHeight = hasText && showDescription && description ? 72 : 60
+  const hasDesc = showTitle && showDescription && !!description
+  const contentHeight = hasDesc ? 72 : 60
 
   // ── PAGE type ──────────────────────────────────────────────────────────────
   if (type === 'page') {
     return (
       <div style={{ width: 375, background: 'var(--color-surface)', fontFamily: 'var(--font-family-base)' }}>
-        <StatusBar />
         <div style={{
           height: contentHeight,
           display: 'flex',
@@ -147,7 +138,7 @@ export function NavBar({
           position: 'relative',
           background: 'var(--color-surface)',
         }}>
-          {/* Left — icon or 24px margin spacer */}
+          {/* Left — back icon or spacer */}
           {iconLeft ? (
             <div style={{ paddingLeft: 'var(--spacing-04)', flexShrink: 0 }}>
               <button style={iconButtonStyle} onClick={onBack} aria-label="Voltar">
@@ -158,8 +149,8 @@ export function NavBar({
             <div style={{ width: 'var(--spacing-06)', flexShrink: 0 }} />
           )}
 
-          {/* Center — absolutely positioned so it's always centered on 375px */}
-          {hasText && (
+          {/* Center — absolutely positioned */}
+          {showTitle && title && (
             <div style={{
               position: 'absolute',
               left: '50%',
@@ -170,42 +161,18 @@ export function NavBar({
               maxWidth: 200,
               pointerEvents: 'none',
             }}>
-              {showTitle && title && (
-                <span
-                  {...editable(onChange, 'title')}
-                  style={{
-                    ...truncate,
-                    maxWidth: 200,
-                    fontFamily: 'var(--font-family-base)',
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-content-primary)',
-                    lineHeight: 'var(--line-height-title-sm)',
-                  }}
-                >
-                  {title}
-                </span>
-              )}
-              {showTitle && showDescription && description && (
-                <span
-                  {...editable(onChange, 'description')}
-                  style={{
-                    ...truncate,
-                    maxWidth: 200,
-                    fontFamily: 'var(--font-family-base)',
-                    fontSize: 'var(--font-size-xs)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-content-secondary)',
-                    lineHeight: 'var(--line-height-title-sm)',
-                  }}
-                >
+              <span {...editable(onChange, 'title')} style={titleStyle}>
+                {title}
+              </span>
+              {hasDesc && (
+                <span {...editable(onChange, 'description')} style={descriptionStyle}>
                   {description}
                 </span>
               )}
             </div>
           )}
 
-          {/* Right icons — pushed to the right */}
+          {/* Right icons */}
           <div style={{ marginLeft: 'auto' }}>
             <RightIcons
               count={rightIcons}
@@ -223,7 +190,6 @@ export function NavBar({
   // ── MODAL type ─────────────────────────────────────────────────────────────
   return (
     <div style={{ width: 375, background: 'var(--color-surface)', fontFamily: 'var(--font-family-base)' }}>
-      <StatusBar />
       <div style={{
         height: contentHeight,
         display: 'flex',
@@ -233,40 +199,15 @@ export function NavBar({
         background: 'var(--color-surface)',
         gap: 'var(--spacing-03)',
       }}>
-        {/* Left — title + description, left-aligned, fills available space */}
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          minWidth: 0,
-        }}>
+        {/* Left — title + description, left-aligned */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           {showTitle && title && (
-            <span
-              {...editable(onChange, 'title')}
-              style={{
-                ...truncate,
-                fontFamily: 'var(--font-family-base)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-regular)',
-                color: 'var(--color-content-primary)',
-                lineHeight: 'var(--line-height-title-sm)',
-              }}
-            >
+            <span {...editable(onChange, 'title')} style={titleStyle}>
               {title}
             </span>
           )}
-          {showTitle && showDescription && description && (
-            <span
-              {...editable(onChange, 'description')}
-              style={{
-                ...truncate,
-                fontFamily: 'var(--font-family-base)',
-                fontSize: 'var(--font-size-xs)',
-                fontWeight: 'var(--font-weight-regular)',
-                color: 'var(--color-content-secondary)',
-                lineHeight: 'var(--line-height-title-sm)',
-              }}
-            >
+          {hasDesc && (
+            <span {...editable(onChange, 'description')} style={descriptionStyle}>
               {description}
             </span>
           )}

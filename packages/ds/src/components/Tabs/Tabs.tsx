@@ -37,7 +37,7 @@ function TabBadge({ count, isActive }: { count: number; isActive: boolean }) {
     }}>
       <span style={{
         fontFamily: 'var(--font-family-base)',
-        fontSize: 'var(--font-size-xxxs)',
+        fontSize: 'var(--font-size-xs)',
         fontWeight: 'var(--font-weight-medium)',
         lineHeight: 1,
         color: isActive ? 'var(--color-gray-white)' : 'var(--color-content-tertiary)',
@@ -63,11 +63,13 @@ export function Tabs({
       <div
         className={className}
         style={{
+          position: 'relative',
           display: 'flex',
           flexDirection: 'row',
           width: '100%',
           height: 48,
           backgroundColor: 'var(--color-gray-white)',
+          borderBottom: '1px solid var(--color-stroke)',
         }}
       >
         {items.map((item, i) => {
@@ -85,14 +87,12 @@ export function Tabs({
                 gap: 'var(--spacing-02)',
                 background: 'none',
                 border: 'none',
-                borderBottom: isActive
-                  ? '2px solid var(--color-brand)'
-                  : '1px solid var(--color-stroke)',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-family-base)',
                 fontSize: 'var(--font-size-xs)',
                 fontWeight: 'var(--font-weight-regular)',
                 color: isActive ? 'var(--color-content-primary)' : 'var(--color-content-tertiary)',
+                transition: 'color 0.3s ease',
                 padding: '0 var(--spacing-04)',
                 whiteSpace: 'nowrap',
               }}
@@ -104,6 +104,19 @@ export function Tabs({
             </button>
           )
         })}
+
+        {/* Sliding active indicator */}
+        <div style={{
+          position: 'absolute',
+          bottom: -1,
+          left: `${(activeIndex / items.length) * 100}%`,
+          width: `${100 / items.length}%`,
+          height: 2,
+          backgroundColor: 'var(--color-brand)',
+          transition: 'left 0.35s cubic-bezier(0.34, 1.4, 0.64, 1)',
+          borderRadius: 'var(--radius-pill)',
+          zIndex: 1,
+        }} />
       </div>
     )
   }
@@ -141,6 +154,7 @@ export function Tabs({
               background: isActive ? 'var(--color-brand-subtle)' : 'var(--color-gray-10)',
               cursor: 'pointer',
               flexShrink: 0,
+              transition: 'background 0.3s ease, border-color 0.3s ease',
             }}
           >
             <Icon
@@ -153,6 +167,7 @@ export function Tabs({
               fontSize: 'var(--font-size-sm)',
               fontWeight: 'var(--font-weight-regular)',
               color: isActive ? 'var(--color-brand)' : 'var(--color-content-primary)',
+              transition: 'color 0.3s ease',
               whiteSpace: 'nowrap',
             }}>
               {item.label}

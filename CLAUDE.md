@@ -76,7 +76,16 @@ Always use inline `style={{ }}` props for token-based values instead.
 - Radio pills work well for 2–4 options; beyond that they wrap and clutter the panel
 - Example: a `state` control with 7 options → `select`; an `items` control with 4 options → `radio`
 
-## Rule #6: Figma is the source of truth
+## Rule #6: All DS components must be interactive
+
+Every component in the design system must work as a functional prototype, not just a visual layer:
+- Stateful components (tabs, toggles, inputs, selectors) MUST manage their own internal state via `useState`
+- Accept an optional controlled prop (e.g. `selected`, `value`) and sync with `useEffect`
+- All clickable elements MUST have real `onClick` handlers — never decorative-only
+- Add CSS transitions (`transition: 'X 0.2s ease'`) on color, opacity, transform for state changes
+- This principle applies to every new or updated component going forward
+
+## Rule #7: Figma is the source of truth
 
 - Always check Figma for exact values before implementing or fixing components
 - File key for components: `kcmeyj2SAZqHF0s8Nayjor` (branch `KB95zjXOg5PPMX5uPPOyBW`)

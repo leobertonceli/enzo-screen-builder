@@ -1,4 +1,4 @@
-import { type CSSProperties, useState } from 'react'
+import { type CSSProperties, useState, useEffect } from 'react'
 import { Icon } from '../../icons/Icon'
 
 export type TextFieldVariant = 'Idle' | 'Focus' | 'Filled' | 'Disable'
@@ -17,6 +17,8 @@ export interface TextFieldProps {
   onChange?: (key: string, val: unknown) => void
   /** Interactive mode: real input, self-managed focus/filled state */
   onValueChange?: (value: string) => void
+  /** Called when the field gains focus (interactive mode only) */
+  onFocusChange?: (focused: boolean) => void
 }
 
 let caretKeyframesInjected = false
@@ -64,12 +66,22 @@ export function TextField({
   width = 327,
   onChange,
   onValueChange,
+  onFocusChange,
 }: TextFieldProps) {
   injectCaretKeyframes()
 
   // ── Interactive mode state ──
   const [internalValue, setInternalValue] = useState(valueProp)
   const [focused, setFocused] = useState(false)
+
+  // Sync internalValue when parent changes value prop (e.g. controls switching to Filled)
+  // Only when not focused so we don't override the user's typing
+  useEffect(() => {
+    if (!focused) {
+      setInternalValue(valueProp)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueProp])
 
   const isInteractive = !!onValueChange
   const currentValue = isInteractive ? internalValue : valueProp
@@ -183,8 +195,21 @@ export function TextField({
           {/* Value / caret row */}
           {isFloating ? (
             isFocus ? (
-              /* Focus: blinking caret placeholder (visual only — real cursor is in <input>) */
-              isInteractive ? null : (
+              /* Focus: real cursor is in the <input> overlay.
+                 Show currentValue in the span so typed text is visible.
+                 Empty = &nbsp; (transparent) to keep layout height for label. */
+              isInteractive ? (
+                <span style={{
+                  ...font,
+                  fontSize: 'var(--font-size-sm)',
+                  color: currentValue ? valueColor : 'transparent',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  userSelect: 'none',
+                  pointerEvents: 'none',
+                }}>{currentValue || '\u00A0'}</span>
+              ) : (
                 <span style={{
                   ...font,
                   fontSize: 'var(--font-size-sm)',
@@ -245,19 +270,34 @@ export function TextField({
               setInternalValue(v)
               onValueChange(v)
             }}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
+            onFocus={() => { setFocused(true); onFocusChange?.(true) }}
+            onBlur={() => { setFocused(false); onFocusChange?.(false) }}
             style={{
+              // Position the input so its TOP edge is exactly at the value row
+              // instead of relying on paddingTop (which causes cursor baseline misalignment)
               position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0,
+              top: isFloating ? 33 : 25,  // aligns with value row center
+              left: 0,
+              right: 0,
+              height: 17,                  // matches the 14px text at line-height 1.24 ≈ 17px
+              color: 'transparent',
+              caretColor: 'var(--color-brand)',
+              background: 'transparent',
               border: 'none',
               outline: 'none',
+              appearance: 'none',
+              WebkitAppearance: 'none',
+              WebkitBoxShadow: '0 0 0px 1000px transparent inset',
               cursor: isDisable ? 'not-allowed' : 'text',
               zIndex: 2,
-              backgroundColor: 'transparent',
+              fontSize: 'var(--font-size-sm)',
+              fontFamily: 'var(--font-family-base)',
+              lineHeight: 'var(--line-height-title)',
+              padding: 0,
+              paddingLeft: leftIcon ? 56 : 20,
+              paddingRight: rightIcon ? 56 : 20,
+              margin: 0,
+              boxSizing: 'border-box',
             }}
           />
         )}

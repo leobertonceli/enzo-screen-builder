@@ -1,67 +1,16 @@
 // @refresh reset
-import React, { useState, useEffect } from 'react'
 import { BottomBar } from '../../components/BottomBar/BottomBar'
-import type { BottomBarSelected } from '../../components/BottomBar/BottomBar'
 import type { ComponentConfig } from '../types'
 import userPhoto from '../../assets/navbar-user-photo.png'
-
-function resolvePhoto(p: Record<string, unknown>) {
-  const url = p.userImageUrl as string
-  return url || (p.meuPlanoMode === 'photo' ? userPhoto : undefined)
-}
-
-function InteractiveBottomBar(p: Record<string, unknown>) {
-  const [active, setActive] = useState(p.selected as BottomBarSelected)
-  useEffect(() => { setActive(p.selected as BottomBarSelected) }, [p.selected])
-  return (
-    <BottomBar
-      selected={active}
-      onTabSelect={setActive}
-      tab1Label={p.tab1Label as string}
-      tab2Label={p.tab2Label as string}
-      tab3Label={p.tab3Label as string}
-      tab4Label={p.tab4Label as string}
-      tab1Icon={p.tab1Icon as string}
-      tab2Icon={p.tab2Icon as string}
-      tab3Icon={p.tab3Icon as string}
-      meuPlanoMode={p.meuPlanoMode as any}
-      userInitials={p.userInitials as string || undefined}
-      userImageUrl={resolvePhoto(p)}
-      width={375}
-    />
-  )
-}
-
-function SlotBottomBar(p: Record<string, unknown>) {
-  const [active, setActive] = useState(p.selected as BottomBarSelected)
-  useEffect(() => { setActive(p.selected as BottomBarSelected) }, [p.selected])
-  return (
-    <BottomBar
-      selected={active}
-      onTabSelect={setActive}
-      tab1Label={p.tab1Label as string}
-      tab2Label={p.tab2Label as string}
-      tab3Label={p.tab3Label as string}
-      tab4Label={p.tab4Label as string}
-      tab1Icon={p.tab1Icon as string}
-      tab2Icon={p.tab2Icon as string}
-      tab3Icon={p.tab3Icon as string}
-      meuPlanoMode={p.meuPlanoMode as any}
-      userInitials={p.userInitials as string || undefined}
-      userImageUrl={resolvePhoto(p)}
-      width="100%"
-    />
-  )
-}
 
 export const BottomBarConfig: ComponentConfig = {
   name: 'BottomBar',
   presets: [
-    { label: 'Alice Agora', values: { selected: 'Alice Agora', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Minha saúde', values: { selected: 'Minha saúde', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Rede Alice',  values: { selected: 'Rede Alice',  tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
+    { label: 'Alice Agora',        values: { selected: 'Alice Agora',  tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
+    { label: 'Minha saúde',        values: { selected: 'Minha saúde',  tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
+    { label: 'Rede Alice',         values: { selected: 'Rede Alice',   tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
     { label: 'Meu plano — iniciais', values: { selected: 'Meu plano', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'initials', userInitials: 'LB', userImageUrl: '' } },
-    { label: 'Meu plano — foto',    values: { selected: 'Meu plano', tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'photo',    userInitials: '',   userImageUrl: '' } },
+    { label: 'Meu plano — foto',   values: { selected: 'Meu plano',   tab1Label: 'Alice Agora', tab2Label: 'Minha saúde', tab3Label: 'Rede Alice', tab4Label: 'Meu plano', tab1Icon: 'heart', tab2Icon: 'pulse', tab3Icon: 'map-marker', meuPlanoMode: 'photo',    userInitials: '',   userImageUrl: '' } },
   ],
   controls: {
     selected:     { type: 'radio',       label: 'Active tab',  options: ['Alice Agora', 'Minha saúde', 'Rede Alice', 'Meu plano'], default: 'Alice Agora' },
@@ -76,6 +25,37 @@ export const BottomBarConfig: ComponentConfig = {
     userInitials: { type: 'text',        label: 'Iniciais',    default: 'LB',         showWhen: { field: 'meuPlanoMode', values: ['initials'] } },
     userImageUrl: { type: 'text',        label: 'Photo URL',   default: '',           showWhen: { field: 'meuPlanoMode', values: ['photo'] } },
   },
-  render: (p) => <InteractiveBottomBar {...p} />,
-  slotRender: (p) => <SlotBottomBar {...p} />,
+  render: (p, onChange) => (
+    <BottomBar
+      selected={p.selected as any}
+      tab1Label={p.tab1Label as string}
+      tab2Label={p.tab2Label as string}
+      tab3Label={p.tab3Label as string}
+      tab4Label={p.tab4Label as string}
+      tab1Icon={p.tab1Icon as string}
+      tab2Icon={p.tab2Icon as string}
+      tab3Icon={p.tab3Icon as string}
+      meuPlanoMode={p.meuPlanoMode as any}
+      userInitials={p.userInitials as string || undefined}
+      userImageUrl={(p.userImageUrl as string) || (p.meuPlanoMode === 'photo' ? userPhoto : undefined)}
+      width={375}
+      onTabSelect={(tab) => onChange('selected', tab)}
+    />
+  ),
+  slotRender: (p) => (
+    <BottomBar
+      selected={p.selected as any}
+      tab1Label={p.tab1Label as string}
+      tab2Label={p.tab2Label as string}
+      tab3Label={p.tab3Label as string}
+      tab4Label={p.tab4Label as string}
+      tab1Icon={p.tab1Icon as string}
+      tab2Icon={p.tab2Icon as string}
+      tab3Icon={p.tab3Icon as string}
+      meuPlanoMode={p.meuPlanoMode as any}
+      userInitials={p.userInitials as string || undefined}
+      userImageUrl={(p.userImageUrl as string) || (p.meuPlanoMode === 'photo' ? userPhoto : undefined)}
+      width="100%"
+    />
+  ),
 }
