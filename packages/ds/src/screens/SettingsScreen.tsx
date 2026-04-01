@@ -64,7 +64,7 @@ export function SettingsScreen() {
               }
               rightIconElement={
                 <Icon
-                  name="chevron-right"
+                  name="chevronArrowRight"
                   size={24}
                   color="var(--color-content-secondary)"
                 />

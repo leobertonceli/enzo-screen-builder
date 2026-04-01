@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type TagVariant = 'Red' | 'Magenta' | 'Blue' | 'Green' | 'Orange' | 'Grey' | 'Disabled'
 export type TagIconMode = 'Primary' | 'Semantic' | 'No icon'
@@ -57,7 +58,7 @@ export function Tag({ variant = 'Red', icon = 'Primary', label = 'Label' }: TagP
       gap: hasIcon ? 'var(--spacing-01)' : undefined,
       flexShrink: 0,
     }}>
-      {hasIcon && <Icon name={cfg.iconName} size={16} color={iconColor} />}
+      {hasIcon && <Icon name={cfg.iconName} size={ICON_SIZE.sm} color={iconColor} />}
       <p style={{ ...labelStyle, color: cfg.textColor }}>
         {label}
       </p>

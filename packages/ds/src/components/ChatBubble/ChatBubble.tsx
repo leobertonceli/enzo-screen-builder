@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type ChatBubbleVariant = 'text' | 'reply' | 'document' | 'media'
 
@@ -199,7 +200,7 @@ export function ChatBubble({
               flexShrink: 0, width: '100%', boxSizing: 'border-box',
             }}>
               <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-gray-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Icon name="paper" size={20} color="var(--color-content-primary)" />
+                <Icon name="paper" size={ICON_SIZE.md} color="var(--color-content-primary)" />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
                 <p style={{ ...font, fontSize: 'var(--font-size-xs)', color: 'var(--color-content-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{fileName}</p>

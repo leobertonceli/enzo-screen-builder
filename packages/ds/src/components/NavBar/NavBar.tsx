@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type NavBarType = 'page' | 'modal'
 
@@ -16,6 +17,8 @@ export interface NavBarProps {
   rightIcons?: 0 | 1 | 2
   rightIcon1?: string
   rightIcon2?: string
+  rightIcon1Size?: number
+  rightIcon2Size?: number
   // callbacks
   onBack?: () => void
   onRightIcon1?: () => void
@@ -66,12 +69,16 @@ function RightIcons({
   count,
   icon1,
   icon2,
+  icon1Size = ICON_SIZE.lg,
+  icon2Size = ICON_SIZE.lg,
   onIcon1,
   onIcon2,
 }: {
   count: 0 | 1 | 2
   icon1: string
   icon2: string
+  icon1Size?: number
+  icon2Size?: number
   onIcon1?: () => void
   onIcon2?: () => void
 }) {
@@ -80,12 +87,12 @@ function RightIcons({
     <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
       {count >= 1 && (
         <button style={iconButtonStyle} onClick={onIcon1} aria-label="Ação 1">
-          <Icon name={icon1} size={24} color="var(--color-content-primary)" />
+          <Icon name={icon1} size={icon1Size} color="var(--color-content-primary)" />
         </button>
       )}
       {count === 2 && (
         <button style={iconButtonStyle} onClick={onIcon2} aria-label="Ação 2">
-          <Icon name={icon2} size={24} color="var(--color-content-primary)" />
+          <Icon name={icon2} size={icon2Size} color="var(--color-content-primary)" />
         </button>
       )}
     </div>
@@ -116,8 +123,10 @@ export function NavBar({
   description = 'Descrição',
   iconLeft = true,
   rightIcons = 0,
-  rightIcon1 = 'dots-vertical',
-  rightIcon2 = 'share-variant-outline',
+  rightIcon1 = 'menuKebab',
+  rightIcon2 = 'shareAndroid',
+  rightIcon1Size = ICON_SIZE.lg,
+  rightIcon2Size = ICON_SIZE.lg,
   onBack,
   onRightIcon1,
   onRightIcon2,
@@ -142,7 +151,7 @@ export function NavBar({
           {iconLeft ? (
             <div style={{ paddingLeft: 'var(--spacing-04)', flexShrink: 0 }}>
               <button style={iconButtonStyle} onClick={onBack} aria-label="Voltar">
-                <Icon name="chevronArrowLeft" size={24} color="var(--color-content-primary)" />
+                <Icon name="chevronArrowLeft" size={ICON_SIZE.lg} color="var(--color-content-primary)" />
               </button>
             </div>
           ) : (
@@ -178,6 +187,8 @@ export function NavBar({
               count={rightIcons}
               icon1={rightIcon1}
               icon2={rightIcon2}
+              icon1Size={rightIcon1Size}
+              icon2Size={rightIcon2Size}
               onIcon1={onRightIcon1}
               onIcon2={onRightIcon2}
             />

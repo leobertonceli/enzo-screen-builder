@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type BottomBarSelected = 'Alice Agora' | 'Minha saúde' | 'Rede Alice' | 'Meu plano'
 export type MeuPlanoMode = 'photo' | 'initials'
@@ -13,8 +14,10 @@ export interface BottomBarProps {
   tab3Label?: string
   tab4Label?: string
   tab1Icon?: string
+  tab1ActiveIcon?: string
   tab2Icon?: string
   tab3Icon?: string
+  tab3ActiveIcon?: string
   meuPlanoMode?: MeuPlanoMode
   userInitials?: string
   userImageUrl?: string
@@ -80,9 +83,11 @@ export function BottomBar({
   tab2Label = 'Minha saúde',
   tab3Label = 'Rede Alice',
   tab4Label = 'Meu plano',
-  tab1Icon = 'heart',
+  tab1Icon = 'heartOutlined',
+  tab1ActiveIcon = 'heartFilled',
   tab2Icon = 'pulse',
-  tab3Icon = 'map-marker',
+  tab3Icon = 'localPin',
+  tab3ActiveIcon,
   meuPlanoMode = 'initials',
   userInitials,
   userImageUrl,
@@ -142,7 +147,7 @@ export function BottomBar({
           {userInitials}
         </p>
       ) : (
-        <Icon name="user" size={16} color={isMeuPlano ? 'var(--color-gray-white)' : INACTIVE_COLOR} />
+        <Icon name="user" size={ICON_SIZE.sm} color={isMeuPlano ? 'var(--color-gray-white)' : INACTIVE_COLOR} />
       )}
     </div>
   )
@@ -151,12 +156,9 @@ export function BottomBar({
     <div style={{
       position: 'relative',
       display: 'flex',
-      gap: 'var(--spacing-03)',
       alignItems: 'flex-start',
       paddingTop: 'var(--spacing-02)',
       paddingBottom: 32,
-      paddingLeft: 'var(--spacing-03)',
-      paddingRight: 'var(--spacing-03)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       backgroundColor: 'var(--color-gray-white)',
@@ -167,19 +169,19 @@ export function BottomBar({
         label={tab1Label}
         active={isAlice}
         onClick={() => handleTabSelect('Alice Agora')}
-        icon={<Icon name={tab1Icon} size={24} color={isAlice ? ACTIVE_COLOR : INACTIVE_COLOR} />}
+        icon={<Icon name={isAlice && tab1ActiveIcon ? tab1ActiveIcon : tab1Icon} size={ICON_SIZE.lg} color={isAlice ? ACTIVE_COLOR : INACTIVE_COLOR} />}
       />
       <TabItem
         label={tab2Label}
         active={isSaude}
         onClick={() => handleTabSelect('Minha saúde')}
-        icon={<Icon name={tab2Icon} size={24} color={isSaude ? ACTIVE_COLOR : INACTIVE_COLOR} />}
+        icon={<Icon name={tab2Icon} size={ICON_SIZE.lg} color={isSaude ? ACTIVE_COLOR : INACTIVE_COLOR} />}
       />
       <TabItem
         label={tab3Label}
         active={isRede}
         onClick={() => handleTabSelect('Rede Alice')}
-        icon={<Icon name={tab3Icon} size={24} color={isRede ? ACTIVE_COLOR : INACTIVE_COLOR} />}
+        icon={<Icon name={isRede && tab3ActiveIcon ? tab3ActiveIcon : tab3Icon} size={ICON_SIZE.lg} color={isRede ? ACTIVE_COLOR : INACTIVE_COLOR} />}
       />
       <TabItem
         label={tab4Label}

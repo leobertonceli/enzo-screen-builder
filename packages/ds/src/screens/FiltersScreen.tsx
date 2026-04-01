@@ -118,7 +118,7 @@ export function FiltersScreen() {
         >
           Filtros
         </h1>
-        <Icon name="magnify" size={24} color="var(--color-content-primary)" />
+        <Icon name="search" size={24} color="var(--color-content-primary)" />
       </div>
 
       {/* Category Chips */}
@@ -203,7 +203,7 @@ export function FiltersScreen() {
             }}
           >
             <Icon
-              name="filter-off"
+              name="menuFilter"
               size={48}
               color="var(--color-content-tertiary)"
             />

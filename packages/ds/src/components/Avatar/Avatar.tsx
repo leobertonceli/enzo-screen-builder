@@ -63,7 +63,7 @@ export function Avatar({
           overflow: 'hidden',
         }}>
           <Icon
-            name="account-circle-outline"
+            name="user"
             size={iconSize}
             color="var(--color-content-secondary)"
           />

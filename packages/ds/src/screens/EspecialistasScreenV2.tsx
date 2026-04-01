@@ -16,8 +16,8 @@ function MissingTag({ label }: { label: string }) {
 }
 
 const consultas = [
-  { key: 'isabella', title: 'Dra. Isabella Moreira', description: 'Clínico geral · Última consulta: 04/03', icon: 'account-outline' },
-  { key: 'pedro', title: 'Dr. Pedro Alvares', description: 'Ortopedia · Última consulta: 12/02', icon: 'account-outline' },
+  { key: 'isabella', title: 'Dra. Isabella Moreira', description: 'Clínico geral · Última consulta: 04/03', icon: 'user' },
+  { key: 'pedro', title: 'Dr. Pedro Alvares', description: 'Ortopedia · Última consulta: 12/02', icon: 'user' },
 ]
 
 export function EspecialistasScreenV2() {
@@ -42,7 +42,7 @@ export function EspecialistasScreenV2() {
           className="flex items-center"
           style={{ padding: 'var(--spacing-04) var(--spacing-06)' }}
         >
-          <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+          <Icon name="arrowLeft" size={24} color="var(--color-content-primary)" />
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export function EspecialistasScreenV2() {
             subtitle="Tire suas dúvidas sobre consultas online e presenciais"
             showSubtitle
             leftAsset
-            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            leftIcon={<Icon name="help" size={20} color="var(--color-content-primary)" />}
             rightAsset={false}
             action="link"
             linkLabel="Saiba mais"

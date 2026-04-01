@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { cn } from '../../utils/cn'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type ListItemSize = 'large' | 'small'
 export type ListItemState = 'default' | 'pressed' | 'loading'
@@ -32,7 +33,7 @@ export interface ListItemProps {
 }
 
 const ChevronRight = () => (
-  <Icon name="chevronArrowRight" size={24} color="var(--color-content-primary)" />
+  <Icon name="chevronArrowRight" size={ICON_SIZE.lg} color="var(--color-content-primary)" />
 )
 
 export function ListItem({
@@ -137,7 +138,7 @@ export function ListItem({
           {leftSide === 'icon' && (
             <div className={cn('shrink-0 size-6 flex items-center justify-center', hasDescription && 'self-start')}>
               {icon ?? (
-                <Icon name="circleFill" size={24} color="var(--color-content-primary)" />
+                <Icon name="circleFill" size={ICON_SIZE.lg} color="var(--color-content-primary)" />
               )}
             </div>
           )}

@@ -1,5 +1,6 @@
 import { type CSSProperties, useState, useEffect } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type TextFieldVariant = 'Idle' | 'Focus' | 'Filled' | 'Disable'
 
@@ -167,8 +168,8 @@ export function TextField({
         }}
       >
         {leftIcon && (
-          <div style={{ flexShrink: 0, zIndex: 1 }}>
-            <Icon name={leftIcon} size={24} color={iconColor} />
+          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name={leftIcon} size={ICON_SIZE.md} color={iconColor} />
           </div>
         )}
 
@@ -254,8 +255,8 @@ export function TextField({
         </div>
 
         {rightIcon && (
-          <div style={{ flexShrink: 0, zIndex: 1 }}>
-            <Icon name={rightIcon} size={24} color={iconColor} />
+          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name={rightIcon} size={ICON_SIZE.md} color={iconColor} />
           </div>
         )}
 
@@ -265,6 +266,10 @@ export function TextField({
             data-tf-id={label}
             value={currentValue}
             disabled={isDisable}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
             onChange={(e) => {
               const v = e.target.value
               setInternalValue(v)
@@ -294,8 +299,8 @@ export function TextField({
               fontFamily: 'var(--font-family-base)',
               lineHeight: 'var(--line-height-title)',
               padding: 0,
-              paddingLeft: leftIcon ? 56 : 20,
-              paddingRight: rightIcon ? 56 : 20,
+              paddingLeft: leftIcon ? 48 : 20,
+              paddingRight: rightIcon ? 48 : 20,
               margin: 0,
               boxSizing: 'border-box',
             }}

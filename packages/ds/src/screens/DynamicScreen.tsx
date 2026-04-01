@@ -42,7 +42,7 @@ export function DynamicScreen({ template }: Props) {
         padding: 'var(--spacing-04) var(--spacing-06)',
         flexShrink: 0,
       }}>
-        <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+        <Icon name="arrowLeft" size={24} color="var(--color-content-primary)" />
       </div>
 
       {/* Page title */}
@@ -89,7 +89,7 @@ function SearchLayout({ template }: { template: GeneratedTemplate }) {
           border: '1px solid var(--color-stroke)',
           backgroundColor: 'var(--color-surface)',
         }}>
-          <Icon name="magnify" size={20} color="var(--color-content-tertiary)" />
+          <Icon name="search" size={20} color="var(--color-content-tertiary)" />
           <span style={{
             fontFamily: 'var(--font-family-label)',
             fontSize: 'var(--font-size-sm)',
@@ -195,7 +195,7 @@ function ListLayout({ template }: { template: GeneratedTemplate }) {
                 leftSide={item.icon ? 'icon' : 'none'}
                 icon={item.icon ? <Icon name={item.icon} size={20} color="var(--color-content-primary)" /> : undefined}
                 rightAsset="icon"
-                rightIconElement={<Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />}
+                rightIconElement={<Icon name="chevronArrowRight" size={20} color="var(--color-content-tertiary)" />}
                 divider={ii < section.items.length - 1}
                 fullWidth
               />
@@ -260,7 +260,7 @@ function HomeLayout({ template }: { template: GeneratedTemplate }) {
                 leftSide="icon"
                 icon={<Icon name={action.icon || 'star-outline'} size={20} color="var(--color-content-primary)" />}
                 rightAsset="icon"
-                rightIconElement={<Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />}
+                rightIconElement={<Icon name="chevronArrowRight" size={20} color="var(--color-content-tertiary)" />}
                 divider={i < quickActions.length - 1}
                 fullWidth
               />
@@ -295,7 +295,7 @@ function HomeLayout({ template }: { template: GeneratedTemplate }) {
                 leftSide={item.icon ? 'icon' : 'none'}
                 icon={item.icon ? <Icon name={item.icon} size={20} color="var(--color-content-primary)" /> : undefined}
                 rightAsset="icon"
-                rightIconElement={<Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />}
+                rightIconElement={<Icon name="chevronArrowRight" size={20} color="var(--color-content-tertiary)" />}
                 divider={ii < section.items.length - 1}
                 fullWidth
               />

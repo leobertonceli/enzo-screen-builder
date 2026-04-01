@@ -298,7 +298,7 @@ function StepEspecialista({
               alignItems: 'center', justifyContent: 'center',
               gap: 'var(--spacing-04)', padding: 'var(--spacing-06)',
             }}>
-              <Icon name="doctor" size={32} color="var(--color-content-tertiary)" />
+              <Icon name="stethoscope" size={32} color="var(--color-content-tertiary)" />
               <p style={{
                 fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
                 color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0,
@@ -420,7 +420,7 @@ function StepDataHora({
           alignItems: 'center', justifyContent: 'center',
           gap: 'var(--spacing-04)', padding: 'var(--spacing-06)',
         }}>
-          <Icon name="calendar-remove-outline" size={32} color="var(--color-content-tertiary)" />
+          <Icon name="calendar" size={32} color="var(--color-content-tertiary)" />
           <p style={{
             fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
             color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0,
@@ -683,7 +683,7 @@ function StepSucesso({
                 backgroundColor: 'var(--color-brand)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Icon name="check" size={36} color="var(--color-gray-white)" />
+                <Icon name="checkOutlined" size={36} color="var(--color-gray-white)" />
               </div>
               <MissingTag label="SuccessIcon — fora do DS" />
             </div>

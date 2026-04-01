@@ -661,7 +661,7 @@ export function Playground() {
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = cBtnHover)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              <Icon name="arrow-left" size={20} color={cText} />
+              <Icon name="arrowLeft" size={20} color={cText} />
             </button>
 
             {/* Component name */}
@@ -704,7 +704,7 @@ export function Playground() {
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = cBtnHover)}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = cBtnBg)}
             >
-              <Icon name="restore" size={20} color={cText} />
+              <Icon name="arrowRepetition" size={20} color={cText} />
             </button>
           </div>
 
@@ -735,7 +735,7 @@ export function Playground() {
                 backgroundColor: 'transparent',
               }}
             >
-              <Icon name="arrow-left" size={20} color={cText} />
+              <Icon name="arrowLeft" size={20} color={cText} />
             </button>
             <button
               onClick={() => hasNext && openComponent(compIndex + 1)}
@@ -748,7 +748,7 @@ export function Playground() {
                 backgroundColor: 'transparent',
               }}
             >
-              <Icon name="arrow-right" size={20} color={cText} />
+              <Icon name="arrowRight" size={20} color={cText} />
             </button>
           </div>
         </div>
@@ -788,7 +788,7 @@ export function Playground() {
             WebkitBackdropFilter: 'blur(12px)',
           }}
         >
-          <Icon name="arrow-left" size={20} color="var(--color-gray-white)" />
+          <Icon name="arrowLeft" size={20} color="var(--color-gray-white)" />
         </button>
 
         {/* Bottom action bar — Editar template + Exportar */}

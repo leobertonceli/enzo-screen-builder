@@ -1,4 +1,5 @@
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type TabsStyle = 'texts' | 'filter'
 
@@ -159,7 +160,7 @@ export function Tabs({
           >
             <Icon
               name="sorting"
-              size={16}
+              size={ICON_SIZE.sm}
               color={isActive ? 'var(--color-brand)' : 'var(--color-content-primary)'}
             />
             <span style={{

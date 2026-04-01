@@ -53,7 +53,7 @@ export function AliceAgoraScreen() {
         flexShrink: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-02)' }}>
-          <Icon name="arrow-left" size={20} color="var(--color-content-primary)" />
+          <Icon name="arrowLeft" size={20} color="var(--color-content-primary)" />
         </div>
 
         <span style={{
@@ -70,7 +70,7 @@ export function AliceAgoraScreen() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer',
         }}>
-          <Icon name="history" size={18} color="var(--color-content-secondary)" />
+          <Icon name="historic" size={18} color="var(--color-content-secondary)" />
         </div>
       </div>
 

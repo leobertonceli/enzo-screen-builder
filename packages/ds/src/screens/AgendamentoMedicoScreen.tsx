@@ -39,7 +39,7 @@ export function AgendamentoMedicoScreen() {
           <TextField
             variant="Idle"
             label="Buscar especialidade ou nome"
-            leftIcon="magnify"
+            leftIcon="search"
             width="100%"
           />
 
@@ -99,7 +99,7 @@ export function AgendamentoMedicoScreen() {
             gap: 'var(--spacing-01)',
             paddingTop: 'var(--spacing-02)',
           }}>
-            <Icon name="information-outline" size={16} color="var(--color-content-tertiary)" />
+            <Icon name="info" size={16} color="var(--color-content-tertiary)" />
             <span style={{
               fontFamily: 'var(--font-family-base)',
               fontSize: 'var(--font-size-xs)',

@@ -149,7 +149,7 @@ function StepExame({ onNext }: StepExameProps) {
             {filtered.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: 'var(--spacing-12) var(--spacing-06)', gap: 'var(--spacing-04)' }}>
-                <Icon name="magnify-close" size={32} color="var(--color-content-tertiary)" />
+                <Icon name="clear" size={32} color="var(--color-content-tertiary)" />
                 <p style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
                   color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0 }}>
                   Nenhum exame encontrado nesta categoria
@@ -317,7 +317,7 @@ function StepLaboratorio({ exame, onNext, onBack }: StepLaboratorioProps) {
             {filtered.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: 'var(--spacing-12) var(--spacing-06)', gap: 'var(--spacing-04)' }}>
-                <Icon name="map-marker-off-outline" size={32} color="var(--color-content-tertiary)" />
+                <Icon name="localPin" size={32} color="var(--color-content-tertiary)" />
                 <p style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
                   color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0 }}>
                   Nenhum laboratório nesta região
@@ -355,7 +355,7 @@ function StepLaboratorio({ exame, onNext, onBack }: StepLaboratorioProps) {
                         description={`${lab.distancia} · ${lab.horario}`}
                         size="small"
                         leftSide="icon"
-                        icon={<Icon name="map-marker-outline" size={20} color="var(--color-content-primary)" />}
+                        icon={<Icon name="localPin" size={20} color="var(--color-content-primary)" />}
                         rightAsset="none"
                         divider={false}
                       />
@@ -367,7 +367,7 @@ function StepLaboratorio({ exame, onNext, onBack }: StepLaboratorioProps) {
                           borderTop: '1px solid var(--color-divider)',
                           backgroundColor: 'var(--color-surface-bg)',
                         }}>
-                          <Icon name="map-marker" size={14} color="var(--color-content-tertiary)"
+                          <Icon name="localPin" size={14} color="var(--color-content-tertiary)"
                             style={{ marginTop: 2, flexShrink: 0 }} />
                           <p style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-xs)',
                             color: 'var(--color-content-secondary)', margin: 0, lineHeight: 1.5 }}>
@@ -489,7 +489,7 @@ function StepRevisao({ exame, lab, onSuccess, onBack }: StepRevisaoProps) {
               description={lab.bairro}
               size="small"
               leftSide="icon"
-              icon={<Icon name="map-marker-outline" size={20} color="var(--color-content-primary)" />}
+              icon={<Icon name="localPin" size={20} color="var(--color-content-primary)" />}
               rightAsset="none"
               divider={true}
             />
@@ -498,7 +498,7 @@ function StepRevisao({ exame, lab, onSuccess, onBack }: StepRevisaoProps) {
               description={lab.distancia}
               size="small"
               leftSide="icon"
-              icon={<Icon name="road-variant" size={20} color="var(--color-content-primary)" />}
+              icon={<Icon name="localPin" size={20} color="var(--color-content-primary)" />}
               rightAsset="none"
               divider={false}
             />
@@ -516,7 +516,7 @@ function StepRevisao({ exame, lab, onSuccess, onBack }: StepRevisaoProps) {
               description="Você receberá uma notificação quando a autorização for aprovada"
               size="small"
               leftSide="icon"
-              icon={<Icon name="clock-outline" size={20} color="var(--color-content-primary)" />}
+              icon={<Icon name="clock" size={20} color="var(--color-content-primary)" />}
               rightAsset="none"
               divider={false}
             />
@@ -588,7 +588,7 @@ function StepProtocolo({ exame, lab, onHome }: StepProtocoloProps) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                <Icon name="check-bold" size={40} color="var(--color-gray-white)" />
+                <Icon name="checkFilled" size={40} color="var(--color-gray-white)" />
               </div>
               <MissingTag label="SuccessIcon — fora do DS" />
             </div>
@@ -636,7 +636,7 @@ function StepProtocolo({ exame, lab, onHome }: StepProtocoloProps) {
               description={`${lab.bairro} · ${lab.distancia}`}
               size="small"
               leftSide="icon"
-              icon={<Icon name="map-marker-outline" size={20} color="var(--color-content-primary)" />}
+              icon={<Icon name="localPin" size={20} color="var(--color-content-primary)" />}
               rightAsset="none"
               divider={false}
             />

@@ -66,7 +66,7 @@ export function AgendamentoConfirmacaoScreen() {
               justifyContent: 'center',
               flexShrink: 0,
             }}>
-              <Icon name="check-circle-outline" size={40} color="var(--color-brand)" />
+              <Icon name="success" size={40} color="var(--color-brand)" />
             </div>
 
             {/* Heading */}

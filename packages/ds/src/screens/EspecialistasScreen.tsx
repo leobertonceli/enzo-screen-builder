@@ -114,7 +114,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
         className="flex items-center"
         style={{ padding: 'var(--spacing-04) var(--spacing-06)' }}
       >
-        <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+        <Icon name="arrowLeft" size={24} color="var(--color-content-primary)" />
       </div>
 
       {/* Page title */}
@@ -151,7 +151,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
               backgroundColor: 'var(--color-surface)',
             }}
           >
-            <Icon name="magnify" size={20} color="var(--color-content-tertiary)" />
+            <Icon name="search" size={20} color="var(--color-content-tertiary)" />
             <Slot id="searchPlaceholder">
               <span
                 style={{
@@ -255,7 +255,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
                     >
                       {doc.specialty} ·
                     </span>
-                    <Icon name="star" size={12} color="var(--color-brand)" />
+                    <Icon name="starFilled" size={12} color="var(--color-brand)" />
                     <span
                       style={{
                         fontFamily: 'var(--font-family-label)',
@@ -285,7 +285,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
 
               {/* Chevron */}
               <div className="flex items-center">
-                <Icon name="chevron-right" size={20} color="var(--color-content-tertiary)" />
+                <Icon name="chevronArrowRight" size={20} color="var(--color-content-tertiary)" />
               </div>
             </div>
           </div>
@@ -321,7 +321,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
               size="small"
               leftSide="icon"
               rightAsset="icon"
-              icon={<Icon name="account-outline" size={20} color="var(--color-content-primary)" />}
+              icon={<Icon name="user" size={20} color="var(--color-content-primary)" />}
               divider={i < c.recentDoctors.length - 1}
             />
           </Slot>
@@ -341,7 +341,7 @@ export function EspecialistasScreen({ content }: { content?: EspecialistasConten
             subtitle={c.helpCard.subtitle}
             showSubtitle
             leftAsset
-            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            leftIcon={<Icon name="help" size={20} color="var(--color-content-primary)" />}
             rightAsset={false}
             action="link"
             linkLabel={c.helpCard.linkLabel}

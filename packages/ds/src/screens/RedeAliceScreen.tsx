@@ -114,7 +114,7 @@ export function RedeAliceScreen() {
               Diogo
             </span>
           </div>
-          <Icon name="bell-outline" size={24} color="var(--color-content-primary)" />
+          <Icon name="bell" size={24} color="var(--color-content-primary)" />
         </div>
       </div>
 

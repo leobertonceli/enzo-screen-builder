@@ -83,7 +83,7 @@ function EmptyView({ onClear }: { onClear: () => void }) {
         backgroundColor: 'var(--color-surface-subtle)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        <Icon name="doctor" size={32} color="var(--color-content-secondary)" />
+        <Icon name="stethoscope" size={32} color="var(--color-content-secondary)" />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-02)' }}>
         <p style={{

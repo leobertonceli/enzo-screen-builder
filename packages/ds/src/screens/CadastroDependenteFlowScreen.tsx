@@ -6,16 +6,43 @@ import { ListItem }  from '../components/ListItem/ListItem'
 import { Callout }   from '../components/Callout/Callout'
 import { Icon }      from '../icons/Icon'
 
+// ─── Motion ───────────────────────────────────────────────────────────────────
+
+const FLOW_STYLES = `
+  @keyframes stepOut {
+    from { opacity: 1; transform: translateY(0);     }
+    to   { opacity: 0; transform: translateY(-10px); }
+  }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(64px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  @keyframes stepInBack {
+    from { opacity: 0; transform: translateY(-48px); }
+    to   { opacity: 1; transform: translateY(0);     }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+`
+
+type Direction = 'forward' | 'back'
+type Phase     = 'enter' | 'exit'
+
+const EXIT_MS  = 280
+const ENTER_MS = 500
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type FlowStep = 'dados-pessoais' | 'endereco' | 'confirmacao' | 'sucesso'
+type FlowStep   = 'dados-pessoais' | 'endereco' | 'confirmacao' | 'sucesso'
 type Parentesco = 'Cônjuge' | 'Filho(a)' | 'Pai/Mãe' | 'Outro'
 
 const PARENTESCOS: { label: Parentesco; icon: string }[] = [
-  { label: 'Cônjuge',  icon: 'heart-outline' },
-  { label: 'Filho(a)', icon: 'baby-face-outline' },
-  { label: 'Pai/Mãe',  icon: 'account-supervisor-outline' },
-  { label: 'Outro',    icon: 'account-outline' },
+  { label: 'Cônjuge',  icon: 'heartOutlined' },
+  { label: 'Filho(a)', icon: 'baby' },
+  { label: 'Pai/Mãe',  icon: 'family' },
+  { label: 'Outro',    icon: 'user' },
 ]
 
 interface DadosPessoais {
@@ -37,6 +64,7 @@ interface Endereco {
 function FlowShell({
   title,
   onBack,
+  onClose,
   canContinue,
   ctaLabel,
   onCta,
@@ -44,6 +72,7 @@ function FlowShell({
 }: {
   title: string
   onBack?: () => void
+  onClose?: () => void
   canContinue: boolean
   ctaLabel: string
   onCta: () => void
@@ -52,39 +81,42 @@ function FlowShell({
   return (
     <div style={{
       width: 375,
-      height: '100vh',
+      height: '100%',
       backgroundColor: 'var(--color-surface)',
       display: 'flex',
       flexDirection: 'column',
       fontFamily: 'var(--font-family-base)',
       overflow: 'hidden',
+      boxSizing: 'border-box',
     }}>
       <NavBar
         type="page"
         title={title}
-        rightIcons={0}
+        rightIcons={onClose ? 1 : 0}
+        rightIcon1="close"
+        rightIcon1Size={20}
+        onRightIcon1={onClose}
         onBack={onBack}
         iconLeft={!!onBack}
       />
 
       {/* Scrollable content */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         <div style={{
           padding: 'var(--spacing-06)',
+          paddingBottom: 'var(--spacing-08)',
           display: 'flex',
           flexDirection: 'column',
           gap: 'var(--spacing-06)',
+          boxSizing: 'border-box',
         }}>
           {children}
-          {/* Bottom breathing room */}
-          <div style={{ height: 'var(--spacing-04)' }} />
         </div>
       </div>
 
-      {/* CTA — always visible at bottom */}
+      {/* CTA — always anchored at bottom */}
       <div style={{
         padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
-        borderTop: '1px solid var(--color-stroke)',
         backgroundColor: 'var(--color-surface)',
         flexShrink: 0,
       }}>
@@ -120,43 +152,79 @@ function SectionTitle({ label }: { label: string }) {
 // ─── Flow controller ──────────────────────────────────────────────────────────
 
 export function CadastroDependenteFlowScreen() {
-  const [step, setStep] = useState<FlowStep>('dados-pessoais')
+  const [displayedStep, setDisplayedStep] = useState<FlowStep>('dados-pessoais')
+  const [direction,     setDirection]     = useState<Direction>('forward')
+  const [phase,         setPhase]         = useState<Phase>('enter')
 
   const [dados, setDados] = useState<DadosPessoais>({
     nome: '', cpf: '', dataNascimento: '', parentesco: null,
   })
-
   const [endereco, setEndereco] = useState<Endereco>({
     cep: '', rua: '', numero: '', complemento: '',
   })
 
-  if (step === 'dados-pessoais') return (
-    <StepDadosPessoais
-      dados={dados}
-      onChange={(k, v) => setDados(prev => ({ ...prev, [k]: v }))}
-      onNext={() => setStep('endereco')}
-    />
-  )
+  function go(to: FlowStep, dir: Direction) {
+    setDirection(dir)
+    setPhase('exit')
+    setTimeout(() => {
+      setDisplayedStep(to)
+      setPhase('enter')
+    }, EXIT_MS)
+  }
 
-  if (step === 'endereco') return (
-    <StepEndereco
-      endereco={endereco}
-      onChange={(k, v) => setEndereco(prev => ({ ...prev, [k]: v }))}
-      onBack={() => setStep('dados-pessoais')}
-      onNext={() => setStep('confirmacao')}
-    />
-  )
+  function handleClose() {
+    setDados({ nome: '', cpf: '', dataNascimento: '', parentesco: null })
+    setEndereco({ cep: '', rua: '', numero: '', complemento: '' })
+    go('dados-pessoais', 'back')
+  }
 
-  if (step === 'confirmacao') return (
-    <StepConfirmacao
-      dados={dados}
-      endereco={endereco}
-      onBack={() => setStep('endereco')}
-      onConfirm={() => setStep('sucesso')}
-    />
-  )
+  const anim = phase === 'exit'
+    ? `stepOut ${EXIT_MS}ms cubic-bezier(0.4, 0, 1, 1) both`
+    : displayedStep === 'sucesso'
+    ? `fadeIn 300ms ease-out both`
+    : direction === 'forward'
+    ? `stepIn ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1) both`
+    : `stepInBack ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1) both`
 
-  return <StepSucesso nome={dados.nome} />
+  return (
+    <>
+      <style>{FLOW_STYLES}</style>
+      <div style={{ position: 'relative', width: 375, height: 812, overflow: 'hidden' }}>
+        <div
+          key={`${displayedStep}-${phase}`}
+          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', animation: anim }}
+        >
+          {displayedStep === 'dados-pessoais' && (
+            <StepDadosPessoais
+              dados={dados}
+              onChange={(k, v) => setDados(prev => ({ ...prev, [k]: v }))}
+              onClose={handleClose}
+              onNext={() => go('endereco', 'forward')}
+            />
+          )}
+          {displayedStep === 'endereco' && (
+            <StepEndereco
+              endereco={endereco}
+              onChange={(k, v) => setEndereco(prev => ({ ...prev, [k]: v }))}
+              onBack={() => go('dados-pessoais', 'back')}
+              onNext={() => go('confirmacao', 'forward')}
+            />
+          )}
+          {displayedStep === 'confirmacao' && (
+            <StepConfirmacao
+              dados={dados}
+              endereco={endereco}
+              onBack={() => go('endereco', 'back')}
+              onConfirm={() => go('sucesso', 'forward')}
+            />
+          )}
+          {displayedStep === 'sucesso' && (
+            <StepSucesso nome={dados.nome} />
+          )}
+        </div>
+      </div>
+    </>
+  )
 }
 
 // ─── Step 1: Dados pessoais ───────────────────────────────────────────────────
@@ -164,21 +232,48 @@ export function CadastroDependenteFlowScreen() {
 function StepDadosPessoais({
   dados,
   onChange,
+  onClose,
   onNext,
 }: {
   dados: DadosPessoais
   onChange: (key: keyof DadosPessoais, value: string | Parentesco) => void
+  onClose?: () => void
   onNext: () => void
 }) {
   const canContinue = !!dados.nome && !!dados.cpf && !!dados.dataNascimento && !!dados.parentesco
 
   return (
     <FlowShell
-      title="Dados pessoais"
+      title="Cadastrar dependente"
+      onClose={onClose}
       canContinue={canContinue}
       ctaLabel="Continuar"
       onCta={onNext}
     >
+      {/* Page heading */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-02)' }}>
+        <h1 style={{
+          fontFamily: 'var(--font-family-base)',
+          fontSize: 'var(--font-size-xl)',
+          fontWeight: 'var(--font-weight-regular)',
+          color: 'var(--color-content-primary)',
+          margin: 0,
+          lineHeight: 'var(--line-height-title)',
+        }}>
+          Dados pessoais
+        </h1>
+        <p style={{
+          fontFamily: 'var(--font-family-base)',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-regular)',
+          color: 'var(--color-content-secondary)',
+          margin: 0,
+          lineHeight: 'var(--line-height-title-sm)',
+        }}>
+          Preencha os dados do dependente para adicioná-lo ao plano.
+        </p>
+      </div>
+
       {/* Fields */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-04)' }}>
         <TextField
@@ -197,15 +292,15 @@ function StepDadosPessoais({
           label="Data de nascimento"
           value={dados.dataNascimento}
           onValueChange={(v) => onChange('dataNascimento', v)}
-          leftIcon="calendar-outline"
+          leftIcon="calendar"
           width="100%"
         />
       </div>
 
       {/* Parentesco */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)', marginTop: 'var(--spacing-10)' }}>
         <SectionTitle label="Parentesco" />
-        <div>
+        <div style={{ margin: '0 calc(-1 * var(--spacing-06))', overflow: 'hidden' }}>
           {PARENTESCOS.map((p, i) => (
             <ListItem
               key={p.label}
@@ -216,8 +311,8 @@ function StepDadosPessoais({
               rightAsset="icon"
               rightIconElement={
                 dados.parentesco === p.label
-                  ? <Icon name="check-circle" size={20} color="var(--color-brand)" />
-                  : <Icon name="circle-outline" size={20} color="var(--color-stroke)" />
+                  ? <Icon name="checkFilled" size={20} color="var(--color-brand)" />
+                  : <div style={{ width: 20, height: 20, borderRadius: 'var(--radius-pill)', border: '1.5px solid var(--color-stroke)', flexShrink: 0 }} />
               }
               divider={i < PARENTESCOS.length - 1}
               fullWidth
@@ -258,7 +353,7 @@ function StepEndereco({
           label="CEP"
           value={endereco.cep}
           onValueChange={(v) => onChange('cep', v)}
-          rightIcon="magnify"
+          rightIcon="search"
           width="100%"
         />
         <TextField
@@ -353,7 +448,7 @@ function StepSucesso({ nome }: { nome: string }) {
 
   return (
     <div style={{
-      width: 375, height: '100vh',
+      width: 375, height: '100%',
       backgroundColor: 'var(--color-surface)',
       display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-family-base)',
@@ -374,7 +469,7 @@ function StepSucesso({ nome }: { nome: string }) {
           backgroundColor: 'var(--color-brand-subtle)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <Icon name="check" size={36} color="var(--color-brand)" />
+          <Icon name="checkOutlined" size={36} color="var(--color-brand)" />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
@@ -406,7 +501,7 @@ function StepSucesso({ nome }: { nome: string }) {
           width: '100%',
           display: 'flex', alignItems: 'center', gap: 'var(--spacing-04)',
         }}>
-          <Icon name="card-account-details-outline" size={24} color="var(--color-content-secondary)" />
+          <Icon name="idCard" size={24} color="var(--color-content-secondary)" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left' }}>
             <span style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-xs)', color: 'var(--color-content-secondary)' }}>
               Cartão em produção

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type CalloutStatus = 'Alert' | 'Information' | 'Warning' | 'Highlight'
 
@@ -16,9 +17,9 @@ export interface CalloutProps {
 }
 
 const STATUS_CONFIG: Record<CalloutStatus, { bg: string; icon: string }> = {
-  Alert:       { bg: 'var(--color-red-00)',     icon: 'alarm-light' },
-  Information: { bg: 'var(--color-blue-00)',    icon: 'information-outline' },
-  Warning:     { bg: 'var(--color-orange-00)',  icon: 'alert-outline' },
+  Alert:       { bg: 'var(--color-red-00)',     icon: 'alertRotatinLight' },
+  Information: { bg: 'var(--color-blue-00)',    icon: 'info' },
+  Warning:     { bg: 'var(--color-orange-00)',  icon: 'alertTriangle' },
   Highlight:   { bg: 'var(--color-magenta-00)', icon: 'asterisk' },
 }
 
@@ -73,10 +74,10 @@ export function Callout({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
 
         {/* Header: icon + title + optional close */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-06)', height: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-02)', flex: '1 0 0', minWidth: 0 }}>
-            <div style={{ flexShrink: 0 }}>
-              <Icon name={activeIcon} size={24} color="var(--color-content-primary)" />
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-06)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-02)', flex: '1 0 0', minWidth: 0 }}>
+            <div style={{ flexShrink: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name={activeIcon} size={ICON_SIZE.md} color="var(--color-content-primary)" />
             </div>
             <p
               {...editable(isEditable, (t) => onChange?.('title', t))}
@@ -96,8 +97,8 @@ export function Callout({
             </p>
           </div>
           {showClose && (
-            <div style={{ flexShrink: 0, cursor: 'pointer' }}>
-              <Icon name="close" size={16} color="var(--color-content-primary)" />
+            <div style={{ flexShrink: 0, cursor: 'pointer', paddingTop: 2 }}>
+              <Icon name="close" size={ICON_SIZE.sm} color="var(--color-content-primary)" />
             </div>
           )}
         </div>

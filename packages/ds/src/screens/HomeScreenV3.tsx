@@ -120,7 +120,7 @@ export function HomeScreenV3() {
           subtitle="Aproveite frete grátis em pedidos acima de R$50"
           showSubtitle
           leftAsset
-          leftIcon={<Icon name="truck-delivery-outline" size={24} color="var(--color-content-primary)" />}
+          leftIcon={<Icon name="localPin" size={24} color="var(--color-content-primary)" />}
           rightAsset={false}
           action="button"
           buttonLabel="Ver ofertas"
@@ -180,7 +180,7 @@ export function HomeScreenV3() {
           subtitle="Fale com nosso atendimento"
           showSubtitle
           leftAsset
-          leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+          leftIcon={<Icon name="help" size={20} color="var(--color-content-primary)" />}
           rightAsset={false}
           action="link"
           linkLabel="Falar com suporte"

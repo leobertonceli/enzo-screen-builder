@@ -97,7 +97,7 @@ export function AgendarConsultaScreen() {
         className="flex items-center"
         style={{ padding: 'var(--spacing-04) var(--spacing-06)' }}
       >
-        <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+        <Icon name="arrowLeft" size={24} color="var(--color-content-primary)" />
       </div>
 
       {/* Page title */}
@@ -170,7 +170,7 @@ export function AgendarConsultaScreen() {
               gap: 4,
             }}
           >
-            <Icon name="check-circle" size={12} color="var(--color-brand)" />
+            <Icon name="success" size={12} color="var(--color-brand)" />
             <span
               style={{
                 fontFamily: 'var(--font-family-label)',
@@ -336,7 +336,7 @@ export function AgendarConsultaScreen() {
               description={`${doc.specialty} · ${doc.price}`}
               size="small"
               leftSide="icon"
-              icon={<Icon name="account-outline" size={20} color="var(--color-content-tertiary)" />}
+              icon={<Icon name="user" size={20} color="var(--color-content-tertiary)" />}
               rightAsset="icon"
               divider={i < particularDoctors.length - 1}
             />
@@ -357,7 +357,7 @@ export function AgendarConsultaScreen() {
             subtitle="Entenda como funciona cada modalidade e qual é a melhor pra você."
             showSubtitle
             leftAsset
-            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            leftIcon={<Icon name="help" size={20} color="var(--color-content-primary)" />}
             rightAsset={false}
             action="link"
             linkLabel="Saiba mais"

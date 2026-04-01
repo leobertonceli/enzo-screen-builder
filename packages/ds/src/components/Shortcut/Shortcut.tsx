@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type ShortcutType = 'callout' | 'support'
 export type ShortcutState = 'idle' | 'pressed' | 'disabled' | 'loading'
@@ -106,7 +107,7 @@ export function Shortcut({
           <>
             {/* Top: icon */}
             <div style={{ width: 24, height: 24 }}>
-              {icon ?? <Icon name="checkOutlined" size={24} color={iconColor} />}
+              {icon ?? <Icon name="checkOutlined" size={ICON_SIZE.lg} color={iconColor} />}
             </div>
 
             {/* Bottom: text + chevron */}
@@ -139,7 +140,7 @@ export function Shortcut({
                   {title}
                 </p>
               </div>
-              <Icon name="chevronArrowRight" size={16} color={iconColor} />
+              <Icon name="chevronArrowRight" size={ICON_SIZE.sm} color={iconColor} />
             </div>
           </>
         )}
@@ -177,7 +178,7 @@ export function Shortcut({
           {/* Top: icon + badge */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ width: 24, height: 24 }}>
-              {icon ?? <Icon name="heartOutlined" size={24} color={iconColor} />}
+              {icon ?? <Icon name="heartOutlined" size={ICON_SIZE.lg} color={iconColor} />}
             </div>
             {showBadge && <Badge count={badgeCount} />}
           </div>

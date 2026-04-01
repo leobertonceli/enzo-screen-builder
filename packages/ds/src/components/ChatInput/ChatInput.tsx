@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 /* ── Types ───────────────────────────────────────────────────────── */
 export type ChatInputState =
@@ -75,8 +76,8 @@ function SendButton({ active, loading }: { active: boolean; loading: boolean }) 
         }} />
       ) : (
         <Icon
-          name="arrow-up"
-          size={20}
+          name="arrowUp"
+          size={ICON_SIZE.md}
           color={active ? 'var(--color-gray-white)' : 'rgba(20,20,20,0.3)'}
         />
       )}
@@ -96,7 +97,7 @@ function MicButton({ active = false, disabled = false }: { active?: boolean; dis
       flexShrink: 0,
       opacity: disabled ? 0.3 : 1,
     }}>
-      <Icon name={active ? 'stop' : 'microphone'} size={20} color="var(--color-content-primary)" />
+      <Icon name={active ? 'stop' : 'microphone'} size={ICON_SIZE.md} color="var(--color-content-primary)" />
     </div>
   )
 }
@@ -112,7 +113,7 @@ function PlusButton({ disabled = false }: { disabled?: boolean }) {
       flexShrink: 0,
       opacity: disabled ? 0.3 : 1,
     }}>
-      <Icon name="add" size={20} color="var(--color-content-primary)" />
+      <Icon name="add" size={ICON_SIZE.md} color="var(--color-content-primary)" />
     </div>
   )
 }
@@ -228,7 +229,7 @@ function AttachedItem({ item, onRemove }: { item: ChatInputAttachedItem; onRemov
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           border: 'none', cursor: 'pointer', padding: 0,
         }}>
-          <Icon name="close" size={16} color={isDocument ? 'var(--color-content-primary)' : 'var(--color-gray-white)'} />
+          <Icon name="close" size={ICON_SIZE.sm} color={isDocument ? 'var(--color-content-primary)' : 'var(--color-gray-white)'} />
         </button>
       )}
     </div>
@@ -283,7 +284,7 @@ function ReplyBanner({
             cursor: 'pointer', flexShrink: 0,
           }}
         >
-          <Icon name="close" size={20} color="var(--color-content-primary)" />
+          <Icon name="close" size={ICON_SIZE.md} color="var(--color-content-primary)" />
         </div>
       </div>
     </div>

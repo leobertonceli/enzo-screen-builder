@@ -46,7 +46,7 @@ export function RedeCredenciadaScreen() {
           className="flex items-center"
           style={{ padding: 'var(--spacing-04) var(--spacing-06)' }}
         >
-          <Icon name="arrow-left" size={24} color="var(--color-content-primary)" />
+          <Icon name="arrowLeft" size={24} color="var(--color-content-primary)" />
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export function RedeCredenciadaScreen() {
             subtitle="Veja todos os estabelecimentos credenciados no seu plano"
             showSubtitle
             leftAsset
-            leftIcon={<Icon name="map-marker-outline" size={24} color="var(--color-content-primary)" />}
+            leftIcon={<Icon name="localPin" size={24} color="var(--color-content-primary)" />}
             rightAsset={false}
             action="button"
             buttonLabel="Ver no mapa"
@@ -135,7 +135,7 @@ export function RedeCredenciadaScreen() {
             subtitle="Entenda como funciona o atendimento no seu plano"
             showSubtitle
             leftAsset
-            leftIcon={<Icon name="help-circle-outline" size={20} color="var(--color-content-primary)" />}
+            leftIcon={<Icon name="help" size={20} color="var(--color-content-primary)" />}
             rightAsset={false}
             action="link"
             linkLabel="Saiba mais"

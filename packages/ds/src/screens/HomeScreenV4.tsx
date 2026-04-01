@@ -58,7 +58,7 @@ export function HomeScreenV4() {
         </div>
         <div style={{ position: 'relative' }}>
           <MissingTag label="NotificationBell — fora do DS" />
-          <Icon name="bell-outline" size={24} color="var(--color-content-primary)" />
+          <Icon name="bell" size={24} color="var(--color-content-primary)" />
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export function HomeScreenV4() {
                 Sem tarefas pendentes
               </span>
             </div>
-            <Icon name="chevron-right" size={20} color="var(--color-gray-white)" />
+            <Icon name="chevronArrowRight" size={20} color="var(--color-gray-white)" />
           </div>
         </div>
       </div>

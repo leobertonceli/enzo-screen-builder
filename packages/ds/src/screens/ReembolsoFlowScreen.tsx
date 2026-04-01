@@ -227,7 +227,7 @@ function StepTipoDespesa({
                 rightAsset={selected === t.label ? 'icon' : 'none'}
                 rightIconElement={
                   selected === t.label
-                    ? <Icon name="check" size={20} color="var(--color-brand)" />
+                    ? <Icon name="checkOutlined" size={20} color="var(--color-brand)" />
                     : undefined
                 }
                 divider={i < TIPOS.length - 1}
@@ -302,7 +302,7 @@ function StepDadosDespesa({
             label="Data do atendimento"
             value={dataAtendimento}
             helperText="DD/MM/AAAA"
-            leftIcon="calendar-outline"
+            leftIcon="calendar"
             width="100%"
             onValueChange={onDataChange}
           />
@@ -312,7 +312,7 @@ function StepDadosDespesa({
             label="Valor pago"
             value={valorPago}
             helperText="Ex: R$ 150,00"
-            leftIcon="currency-brl"
+            leftIcon="money"
             width="100%"
             onValueChange={onValorChange}
           />
@@ -422,7 +422,7 @@ function StepDadosBancarios({
                 label="Banco"
                 value={banco}
                 helperText="Nome ou código do banco"
-                leftIcon="bank-outline"
+                leftIcon="creditCard"
                 width="100%"
                 onValueChange={onBancoChange}
               />
@@ -641,7 +641,7 @@ function StepSucesso({
                 backgroundColor: 'var(--color-brand)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Icon name="check" size={36} color="var(--color-gray-white)" />
+                <Icon name="checkOutlined" size={36} color="var(--color-gray-white)" />
               </div>
               <MissingTag label="SuccessIcon — fora do DS" />
             </div>

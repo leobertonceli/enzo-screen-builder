@@ -47,7 +47,7 @@ export function AgendamentoHorarioScreen() {
         }}>
           Dezembro 2024
         </span>
-        <Icon name="chevron-down" size={16} color="var(--color-content-secondary)" />
+        <Icon name="chevronArrowDown" size={16} color="var(--color-content-secondary)" />
       </div>
 
       {/* Scrollable content */}
@@ -166,7 +166,7 @@ export function AgendamentoHorarioScreen() {
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--color-magenta-10)',
           }}>
-            <Icon name="calendar-check-outline" size={20} color="var(--color-brand)" />
+            <Icon name="calendarAdd" size={20} color="var(--color-brand)" />
             <span style={{
               fontFamily: 'var(--font-family-base)',
               fontSize: 'var(--font-size-sm)',

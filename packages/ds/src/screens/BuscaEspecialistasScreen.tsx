@@ -246,7 +246,7 @@ export function BuscaEspecialistasScreen() {
           border: '1px solid var(--color-stroke)',
           backgroundColor: 'var(--color-surface)',
         }}>
-          <Icon name="magnify" size={20} color="var(--color-content-secondary)" />
+          <Icon name="search" size={20} color="var(--color-content-secondary)" />
           <span style={{
             flex: 1,
             fontFamily: 'var(--font-family-label)',
@@ -265,7 +265,7 @@ export function BuscaEspecialistasScreen() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Icon name="close-circle" size={18} color="var(--color-content-tertiary)" />
+              <Icon name="clear" size={18} color="var(--color-content-tertiary)" />
             </button>
           )}
         </div>
@@ -449,7 +449,7 @@ export function BuscaEspecialistasScreen() {
             backgroundColor: 'var(--color-surface-subtle)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Icon name="doctor" size={32} color="var(--color-content-secondary)" />
+            <Icon name="stethoscope" size={32} color="var(--color-content-secondary)" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-02)' }}>
             <p style={{

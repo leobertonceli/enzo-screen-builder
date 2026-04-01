@@ -1,4 +1,5 @@
 import { Icon } from '../../icons/Icon'
+import { ICON_SIZE } from '../../icons/iconSize'
 
 export type CheckboxState = 'unselected' | 'selected' | 'indeterminate'
 
@@ -41,7 +42,7 @@ export function Checkbox({ state = 'unselected', disabled = false, onChange, cla
         boxSizing: 'border-box',
       }}
     >
-      {isSelected && <Icon name="checkOutlined" size={16} color="var(--color-gray-white)" />}
+      {isSelected && <Icon name="checkOutlined" size={ICON_SIZE.sm} color="var(--color-gray-white)" />}
       {isIndeterminate && (
         <div style={{ width: 12, height: 2, backgroundColor: 'var(--color-gray-white)', borderRadius: 1 }} />
       )}
