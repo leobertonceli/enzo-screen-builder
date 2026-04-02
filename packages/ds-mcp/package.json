@@ -22,10 +22,6 @@
     "wonderland",
     "alice-health"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
-  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2"
   }

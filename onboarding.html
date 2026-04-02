@@ -25,7 +25,6 @@
       gap: 12px;
     }
 
-    /* ── Header ── */
     .header {
       background: #141414;
       border-radius: 20px;
@@ -54,7 +53,6 @@
 
     .header-desc { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.5; }
 
-    /* ── Demo ── */
     .demo {
       background: #fff; border-radius: 20px; padding: 24px;
       display: flex; flex-direction: column; gap: 12px;
@@ -82,7 +80,6 @@
       align-self: flex-start; border-bottom-left-radius: 4px;
     }
 
-    /* ── Code blocks ── */
     pre.code-block {
       background: #141414;
       border-radius: 12px;
@@ -126,14 +123,12 @@
     .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
     .copy-btn.copied { color: #4ade80; }
 
-    /* ── Section label ── */
     .section-label {
       font-size: 11px; font-weight: 600; color: #8F8F8F;
       text-transform: uppercase; letter-spacing: 0.08em;
       padding: 8px 4px 0;
     }
 
-    /* ── Steps ── */
     .step {
       background: #fff; border-radius: 20px; padding: 24px;
       display: flex; gap: 16px;
@@ -159,7 +154,6 @@
     }
     .step-tip-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
 
-    /* ── Check card ── */
     .check-card {
       background: #fff; border-radius: 20px; padding: 24px;
       display: flex; flex-direction: column; gap: 16px;
@@ -178,7 +172,6 @@
       font-size: 11px;
     }
 
-    /* ── Components grid ── */
     .components-card {
       background: #fff; border-radius: 20px; padding: 24px;
       display: flex; flex-direction: column; gap: 16px;
@@ -191,7 +184,6 @@
       font-size: 13px; font-weight: 500; color: #3D3D3D;
     }
 
-    /* ── Footer ── */
     .footer {
       background: #fff; border-radius: 20px; padding: 20px 24px;
       display: flex; align-items: center; justify-content: space-between;
@@ -242,7 +234,7 @@
     </div>
 
     <!-- Steps -->
-    <div class="section-label">Instalação em 3 passos</div>
+    <div class="section-label">Instalação em 2 passos</div>
 
     <!-- Step 1 -->
     <div class="step">
@@ -261,26 +253,10 @@
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <div class="step-title">Configure o acesso ao pacote</div>
-        <div class="step-desc">Abra o Terminal e cole os dois comandos abaixo.</div>
-<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, `echo '@leobertonceli:registry=https://npm.pkg.github.com' >> ~/.npmrc\necho '//npm.pkg.github.com/:_authToken=TOKEN_FORNECIDO_PELO_LEO' >> ~/.npmrc`)">Copiar</button><span class="cmt"># Cole no Terminal</span>
-echo <span class="str">'@leobertonceli:registry=https://npm.pkg.github.com'</span> &gt;&gt; ~/.npmrc
-echo <span class="str">'//npm.pkg.github.com/:_authToken=TOKEN_FORNECIDO_PELO_LEO'</span> &gt;&gt; ~/.npmrc</pre>
-        <div class="step-tip">
-          <span class="step-tip-icon">💡</span>
-          Isso configura o npm para encontrar o pacote do DS. Só precisa fazer uma vez.
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
         <div class="step-title">Configure o Claude Desktop</div>
         <div class="step-desc">Abra o arquivo abaixo no Finder (<strong>Cmd + Shift + G</strong>) e adicione o bloco JSON.</div>
 <pre class="code-block"><button class="copy-btn" onclick="copyCode(this, '~/Library/Application Support/Claude/claude_desktop_config.json')">Copiar</button>~/Library/Application Support/Claude/<span class="key">claude_desktop_config.json</span></pre>
-<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, `{\n  &quot;mcpServers&quot;: {\n    &quot;wonderland-ds&quot;: {\n      &quot;command&quot;: &quot;npx&quot;,\n      &quot;args&quot;: [&quot;-y&quot;, &quot;@leobertonceli/wonderland-ds-mcp&quot;]\n    }\n  }\n}`)">Copiar</button>{
+<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;wonderland-ds&quot;: {\n      &quot;command&quot;: &quot;npx&quot;,\n      &quot;args&quot;: [&quot;-y&quot;, &quot;@leobertonceli/wonderland-ds-mcp&quot;]\n    }\n  }\n}')">Copiar</button>{
   <span class="key">"mcpServers"</span>: {
     <span class="key">"wonderland-ds"</span>: {
       <span class="key">"command"</span>: <span class="str">"npx"</span>,

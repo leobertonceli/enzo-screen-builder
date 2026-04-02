@@ -22,20 +22,9 @@ O Claude consulta automaticamente os componentes disponíveis, os tokens de cor/
 
 ---
 
-## Instalação (5 minutos)
+## Instalação (2 minutos)
 
-### 1. Configurar o acesso ao pacote
-
-Abra o terminal e rode os dois comandos abaixo:
-
-```bash
-echo '@leobertonceli:registry=https://npm.pkg.github.com' >> ~/.npmrc
-echo '//npm.pkg.github.com/:_authToken=TOKEN_FORNECIDO_PELO_LEO' >> ~/.npmrc
-```
-
-Isso configura o npm para buscar o pacote do DS no lugar certo.
-
-### 2. Configurar o Claude Desktop
+### 1. Configure o Claude Desktop
 
 Abra o arquivo de configuração do Claude Desktop. No Mac, ele fica em:
 
@@ -60,7 +49,7 @@ Adicione o bloco abaixo dentro do arquivo:
 
 Se o arquivo já tiver conteúdo, adicione só a parte `"wonderland-ds": { ... }` dentro de `"mcpServers"`.
 
-### 3. Reinicie o Claude Desktop
+### 2. Reinicie o Claude Desktop
 
 Feche e abra o Claude Desktop novamente.
 
