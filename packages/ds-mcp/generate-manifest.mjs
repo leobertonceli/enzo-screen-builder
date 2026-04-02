@@ -1,364 +1,268 @@
 /**
  * generate-manifest.mjs
  *
- * Gera ds-manifest.json automaticamente.
+ * Gera ds-manifest.json automaticamente lendo o código-fonte do DS.
  *
- * Tokens → lidos direto do index.css (sempre atualizados).
- * Componentes → definidos aqui embaixo em COMPONENTS (fonte de verdade).
+ * - Tokens → lidos direto do index.css
+ * - Componentes → extraídos automaticamente dos arquivos .tsx
+ * - Descriptions e usage → definidos em COMPONENT_META abaixo (só isso é manual)
  *
- * Quando adicionar um componente novo ao DS:
- *   1. Adicione a entrada em COMPONENTS abaixo.
- *   2. Rode: npm run generate
- *
- * O manifest é regenerado e quem usa o MCP recebe a versão nova.
+ * Quando adicionar um componente novo:
+ *   1. Crie o arquivo em packages/ds/src/components/<Name>/<Name>.tsx
+ *   2. Adicione uma entrada em COMPONENT_META abaixo (description + usage)
+ *   3. npm run release
  */
 
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const CSS_PATH = join(__dirname, '../ds/src/index.css')
-const OUT_PATH = join(__dirname, 'ds-manifest.json')
+const DS_ROOT   = join(__dirname, '../ds/src')
+const CSS_PATH  = join(DS_ROOT, 'index.css')
+const OUT_PATH  = join(__dirname, 'ds-manifest.json')
 
 // ─── TOKEN PARSER ────────────────────────────────────────────────────────────
-// Lê o index.css e extrai grupos de tokens por prefixo.
 
 function parseTokens(css) {
-  const lines = css.split('\n')
   const all = {}
-
-  for (const line of lines) {
-    const match = line.match(/^\s*(--[\w-]+)\s*:\s*(.+?);/)
-    if (match) {
-      all[match[1].trim()] = match[2].trim()
-    }
+  for (const line of css.split('\n')) {
+    const m = line.match(/^\s*(--[\w-]+)\s*:\s*(.+?);/)
+    if (m) all[m[1].trim()] = m[2].trim()
   }
 
   const pick = (prefix) =>
     Object.fromEntries(Object.entries(all).filter(([k]) => k.startsWith(prefix)))
 
-  // Semânticos (os mais usados no dia a dia)
-  const semanticColors = {
-    '--color-brand':             all['--color-brand']             ?? 'var(--color-magenta-60)',
-    '--color-brand-pressed':     all['--color-brand-pressed']     ?? 'var(--color-magenta-70)',
-    '--color-brand-subtle':      all['--color-brand-subtle']      ?? 'var(--color-magenta-00)',
-    '--color-content-primary':   all['--color-content-primary']   ?? 'var(--color-gray-100)',
-    '--color-content-secondary': all['--color-content-secondary'] ?? 'var(--color-gray-60)',
-    '--color-content-tertiary':  all['--color-content-tertiary']  ?? 'var(--color-gray-50)',
-    '--color-surface':           all['--color-surface']           ?? 'var(--color-gray-white)',
-    '--color-surface-subtle':    all['--color-surface-subtle']    ?? 'var(--color-gray-10)',
-    '--color-surface-bg':        all['--color-surface-bg']        ?? 'var(--color-gray-00)',
-    '--color-divider':           all['--color-divider']           ?? 'var(--color-gray-10)',
-    '--color-stroke':            all['--color-stroke']            ?? 'var(--color-gray-20)',
-    '--color-gray-white':        all['--color-gray-white']        ?? '#FFFFFF',
-  }
-
   return {
-    colors:     semanticColors,
-    spacing:    pick('--spacing-0').concat
-                  ? pick('--spacing-') : pick('--spacing-'),
+    colors: {
+      '--color-brand':             all['--color-brand'],
+      '--color-brand-pressed':     all['--color-brand-pressed'],
+      '--color-brand-subtle':      all['--color-brand-subtle'],
+      '--color-content-primary':   all['--color-content-primary'],
+      '--color-content-secondary': all['--color-content-secondary'],
+      '--color-content-tertiary':  all['--color-content-tertiary'],
+      '--color-surface':           all['--color-surface'],
+      '--color-surface-subtle':    all['--color-surface-subtle'],
+      '--color-surface-bg':        all['--color-surface-bg'],
+      '--color-divider':           all['--color-divider'],
+      '--color-stroke':            all['--color-stroke'],
+      '--color-gray-white':        all['--color-gray-white'],
+    },
+    spacing:    pick('--spacing-'),
     fontSize:   pick('--font-size-'),
     fontWeight: pick('--font-weight-'),
     fontFamily: {
-      '--font-family-base':  all['--font-family-base']  ?? '"Haffer", system-ui, sans-serif',
-      '--font-family-label': all['--font-family-label'] ?? '"DM Sans", system-ui, sans-serif',
+      '--font-family-base':  all['--font-family-base'],
+      '--font-family-label': all['--font-family-label'],
     },
     radius: pick('--radius-'),
   }
 }
 
-// ─── COMPONENTES ─────────────────────────────────────────────────────────────
-// Fonte de verdade. Adicione novos componentes aqui.
+// ─── PROP EXTRACTOR ──────────────────────────────────────────────────────────
+// Lê o arquivo .tsx e extrai props da interface <Name>Props
 
-const COMPONENTS = [
-  {
-    name: 'Button',
+function extractProps(tsxPath, componentName) {
+  const src = readFileSync(tsxPath, 'utf8')
+
+  // Coleta tipos exportados: type X = 'a' | 'b' | 'c'
+  const typeMap = {}
+  for (const m of src.matchAll(/^export type (\w+)\s*=\s*([^\n]+)/gm)) {
+    typeMap[m[1]] = m[2].trim().replace(/\s*\/\/.*$/gm, '').trim()
+  }
+
+  // Acha o bloco da interface Props
+  const ifaceMatch = src.match(
+    new RegExp(`export interface ${componentName}Props\\s*\\{([\\s\\S]*?)\\n\\}`)
+  )
+  if (!ifaceMatch) return []
+
+  const block = ifaceMatch[1]
+  const props = []
+
+  // Extrai defaults do destructuring da função
+  const fnMatch = src.match(
+    new RegExp(`export function ${componentName}\\s*\\(\\s*\\{([\\s\\S]*?)\\}\\s*:\\s*${componentName}Props`)
+  )
+  const defaults = {}
+  if (fnMatch) {
+    for (const m of fnMatch[1].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) {
+      defaults[m[1].trim()] = m[2].trim().replace(/['"]/g, '').replace(/,$/, '').trim()
+    }
+  }
+
+  // Parseia cada linha da interface
+  for (const line of block.split('\n')) {
+    // Pega comentário JSDoc inline /** ... */
+    const commentMatch = line.match(/\/\*\*\s*(.+?)\s*\*\//)
+    const description = commentMatch ? commentMatch[1] : undefined
+
+    // Remove o comentário e parseia prop
+    const clean = line.replace(/\/\*\*.*?\*\//, '').trim()
+    const propMatch = clean.match(/^(\w+)\??\s*:\s*(.+)$/)
+    if (!propMatch) continue
+
+    const name    = propMatch[1].trim()
+    const rawType = propMatch[2].trim().replace(/,$/, '').trim()
+
+    // Resolve alias de tipo (ex: ButtonStyle → 'primary' | 'secondary' | 'tertiary')
+    let type = typeMap[rawType] ?? rawType
+
+    // Limpa tipos internos que não fazem sentido pra documentação
+    if (type.includes('(key: string, val: unknown)')) continue // playground-only
+    if (name === 'className') continue // detalhe de layout, não relevante
+    if (name === 'htmlType') continue  // detalhe técnico
+
+    const prop = { name, type }
+    if (description)       prop.description = description
+    if (defaults[name])    prop.default = defaults[name]
+
+    props.push(prop)
+  }
+
+  return props
+}
+
+// ─── COMPONENT META ──────────────────────────────────────────────────────────
+// Só description e usage são manuais. Props são extraídas automaticamente.
+// Adicione uma entrada aqui quando criar um componente novo.
+
+const COMPONENT_META = {
+  Button: {
     description: 'Primary action button for CTAs. Full-width via className="w-full".',
-    import: "import { Button } from '../components/Button/Button'",
-    props: [
-      { name: 'label',       type: 'string',                                           required: true },
-      { name: 'style',       type: "'primary' | 'secondary' | 'tertiary'",            default: "'primary'" },
-      { name: 'size',        type: "'small'(40px) | 'medium'(48px) | 'large'(56px)", default: "'large'" },
-      { name: 'state',       type: "'enabled' | 'pressed' | 'disabled' | 'loading'", default: "'enabled'" },
-      { name: 'type',        type: "'text' | 'left-icon' | 'right-icon' | 'only-icon'", default: "'text'" },
-      { name: 'darkMode',    type: 'boolean',                                          default: 'false' },
-      { name: 'iconElement', type: 'ReactNode',                                        description: 'Custom icon element' },
-      { name: 'className',   type: 'string',                                           description: 'Layout classes only, e.g. w-full' },
-      { name: 'onClick',     type: '() => void' },
-    ],
     usage: '<Button label="Agendar consulta" style="primary" size="large" className="w-full" />',
   },
-  {
-    name: 'ListItem',
+  ListItem: {
     description: 'Row item for lists. Last item in group must have divider={false}.',
-    import: "import { ListItem } from '../components/ListItem/ListItem'",
-    props: [
-      { name: 'title',       type: 'string',                                 required: true },
-      { name: 'description', type: 'string',                                 description: 'Subtitle (optional)' },
-      { name: 'size',        type: "'large' | 'small'",                     default: "'small'", description: 'Prefer small in screens' },
-      { name: 'leftSide',    type: "'none' | 'icon' | 'image'",            default: "'none'" },
-      { name: 'icon',        type: 'ReactNode',                              description: "Used with leftSide='icon'" },
-      { name: 'imageSrc',    type: 'string',                                 description: "Used with leftSide='image'" },
-      { name: 'rightAsset',  type: "'none' | 'icon' | 'text' | 'text-icon'", default: "'icon'" },
-      { name: 'rightText',   type: 'string',                                 description: "Used with rightAsset='text' or 'text-icon'" },
-      { name: 'divider',     type: 'boolean',                                default: 'true' },
-      { name: 'onClick',     type: '() => void' },
-    ],
     usage: '<ListItem title="Fleury" description="1.2 km · Aberto até 18h" size="small" leftSide="icon" icon={<Icon name="localPin" size={24} />} rightAsset="none" divider={false} />',
   },
-  {
-    name: 'Chip',
+  Chip: {
     description: 'Filter pills, quick-reply chips, day/time selectors.',
-    import: "import { Chip } from '../components/Chip/Chip'",
-    props: [
-      { name: 'label',          type: 'string',                                       required: true },
-      { name: 'variant',        type: "'text' | 'icon' | 'image'",                  default: "'text'" },
-      { name: 'size',           type: "'small' | 'medium' | 'large'",               default: "'small'" },
-      { name: 'state',          type: "'idle' | 'pressed' | 'selected' | 'disabled'", default: "'idle'" },
-      { name: 'showCounter',    type: 'boolean',                                      default: 'false' },
-      { name: 'affordanceIcon', type: 'boolean',                                      default: 'false' },
-      { name: 'iconElement',    type: 'ReactNode',                                    description: "Only for variant='icon'" },
-      { name: 'onClick',        type: '() => void' },
-    ],
     usage: "<Chip label=\"Online\" state={isSelected ? 'selected' : 'idle'} onClick={() => setFilter('Online')} />",
   },
-  {
-    name: 'BaseCard',
+  BaseCard: {
     description: 'Content card with optional category, title, subtitle, slot, and actions. Never place two side by side.',
-    import: "import { BaseCard } from '../components/BaseCard/BaseCard'",
-    props: [
-      { name: 'size',         type: "'small' | 'large'",                                              default: "'small'" },
-      { name: 'filled',       type: 'boolean',                                                         default: 'false', description: 'false=outlined/white, true=filled/gray' },
-      { name: 'showCategory', type: 'boolean',                                                         default: 'false' },
-      { name: 'category',     type: 'string',                                                          description: 'Small label above title' },
-      { name: 'showTitle',    type: 'boolean',                                                         default: 'true' },
-      { name: 'title',        type: 'string' },
-      { name: 'showSubtitle', type: 'boolean',                                                         default: 'false' },
-      { name: 'subtitle',     type: 'string' },
-      { name: 'showSlot',     type: 'boolean',                                                         default: 'false' },
-      { name: 'slot',         type: 'ReactNode',                                                       description: 'Custom content area' },
-      { name: 'action',       type: "'none' | 'button' | '2buttons' | 'link' | '2links'",            default: "'none'" },
-      { name: 'linkLabel',    type: 'string' },
-      { name: 'buttonLabel',  type: 'string' },
-      { name: 'width',        type: 'number | string',                                                 default: '327' },
-      { name: 'onClick',      type: '() => void' },
-    ],
     usage: '<BaseCard showCategory={true} category="Plano" showTitle={true} title="Sua cobertura está ativa" action="link" linkLabel="Ver detalhes" width={327} />',
   },
-  {
-    name: 'NavBar',
+  NavBar: {
     description: 'Top header bar for flow/detail screens. Includes StatusBar. type=page has back arrow, type=modal has close X.',
-    import: "import { NavBar } from '../components/NavBar/NavBar'",
-    props: [
-      { name: 'type',            type: "'page' | 'modal'",  default: "'page'", description: 'page=back←, modal=close✕' },
-      { name: 'showTitle',       type: 'boolean',            default: 'true' },
-      { name: 'title',           type: 'string',             description: 'Centered title text' },
-      { name: 'showDescription', type: 'boolean',            default: 'false' },
-      { name: 'description',     type: 'string',             description: 'Small subtitle below title' },
-      { name: 'rightIcons',      type: '0 | 1 | 2',         default: '0', description: 'Number of right icon buttons (page only)' },
-      { name: 'rightIcon1',      type: 'string',             default: "'dots-vertical'" },
-      { name: 'rightIcon2',      type: 'string',             default: "'share-variant-outline'" },
-      { name: 'onBack',          type: '() => void' },
-      { name: 'onClose',         type: '() => void' },
-      { name: 'onRightIcon1',    type: '() => void' },
-      { name: 'onRightIcon2',    type: '() => void' },
-    ],
     usage: '<NavBar type="page" showTitle={true} title="Agendar consulta" rightIcons={0} />',
   },
-  {
-    name: 'BottomBar',
+  BottomBar: {
     description: 'Bottom tab navigation. Hub screens only — never on flow/detail screens.',
-    import: "import { BottomBar } from '../components/BottomBar/BottomBar'",
-    props: [
-      { name: 'selected',     type: "'Alice Agora' | 'Minha saúde' | 'Rede Alice' | 'Meu plano'", required: true },
-      { name: 'tab1Label',    type: 'string',                default: "'Alice Agora'" },
-      { name: 'tab2Label',    type: 'string',                default: "'Minha saúde'" },
-      { name: 'tab3Label',    type: 'string',                default: "'Rede Alice'" },
-      { name: 'tab4Label',    type: 'string',                default: "'Meu plano'" },
-      { name: 'meuPlanoMode', type: "'photo' | 'initials'", default: "'photo'" },
-      { name: 'userImageUrl', type: 'string' },
-      { name: 'userInitials', type: 'string' },
-      { name: 'width',        type: 'number',                default: '375' },
-      { name: 'onChange',     type: '(tab: string) => void' },
-    ],
     usage: '<BottomBar selected="Minha saúde" meuPlanoMode="photo" userImageUrl={personPhoto} width={375} />',
   },
-  {
-    name: 'CardMFC',
-    description: "Doctor card in compact (row) or highlighted (hero) style.",
-    import: "import { CardMFC } from '../components/CardMFC/CardMFC'",
-    props: [
-      { name: 'style',       type: "'compact' | 'highlighted'",  required: true, description: 'compact=row, highlighted=full hero card' },
-      { name: 'name',        type: 'string',                      required: true },
-      { name: 'label',       type: 'string',                      description: "Small label above name, e.g. 'Minha médica'" },
-      { name: 'bio',         type: 'string',                      description: 'Only in highlighted style' },
-      { name: 'rating',      type: 'string' },
-      { name: 'distance',    type: 'string' },
-      { name: 'modality',    type: 'string',                      description: "e.g. 'Online e presencial'" },
-      { name: 'imageUrl',    type: 'string',                      description: 'mfc-1-fabiana.jpg | mfc-2-tiago.jpg | mfc-3-manuela.jpg' },
-      { name: 'linkLabel',   type: 'string',                      description: 'CTA link text' },
-      { name: 'width',       type: 'number | string',             default: "'100%'" },
-      { name: 'onLinkClick', type: '() => void' },
-    ],
+  CardMFC: {
+    description: 'Doctor card in compact (row) or highlighted (hero) style.',
     usage: '<CardMFC style="compact" name="Beatriz Santos" label="Dermatologista" rating="4.8" modality="Online" imageUrl={mfcFabiana} linkLabel="Agendar" width="100%" />',
   },
-  {
-    name: 'Shortcut',
+  Shortcut: {
     description: 'Callout (full-width, brand bg) or support (half-width, gray bg) action card.',
-    import: "import { Shortcut } from '../components/Shortcut/Shortcut'",
-    props: [
-      { name: 'type',     type: "'callout' | 'support'",  required: true },
-      { name: 'state',    type: "'idle' | 'disabled'",    default: "'idle'" },
-      { name: 'title',    type: 'string',                  required: true },
-      { name: 'subtitle', type: 'string',                  description: 'Callout only' },
-      { name: 'icon',     type: 'ReactNode',               required: true },
-      { name: 'badge',    type: 'boolean',                 description: 'Support only' },
-      { name: 'onClick',  type: '() => void' },
-    ],
     usage: '<Shortcut type="support" title="Meu médico" icon={<Icon name="stethoscope" size={24} color="var(--color-content-primary)" />} />',
   },
-  {
-    name: 'Avatar',
+  Avatar: {
     description: 'User photo or initials avatar.',
-    import: "import { Avatar } from '../components/Avatar/Avatar'",
-    props: [
-      { name: 'size',   type: "'large'(80px) | 'medium'(64px) | 'small'(48px) | 'xsmall'(32px)", required: true },
-      { name: 'type',   type: "'image' | 'initials'",                                               required: true },
-      { name: 'status', type: "'idle' | 'active'",                                                  default: "'idle'", description: 'active=brand ring' },
-      { name: 'src',    type: 'string',                                                              description: "For type='image'" },
-    ],
     usage: '<Avatar size="small" type="image" status="idle" src={personPhoto} />',
   },
-  {
-    name: 'Tabs',
+  Tabs: {
     description: 'Tab switcher in texts or filter style.',
-    import: "import { Tabs } from '../components/Tabs/Tabs'",
-    props: [
-      { name: 'style',       type: "'texts' | 'filter'",              required: true },
-      { name: 'items',       type: '{ label: string; badge?: number }[]', required: true },
-      { name: 'activeIndex', type: 'number',                           required: true },
-      { name: 'onChange',    type: '(index: number) => void',         required: true },
-    ],
     usage: "<Tabs style=\"texts\" items={[{ label: 'Online' }, { label: 'Presencial' }]} activeIndex={activeTab} onChange={setActiveTab} />",
   },
-  {
-    name: 'Tag',
+  Tag: {
     description: 'Status badge with color variants.',
-    import: "import { Tag } from '../components/Tag/Tag'",
-    props: [
-      { name: 'variant', type: "'Red' | 'Magenta' | 'Blue' | 'Green' | 'Orange' | 'Grey' | 'Disabled'", required: true },
-      { name: 'icon',    type: 'string',                                                                   default: "'No icon'" },
-      { name: 'label',   type: 'string',                                                                   required: true },
-    ],
     usage: '<Tag variant="Green" icon="No icon" label="Disponível" />',
   },
-  {
-    name: 'Link',
+  Link: {
     description: 'Inline text link. Brand color on light bg, white on dark bg.',
-    import: "import { Link } from '../components/Link/Link'",
-    props: [
-      { name: 'label',   type: 'string',                           required: true },
-      { name: 'size',    type: "'small'(14px) | 'large'(16px)",   default: "'small'" },
-      { name: 'context', type: "'on-light' | 'on-dark'",          default: "'on-light'" },
-      { name: 'icon',    type: "'none' | 'left' | 'right'",       default: "'none'" },
-      { name: 'onClick', type: '() => void' },
-    ],
     usage: '<Link label="Ver todos" size="small" context="on-light" icon="right" onClick={handleSeeAll} />',
   },
-  {
-    name: 'ChatInput',
+  ChatInput: {
     description: 'Chat message input bar.',
-    import: "import { ChatInput } from '../components/ChatInput/ChatInput'",
-    props: [
-      { name: 'state',       type: "'idle' | 'focus' | 'typing' | 'recording' | 'transcribing' | 'loading' | 'disabled'", default: "'idle'" },
-      { name: 'placeholder', type: 'string' },
-      { name: 'showMic',     type: 'boolean',          default: 'true' },
-      { name: 'showPlus',    type: 'boolean',          default: 'false' },
-      { name: 'width',       type: 'number | string',  default: '327', description: "Use '100%' inside padded container" },
-      { name: 'value',       type: 'string' },
-      { name: 'onSend',      type: '() => void' },
-    ],
     usage: '<ChatInput state="idle" showPlus={false} width="100%" />',
   },
-  {
-    name: 'ChatBubble',
+  ChatBubble: {
     description: 'Individual chat message bubble (user or assistant).',
-    import: "import { ChatBubble } from '../components/ChatBubble/ChatBubble'",
-    props: [
-      { name: 'sender',  type: 'boolean',  required: true, description: 'true=assistant (left), false=user (right)' },
-      { name: 'text',    type: 'string',   required: true },
-      { name: 'time',    type: 'string' },
-      { name: 'loading', type: 'boolean',  default: 'false' },
-    ],
     usage: '<ChatBubble sender={true} text="Como posso ajudar?" time="14:30" />',
   },
-  {
-    name: 'TextField',
+  TextField: {
     description: 'Text input field.',
-    import: "import { TextField } from '../components/TextField/TextField'",
-    props: [
-      { name: 'label',       type: 'string' },
-      { name: 'placeholder', type: 'string' },
-      { name: 'value',       type: 'string' },
-      { name: 'state',       type: "'default' | 'focus' | 'filled' | 'error' | 'disabled'", default: "'default'" },
-      { name: 'helperText',  type: 'string' },
-      { name: 'errorText',   type: 'string' },
-      { name: 'onChange',    type: '(value: string) => void' },
-      { name: 'width',       type: 'number | string', default: '327' },
-    ],
-    usage: '<TextField label="Nome completo" placeholder="Digite seu nome" state="default" width={327} />',
+    usage: '<TextField label="Nome completo" placeholder="Digite seu nome" width={327} />',
   },
-  {
-    name: 'Checkbox',
+  Checkbox: {
     description: 'Boolean checkbox input.',
-    import: "import { Checkbox } from '../components/Checkbox/Checkbox'",
-    props: [
-      { name: 'label',    type: 'string' },
-      { name: 'checked',  type: 'boolean',   required: true },
-      { name: 'disabled', type: 'boolean',   default: 'false' },
-      { name: 'onChange', type: '() => void' },
-    ],
     usage: "<Checkbox label=\"Aceito os termos\" checked={accepted} onChange={() => setAccepted(v => !v)} />",
   },
-  {
-    name: 'Badge',
+  Badge: {
     description: 'Notification count badge.',
-    import: "import { Badge } from '../components/Badge/Badge'",
-    props: [
-      { name: 'count',   type: 'number' },
-      { name: 'visible', type: 'boolean', default: 'true' },
-    ],
     usage: '<Badge count={3} />',
   },
-  {
-    name: 'Callout',
+  Callout: {
     description: 'Inline alert/info/warning/highlight message block.',
-    import: "import { Callout } from '../components/Callout/Callout'",
-    props: [
-      { name: 'status',        type: "'Alert' | 'Information' | 'Warning' | 'Highlight'", required: true },
-      { name: 'title',         type: 'string',            required: true },
-      { name: 'description',   type: 'string' },
-      { name: 'showLink',      type: 'boolean',           default: 'false' },
-      { name: 'linkLabel',     type: 'string' },
-      { name: 'showClose',     type: 'boolean',           default: 'false' },
-      { name: 'highlightIcon', type: 'string',            description: "Icon name, only for status='Highlight'" },
-      { name: 'width',         type: 'number | string',   default: '327' },
-    ],
     usage: '<Callout status="Information" title="Preparo necessário" description="Jejum de 8h antes da coleta." width="100%" />',
   },
-  {
-    name: 'Icon',
+  Icon: {
     description: 'DS icon system. camelCase names. Size auto-selects the right SVG (sm=12, md=16, lg=24, xlg=32).',
-    import: "import { Icon } from '../icons/Icon'",
+    usage: '<Icon name="heartOutlined" size={24} color="var(--color-content-primary)" />',
+    // Icon não tem Props interface — definição manual
     props: [
-      { name: 'name',  type: 'string',  required: true, description: 'camelCase: heartOutlined, chevronArrowRight, add, user, bell, localPin, creditCard, paper, sorting, checkOutlined' },
+      { name: 'name',  type: 'string',  description: 'camelCase: heartOutlined, chevronArrowRight, add, user, bell, localPin, creditCard, paper, sorting, checkOutlined' },
       { name: 'size',  type: 'number',  default: '24', description: '12 | 16 | 24 | 32' },
       { name: 'color', type: 'string',  default: 'currentColor' },
     ],
-    usage: '<Icon name="heartOutlined" size={24} color="var(--color-content-primary)" />',
   },
-]
+}
+
+// ─── DISCOVER & BUILD COMPONENTS ─────────────────────────────────────────────
+
+function buildComponents() {
+  const componentsDir = join(DS_ROOT, 'components')
+  const entries = readdirSync(componentsDir, { withFileTypes: true })
+    .filter(e => e.isDirectory())
+    .map(e => e.name)
+
+  const components = []
+
+  for (const name of entries) {
+    const meta = COMPONENT_META[name]
+    if (!meta) {
+      console.warn(`  ⚠ ${name} — sem meta em COMPONENT_META, ignorado`)
+      continue
+    }
+
+    const tsxPath = join(componentsDir, name, `${name}.tsx`)
+    if (!existsSync(tsxPath)) {
+      console.warn(`  ⚠ ${name}.tsx não encontrado, ignorado`)
+      continue
+    }
+
+    // Props manuais (ex: Icon) ou extraídas do arquivo
+    const props = meta.props ?? extractProps(tsxPath, name)
+
+    components.push({
+      name,
+      description: meta.description,
+      import: `import { ${name} } from '../components/${name}/${name}'`,
+      props,
+      usage: meta.usage,
+    })
+  }
+
+  // Adiciona Icon (está em icons/, não em components/)
+  const iconMeta = COMPONENT_META['Icon']
+  if (iconMeta && !components.find(c => c.name === 'Icon')) {
+    components.push({
+      name: 'Icon',
+      description: iconMeta.description,
+      import: "import { Icon } from '../icons/Icon'",
+      props: iconMeta.props,
+      usage: iconMeta.usage,
+    })
+  }
+
+  // Ordena alfabeticamente
+  return components.sort((a, b) => a.name.localeCompare(b.name))
+}
 
 // ─── RULES ───────────────────────────────────────────────────────────────────
 
@@ -398,8 +302,9 @@ const SCREEN_TEMPLATE = `export function MyScreen() {
 
 // ─── GENERATE ────────────────────────────────────────────────────────────────
 
-const css = readFileSync(CSS_PATH, 'utf8')
-const tokens = parseTokens(css)
+const css        = readFileSync(CSS_PATH, 'utf8')
+const tokens     = parseTokens(css)
+const components = buildComponents()
 
 const manifest = {
   version: '1.0.0',
@@ -407,7 +312,7 @@ const manifest = {
   importBase: "All imports from '../components/<Name>/<Name>' relative to packages/ds/src/screens/",
   tokens,
   rules: RULES,
-  components: COMPONENTS,
+  components,
   assets: {
     mfcPhotos: [
       "import mfcFabiana from '../assets/mfc/mfc-1-fabiana.jpg'",
@@ -423,5 +328,5 @@ writeFileSync(OUT_PATH, JSON.stringify(manifest, null, 2))
 
 const tokenCount = Object.values(tokens).reduce((acc, g) => acc + Object.keys(g).length, 0)
 console.log(`✓ ds-manifest.json gerado`)
-console.log(`  ${COMPONENTS.length} componentes`)
+console.log(`  ${components.length} componentes (extraídos automaticamente)`)
 console.log(`  ${tokenCount} tokens (lidos do index.css)`)
