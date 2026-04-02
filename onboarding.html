@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wonderland DS — Guia de instalação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #F4F4F4;
+      color: #141414;
+      min-height: 100vh;
+      padding: 48px 24px 80px;
+    }
+
+    .page {
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #141414;
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; }
+
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: #BE0380;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .logo-text { font-size: 14px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+
+    .header-title {
+      font-size: 28px; font-weight: 600; color: #fff;
+      line-height: 1.2; letter-spacing: -0.02em;
+    }
+    .header-title span { color: #BE0380; }
+
+    .header-desc { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    /* ── Demo ── */
+    .demo {
+      background: #fff; border-radius: 20px; padding: 24px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .demo-label {
+      font-size: 11px; font-weight: 600; color: #8F8F8F;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .chat { display: flex; flex-direction: column; gap: 8px; }
+
+    .bubble {
+      padding: 10px 14px; border-radius: 16px;
+      font-size: 14px; line-height: 1.4; max-width: 85%;
+    }
+
+    .bubble-user {
+      background: #BE0380; color: #fff;
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+
+    .bubble-claude {
+      background: #F4F4F4; color: #141414;
+      align-self: flex-start; border-bottom-left-radius: 4px;
+    }
+
+    /* ── Code blocks ── */
+    pre.code-block {
+      background: #141414;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #fff;
+      white-space: pre;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    pre.bubble-code {
+      background: #141414; color: #fff;
+      border-radius: 16px; border-bottom-left-radius: 4px;
+      padding: 12px 14px;
+      font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+      font-size: 12px; line-height: 1.7;
+      white-space: pre;
+      align-self: flex-start;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .kw  { color: #BE0380; }
+    .str { color: #79c0ff; }
+    .key { color: #f0c674; }
+    .cmt { color: #6F6F6F; }
+    .tag { color: #7ee787; }
+
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,0.1); border: none;
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      transition: background 0.2s, color 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .copy-btn.copied { color: #4ade80; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px; font-weight: 600; color: #8F8F8F;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 8px 4px 0;
+    }
+
+    /* ── Steps ── */
+    .step {
+      background: #fff; border-radius: 20px; padding: 24px;
+      display: flex; gap: 16px;
+    }
+
+    .step-num {
+      width: 32px; height: 32px; min-width: 32px;
+      background: #BE0380; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: #fff;
+    }
+
+    .step-body { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+    .step-title { font-size: 16px; font-weight: 600; color: #141414; letter-spacing: -0.01em; }
+
+    .step-desc { font-size: 14px; color: #6F6F6F; line-height: 1.5; }
+
+    .step-tip {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #FFF0FA; border-radius: 10px; padding: 10px 12px;
+      font-size: 13px; color: #BE0380; line-height: 1.4;
+    }
+    .step-tip-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Check card ── */
+    .check-card {
+      background: #fff; border-radius: 20px; padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .check-title { font-size: 16px; font-weight: 600; color: #141414; }
+
+    .check-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .check-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #141414; }
+
+    .check-icon {
+      width: 20px; height: 20px; min-width: 20px;
+      background: #F4F4F4; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+
+    /* ── Components grid ── */
+    .components-card {
+      background: #fff; border-radius: 20px; padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .components-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .component-pill {
+      background: #F4F4F4; border-radius: 200px; padding: 4px 12px;
+      font-size: 13px; font-weight: 500; color: #3D3D3D;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: #fff; border-radius: 20px; padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .footer-left { display: flex; flex-direction: column; gap: 2px; }
+    .footer-name { font-size: 14px; font-weight: 600; color: #141414; }
+    .footer-role { font-size: 13px; color: #8F8F8F; }
+
+    .footer-badge {
+      background: #FFF0FA; border-radius: 200px; padding: 6px 14px;
+      font-size: 13px; font-weight: 500; color: #BE0380;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2L15.5 6V12L9 16L2.5 12V6L9 2Z" fill="white" fill-opacity="0.9"/>
+          </svg>
+        </div>
+        <span class="logo-text">Wonderland DS</span>
+      </div>
+      <div class="header-title">Prototipe com o DS<br>direto <span>no Claude</span></div>
+      <div class="header-desc">Descreva uma tela. O Claude monta com os componentes e tokens reais do DS — sem abrir código.</div>
+    </div>
+
+    <!-- Demo -->
+    <div class="demo">
+      <div class="demo-label">Como funciona</div>
+      <div class="chat">
+        <div class="bubble bubble-user">Cria uma tela de cadastro de dependente com nome, data de nascimento e botão de confirmar</div>
+        <div class="bubble bubble-claude">Consultando os componentes disponíveis no DS…</div>
+<pre class="bubble-code"><span class="kw">export function</span> CadastroDependente() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">NavBar</span> title=<span class="str">"Novo dependente"</span> /&gt;
+    &lt;<span class="tag">TextField</span> label=<span class="str">"Nome completo"</span> /&gt;
+    &lt;<span class="tag">TextField</span> label=<span class="str">"Data de nascimento"</span> /&gt;
+    &lt;<span class="tag">Button</span> label=<span class="str">"Confirmar"</span> /&gt;
+  )
+}</pre>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div class="section-label">Instalação em 3 passos</div>
+
+    <!-- Step 1 -->
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Instale o Node.js</div>
+        <div class="step-desc">Necessário para rodar o servidor do DS. Se já tiver instalado, pule para o passo 2.</div>
+        <div class="step-tip">
+          <span class="step-tip-icon">↗</span>
+          Baixe em <strong>nodejs.org</strong> — versão LTS recomendada
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Configure o acesso ao pacote</div>
+        <div class="step-desc">Abra o Terminal e cole os dois comandos abaixo.</div>
+<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, `echo '@leobertonceli:registry=https://npm.pkg.github.com' >> ~/.npmrc\necho '//npm.pkg.github.com/:_authToken=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' >> ~/.npmrc`)">Copiar</button><span class="cmt"># Cole no Terminal</span>
+echo <span class="str">'@leobertonceli:registry=https://npm.pkg.github.com'</span> &gt;&gt; ~/.npmrc
+echo <span class="str">'//npm.pkg.github.com/:_authToken=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'</span> &gt;&gt; ~/.npmrc</pre>
+        <div class="step-tip">
+          <span class="step-tip-icon">💡</span>
+          Isso configura o npm para encontrar o pacote do DS. Só precisa fazer uma vez.
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Configure o Claude Desktop</div>
+        <div class="step-desc">Abra o arquivo abaixo no Finder (<strong>Cmd + Shift + G</strong>) e adicione o bloco JSON.</div>
+<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, '~/Library/Application Support/Claude/claude_desktop_config.json')">Copiar</button>~/Library/Application Support/Claude/<span class="key">claude_desktop_config.json</span></pre>
+<pre class="code-block"><button class="copy-btn" onclick="copyCode(this, `{\n  &quot;mcpServers&quot;: {\n    &quot;wonderland-ds&quot;: {\n      &quot;command&quot;: &quot;npx&quot;,\n      &quot;args&quot;: [&quot;-y&quot;, &quot;@leobertonceli/wonderland-ds-mcp&quot;]\n    }\n  }\n}`)">Copiar</button>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"wonderland-ds"</span>: {
+      <span class="key">"command"</span>: <span class="str">"npx"</span>,
+      <span class="key">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"@leobertonceli/wonderland-ds-mcp"</span>]
+    }
+  }
+}</pre>
+        <div class="step-tip">
+          <span class="step-tip-icon">🔄</span>
+          Após salvar, <strong>reinicie o Claude Desktop</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Verificação -->
+    <div class="section-label">Como saber se funcionou</div>
+
+    <div class="check-card">
+      <div class="check-title">Procure o ícone de ferramentas no Claude</div>
+      <div class="check-list">
+        <div class="check-item">
+          <div class="check-icon">🔧</div>
+          Clique no ícone de ferramentas na interface do Claude Desktop
+        </div>
+        <div class="check-item">
+          <div class="check-icon">✓</div>
+          Você deve ver <strong>list_components</strong>, <strong>get_component</strong> e <strong>get_tokens</strong> na lista
+        </div>
+        <div class="check-item">
+          <div class="check-icon">✦</div>
+          Peça: <em>"Quais componentes estão disponíveis?"</em> — o Claude vai responder com o DS completo
+        </div>
+      </div>
+    </div>
+
+    <!-- Componentes -->
+    <div class="section-label">O que está disponível</div>
+
+    <div class="components-card">
+      <div class="check-title">19 componentes prontos</div>
+      <div class="components-grid">
+        <span class="component-pill">Button</span>
+        <span class="component-pill">NavBar</span>
+        <span class="component-pill">BottomBar</span>
+        <span class="component-pill">ListItem</span>
+        <span class="component-pill">TextField</span>
+        <span class="component-pill">Chip</span>
+        <span class="component-pill">Tabs</span>
+        <span class="component-pill">Avatar</span>
+        <span class="component-pill">Badge</span>
+        <span class="component-pill">Tag</span>
+        <span class="component-pill">Callout</span>
+        <span class="component-pill">Checkbox</span>
+        <span class="component-pill">Link</span>
+        <span class="component-pill">ChatBubble</span>
+        <span class="component-pill">ChatInput</span>
+        <span class="component-pill">CardMFC</span>
+        <span class="component-pill">BaseCard</span>
+        <span class="component-pill">Shortcut</span>
+        <span class="component-pill">Icon</span>
+      </div>
+      <div class="step-desc">Mais tokens de cor, espaçamento, tipografia e border radius — tudo aplicado automaticamente.</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-left">
+        <div class="footer-name">Dúvidas? Fala com o Leo</div>
+        <div class="footer-role">Design System · Alice Health</div>
+      </div>
+      <div class="footer-badge">Wonderland DS</div>
+    </div>
+
+  </div>
+
+  <script>
+    function copyCode(btn, text) {
+      const decoded = text.replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+      navigator.clipboard.writeText(decoded).then(() => {
+        btn.textContent = 'Copiado ✓'
+        btn.classList.add('copied')
+        setTimeout(() => {
+          btn.textContent = 'Copiar'
+          btn.classList.remove('copied')
+        }, 2000)
+      })
+    }
+  </script>
+</body>
+</html>

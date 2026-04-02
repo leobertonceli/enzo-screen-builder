@@ -1,11 +1,30 @@
 {
-  "name": "wonderland-ds-mcp",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "MCP server for Wonderland Design System (Alice Health)",
+  "name": "@leobertonceli/wonderland-ds-mcp",
+  "version": "1.0.3",
+  "description": "MCP server for Wonderland Design System (Alice Health) — exposes components, tokens and rules to Claude",
   "main": "server.mjs",
+  "bin": {
+    "wonderland-ds-mcp": "bin/wonderland-ds-mcp"
+  },
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "generate": "node generate-manifest.mjs"
+  },
+  "files": [
+    "bin/",
+    "server.mjs",
+    "generate-manifest.mjs",
+    "ds-manifest.json"
+  ],
+  "keywords": [
+    "mcp",
+    "design-system",
+    "wonderland",
+    "alice-health"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2"
