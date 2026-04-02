@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node server.mjs",
-    "generate": "node generate-manifest.mjs"
+    "generate": "node generate-manifest.mjs",
+    "release": "node generate-manifest.mjs && npm version patch && npm publish --access public"
   },
   "files": [
     "bin/",
