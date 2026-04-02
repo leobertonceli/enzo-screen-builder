@@ -1,154 +1,178 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { NavBar }   from '../components/NavBar/NavBar'
-import { Button }   from '../components/Button/Button'
-import { Chip }     from '../components/Chip/Chip'
-import { ListItem } from '../components/ListItem/ListItem'
-import { Callout }  from '../components/Callout/Callout'
-import { CardMFC }  from '../components/CardMFC/CardMFC'
-import { BaseCard } from '../components/BaseCard/BaseCard'
-import { Icon }     from '../icons/Icon'
-import mfcFabiana  from '../assets/mfc/mfc-1-fabiana.jpg'
-import mfcTiago    from '../assets/mfc/mfc-2-tiago.jpg'
-import mfcManuela  from '../assets/mfc/mfc-3-manuela.jpg'
+import { useState, useRef, type CSSProperties } from 'react'
+import { NavBar }    from '../components/NavBar/NavBar'
+import { Button }    from '../components/Button/Button'
+import { Chip }      from '../components/Chip/Chip'
+import { ListItem }  from '../components/ListItem/ListItem'
+import { CardMFC }   from '../components/CardMFC/CardMFC'
+import { TextField } from '../components/TextField/TextField'
+import { Icon }      from '../icons/Icon'
+import { ICON_SIZE } from '../icons/iconSize'
+import mfcFabiana   from '../assets/mfc/mfc-1-fabiana.jpg'
+import mfcTiago     from '../assets/mfc/mfc-2-tiago.jpg'
+import mfcManuela   from '../assets/mfc/mfc-3-manuela.jpg'
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// ─── Motion constants ─────────────────────────────────────────────────────────
 
-type FlowStep         = 'especialista' | 'data-hora' | 'confirmacao' | 'sucesso'
-type EspecialistaState = 'loading' | 'loaded' | 'empty' | 'error'
-type DataHoraState    = 'loading' | 'loaded' | 'empty' | 'error' | 'conflict'
-type ConfirmacaoState = 'loaded' | 'confirming' | 'conflict'
-type ModalFilter      = 'Todos' | 'Online' | 'Presencial'
+const EXIT_MS  = 280
+const ENTER_MS = 500
 
-interface Specialist {
-  id: string
+const MOTION_STYLES = `
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(64px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes stepInBack {
+    from { opacity: 0; transform: translateY(-48px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes stepOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-10px); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+`
+
+let motionStylesInjected = false
+function injectMotionStyles() {
+  if (motionStylesInjected) return
+  motionStylesInjected = true
+  const el = document.createElement('style')
+  el.textContent = MOTION_STYLES
+  document.head.appendChild(el)
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Step      = 1 | 2 | 3 | 4
+type Phase     = 'enter' | 'exit'
+type Direction = 'forward' | 'back'
+
+interface Doctor {
   name: string
-  specialty: string
-  modality: 'Online' | 'Presencial' | 'Online e presencial'
-  nextSlot: string
+  description: string
+  rating: string
+  distance: string
+  modality: string
   imageUrl: string
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
-const SPECIALISTS: Specialist[] = [
-  { id: '1', name: 'Beatriz Santos',  specialty: 'Dermatologista',        modality: 'Online',              nextSlot: 'Seg, 23 Dez', imageUrl: mfcFabiana },
-  { id: '2', name: 'Ricardo Alves',   specialty: 'Dermatologia Estética', modality: 'Presencial',          nextSlot: 'Ter, 24 Dez', imageUrl: mfcTiago   },
-  { id: '3', name: 'Manuela Costa',   specialty: 'Dermatologista',        modality: 'Online e presencial', nextSlot: 'Qua, 25 Dez', imageUrl: mfcManuela },
+interface Specialty {
+  label: string
+  icon: string
+}
+
+const SPECIALTIES: Specialty[] = [
+  { label: 'Clínico Geral',  icon: 'stethoscope' },
+  { label: 'Cardiologia',    icon: 'heartFilled'  },
+  { label: 'Dermatologia',   icon: 'day'          },
+  { label: 'Ortopedia',      icon: 'bodyOutlined' },
+  { label: 'Psicologia',     icon: 'mindfulness'  },
+  { label: 'Ginecologia',    icon: 'baby'         },
 ]
 
-const DATES = ['Seg, 23', 'Ter, 24', 'Qua, 25', 'Sex, 27', 'Seg, 30', 'Ter, 31']
+const DOCTORS: Doctor[] = [
+  {
+    name: 'Dra. Ana Lima',
+    description: 'Formada pela USP, com 8 anos de experiência.',
+    rating: '4.9',
+    distance: '1.2 km',
+    modality: 'Online e presencial',
+    imageUrl: mfcFabiana,
+  },
+  {
+    name: 'Dr. Pedro Costa',
+    description: 'Médico de família vinculado ao seu plano Alice.',
+    rating: '4.7',
+    distance: '3.0 km',
+    modality: 'Presencial',
+    imageUrl: mfcTiago,
+  },
+  {
+    name: 'Dra. Mariana Souza',
+    description: 'Médica com foco em atenção primária.',
+    rating: '4.8',
+    distance: '0.8 km',
+    modality: 'Online',
+    imageUrl: mfcManuela,
+  },
+]
 
-const TIMES_BY_DATE: Record<string, string[]> = {
-  'Seg, 23': ['09:00', '10:30', '14:00', '15:30', '16:00'],
-  'Ter, 24': ['08:30', '11:00', '14:30'],
-  'Qua, 25': ['09:30', '10:00', '16:30'],
-  'Sex, 27': ['08:00', '09:00', '11:30', '15:00'],
-  'Seg, 30': ['10:00', '14:00', '16:00'],
-  'Ter, 31': ['09:00', '10:30'],
+const DATE_CHIPS = ['Hoje', 'Ter 22', 'Qua 23', 'Qui 24', 'Sex 25']
+const TIME_CHIPS = ['08:00', '09:30', '10:00', '11:00', '14:00', '15:30', '16:00', '17:30']
+
+const sectionLabel: CSSProperties = {
+  fontFamily: 'var(--font-family-base)',
+  fontSize: 'var(--font-size-sm)',
+  fontWeight: 'var(--font-weight-regular)' as CSSProperties['fontWeight'],
+  color: 'var(--color-content-secondary)',
+  margin: 0,
 }
 
-// ─── Missing component tag ───────────────────────────────────────────────────
-
-function MissingTag({ label }: { label: string }) {
-  return (
-    <div style={{
-      position: 'absolute', top: 'var(--spacing-02)', right: 'var(--spacing-02)',
-      backgroundColor: '#E53935', color: 'var(--color-gray-white)',
-      fontSize: 'var(--font-size-xs)', fontFamily: 'var(--font-family-base)',
-      fontWeight: 'var(--font-weight-medium)', padding: '2px 8px',
-      borderRadius: 'var(--radius-pill)', zIndex: 10, lineHeight: '1.4',
-    }}>{label}</div>
-  )
-}
-
-// ─── Flow controller ─────────────────────────────────────────────────────────
+// ─── Root component ───────────────────────────────────────────────────────────
 
 export function AgendamentoConsultaFlowScreen() {
-  const [step, setStep] = useState<FlowStep>('especialista')
+  injectMotionStyles()
 
-  // Step 1
-  const [espState, setEspState]       = useState<EspecialistaState>('loading')
-  const [filter, setFilter]           = useState<ModalFilter>('Todos')
-  const [specialist, setSpecialist]   = useState<Specialist | null>(null)
+  const [displayedStep, setDisplayedStep] = useState<Step>(1)
+  const [phase, setPhase]                 = useState<Phase>('enter')
+  const [direction, setDirection]         = useState<Direction>('forward')
 
-  // Step 2
-  const [dhState, setDhState]         = useState<DataHoraState>('loading')
-  const [modality, setModality]       = useState<'Online' | 'Presencial'>('Online')
-  const [date, setDate]               = useState<string | null>(null)
-  const [time, setTime]               = useState<string | null>(null)
+  // Step state
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null)
+  const [selectedDoctor,    setSelectedDoctor]    = useState<Doctor | null>(null)
+  const [selectedDate,      setSelectedDate]      = useState<string | null>(null)
+  const [selectedTime,      setSelectedTime]      = useState<string | null>(null)
+  const [searchQuery,       setSearchQuery]       = useState('')
 
-  // Step 3
-  const [confState, setConfState]     = useState<ConfirmacaoState>('loaded')
+  const pendingStep = useRef<Step | null>(null)
 
-  // Step 1: auto-transition loading → loaded
-  useEffect(() => {
-    if (espState !== 'loading') return
-    const t = setTimeout(() => setEspState('loaded'), 1500)
-    return () => clearTimeout(t)
-  }, [espState])
-
-  // Step 2: auto-transition loading → loaded (only when on that step)
-  useEffect(() => {
-    if (step !== 'data-hora' || dhState !== 'loading') return
-    const t = setTimeout(() => setDhState('loaded'), 1200)
-    return () => clearTimeout(t)
-  }, [step, dhState])
-
-  // Reset time when date changes
-  useEffect(() => { setTime(null) }, [date])
-
-  // Set default modality based on specialist's offering
-  useEffect(() => {
-    if (!specialist) return
-    setModality(specialist.modality === 'Presencial' ? 'Presencial' : 'Online')
-  }, [specialist])
-
-  // Derived
-  const filtered = useMemo(() => {
-    if (filter === 'Todos') return SPECIALISTS
-    if (filter === 'Online') return SPECIALISTS.filter(s => s.modality !== 'Presencial')
-    return SPECIALISTS.filter(s => s.modality !== 'Online')
-  }, [filter])
-
-  const availableTimes = date ? (TIMES_BY_DATE[date] ?? []) : []
-
-  const specialistModalities = useMemo((): ('Online' | 'Presencial')[] => {
-    if (!specialist) return ['Online', 'Presencial']
-    if (specialist.modality === 'Online') return ['Online']
-    if (specialist.modality === 'Presencial') return ['Presencial']
-    return ['Online', 'Presencial']
-  }, [specialist])
-
-  // Navigation handlers
-  function goToDataHora() {
-    setStep('data-hora')
-    setDhState('loading')
-    setDate(null)
-    setTime(null)
-  }
-
-  function goToConfirmacao() {
-    setStep('confirmacao')
-    setConfState('loaded')
-  }
-
-  function confirmBooking() {
-    setConfState('confirming')
-    // Simulate API call: ~20% chance of conflict to demonstrate that state
+  function go(toStep: Step, dir: Direction) {
+    if (phase === 'exit') return
+    pendingStep.current = toStep
+    setDirection(dir)
+    setPhase('exit')
     setTimeout(() => {
-      if (Math.random() < 0.2) {
-        setConfState('conflict')
-      } else {
-        setStep('sucesso')
-      }
-    }, 2000)
+      setDisplayedStep(pendingStep.current!)
+      setPhase('enter')
+    }, EXIT_MS)
   }
 
-  function retryFromConflict() {
-    setStep('data-hora')
-    setDhState('loaded')
-    setTime(null)
+  function goForward(toStep: Step) { go(toStep, 'forward') }
+  function goBack(toStep: Step)    { go(toStep, 'back')    }
+
+  function resetFlow() {
+    setSelectedSpecialty(null)
+    setSelectedDoctor(null)
+    setSelectedDate(null)
+    setSelectedTime(null)
+    setSearchQuery('')
+    go(1, 'back')
   }
+
+  // Step wrapper animation
+  const isExit = phase === 'exit'
+  const stepAnimation = isExit
+    ? `stepOut ${EXIT_MS}ms cubic-bezier(0.4, 0, 1, 1) both`
+    : direction === 'forward'
+    ? `stepIn ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1) both`
+    : `stepInBack ${ENTER_MS}ms cubic-bezier(0.16, 1, 0.3, 1) both`
+
+  const stepWrapperStyle: CSSProperties = {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    animation: stepAnimation,
+  }
+
+  const filteredSpecialties = SPECIALTIES.filter(s =>
+    s.label.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div style={{
@@ -159,602 +183,481 @@ export function AgendamentoConsultaFlowScreen() {
       backgroundColor: 'var(--color-surface)',
       fontFamily: 'var(--font-family-base)',
       overflow: 'hidden',
+      position: 'relative',
     }}>
-      {step === 'especialista' && (
-        <StepEspecialista
-          state={espState}
-          filter={filter}
-          onFilterChange={setFilter}
-          filtered={filtered}
-          selected={specialist}
-          onSelect={setSpecialist}
-          onNext={goToDataHora}
-          onRetry={() => setEspState('loading')}
-        />
-      )}
-
-      {step === 'data-hora' && (
-        <StepDataHora
-          state={dhState}
-          specialist={specialist!}
-          modalities={specialistModalities}
-          modalityChoice={modality}
-          onModalityChange={setModality}
-          dates={DATES}
-          selectedDate={date}
-          onDateSelect={setDate}
-          availableTimes={availableTimes}
-          selectedTime={time}
-          onTimeSelect={setTime}
-          onBack={() => setStep('especialista')}
-          onNext={goToConfirmacao}
-          onRetry={() => setDhState('loading')}
-        />
-      )}
-
-      {step === 'confirmacao' && (
-        <StepConfirmacao
-          state={confState}
-          specialist={specialist!}
-          date={date!}
-          time={time!}
-          modality={modality}
-          onBack={() => setStep('data-hora')}
-          onConfirm={confirmBooking}
-          onChangeTime={retryFromConflict}
-        />
-      )}
-
-      {step === 'sucesso' && (
-        <StepSucesso
-          specialist={specialist!}
-          date={date!}
-          time={time!}
-          modality={modality}
-        />
-      )}
+      <div key={`${displayedStep}-${phase}`} style={stepWrapperStyle}>
+        {displayedStep === 1 && (
+          <Step1Especialidade
+            searchQuery={searchQuery}
+            onSearchChange={(q) => { setSearchQuery(q) }}
+            specialties={filteredSpecialties}
+            onSelect={(specialty) => {
+              setSelectedSpecialty(specialty)
+              goForward(2)
+            }}
+          />
+        )}
+        {displayedStep === 2 && (
+          <Step2Medico
+            specialty={selectedSpecialty ?? ''}
+            doctors={DOCTORS}
+            onBack={() => goBack(1)}
+            onSelect={(doctor) => {
+              setSelectedDoctor(doctor)
+              goForward(3)
+            }}
+          />
+        )}
+        {displayedStep === 3 && (
+          <Step3DataHorario
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            onDateSelect={(d) => { setSelectedDate(d); setSelectedTime(null) }}
+            onTimeSelect={setSelectedTime}
+            onBack={() => goBack(2)}
+            onNext={() => goForward(4)}
+          />
+        )}
+        {displayedStep === 4 && (
+          <Step4Confirmacao
+            doctor={selectedDoctor}
+            specialty={selectedSpecialty ?? ''}
+            date={selectedDate ?? ''}
+            time={selectedTime ?? ''}
+            onReset={resetFlow}
+          />
+        )}
+      </div>
     </div>
   )
 }
 
-// ─── Step 1: Escolha de especialista ────────────────────────────────────────
+// ─── Step 1: Especialidade ────────────────────────────────────────────────────
 
-function StepEspecialista({
-  state, filter, onFilterChange, filtered, selected, onSelect, onNext, onRetry,
+function Step1Especialidade({
+  searchQuery,
+  onSearchChange,
+  specialties,
+  onSelect,
 }: {
-  state: EspecialistaState
-  filter: ModalFilter
-  onFilterChange: (f: ModalFilter) => void
-  filtered: Specialist[]
-  selected: Specialist | null
-  onSelect: (s: Specialist) => void
-  onNext: () => void
-  onRetry: () => void
+  searchQuery: string
+  onSearchChange: (q: string) => void
+  specialties: Specialty[]
+  onSelect: (label: string) => void
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <NavBar type="page" title="Com quem quer consultar?" rightIcons={0} onBack={() => {}} />
+      <NavBar
+        type="page"
+        showTitle={false}
+        iconLeft={false}
+        rightIcons={1}
+        rightIcon1="close"
+        rightIcon1Size={20}
+        onRightIcon1={() => {}}
+      />
 
-      {/* Loading */}
-      {state === 'loading' && (
-        <div style={{
-          flex: 1, padding: 'var(--spacing-06)',
-          display: 'flex', flexDirection: 'column', gap: 'var(--spacing-04)',
+      <div style={{ padding: '0 var(--spacing-06) var(--spacing-05)' }}>
+        <h1 style={{
+          fontFamily: 'var(--font-family-base)',
+          fontSize: 'var(--font-size-xl)',
+          fontWeight: 'var(--font-weight-regular)' as CSSProperties['fontWeight'],
+          color: 'var(--color-content-primary)',
+          margin: '0 0 var(--spacing-05)',
+          lineHeight: 'var(--line-height-title)',
         }}>
-          {[...Array(4)].map((_, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-03)' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', backgroundColor: 'var(--color-surface-subtle)', flexShrink: 0 }} />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-02)' }}>
-                <div style={{ height: 16, borderRadius: 'var(--radius-xs)', backgroundColor: 'var(--color-surface-subtle)', width: '60%' }} />
-                <div style={{ height: 14, borderRadius: 'var(--radius-xs)', backgroundColor: 'var(--color-surface-subtle)', width: '40%' }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+          Com quem quer consultar?
+        </h1>
+        <TextField
+          label="Buscar especialidade"
+          leftIcon="search"
+          width="100%"
+          onValueChange={onSearchChange}
+        />
+      </div>
 
-      {/* Error */}
-      {state === 'error' && (
-        <div style={{ flex: 1, padding: 'var(--spacing-06)' }}>
-          <Callout
-            status="Alert"
-            title="Não foi possível carregar os especialistas"
-            description="Verifique sua conexão e tente novamente."
-            showLink={true}
-            linkLabel="Tentar novamente"
-            onLinkClick={onRetry}
-            width="100%"
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        {specialties.map((s, i) => (
+          <ListItem
+            key={s.label}
+            title={s.label}
+            size="large"
+            leftSide="icon"
+            icon={<Icon name={s.icon} size={ICON_SIZE.lg} color="var(--color-content-primary)" />}
+            rightAsset="icon"
+            divider={i < specialties.length - 1}
+            onClick={() => onSelect(s.label)}
           />
-        </div>
-      )}
+        ))}
+        {specialties.length === 0 && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'var(--spacing-03)',
+            padding: 'var(--spacing-10) var(--spacing-06)',
+          }}>
+            <Icon name="search" size={ICON_SIZE.xl} color="var(--color-content-tertiary)" />
+            <p style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-sm)',
+              color: 'var(--color-content-secondary)',
+              textAlign: 'center',
+              margin: 0,
+            }}>
+              Nenhuma especialidade encontrada
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
-      {/* Loaded */}
-      {state === 'loaded' && (
-        <>
-          {/* Filter chips */}
-          <div
-            style={{
-              display: 'flex', gap: 'var(--spacing-02)', overflowX: 'auto',
-              scrollbarWidth: 'none', padding: 'var(--spacing-04) var(--spacing-06)',
-              borderBottom: '1px solid var(--color-divider)', flexShrink: 0,
-            }}
-            className="flex-nowrap"
-          >
-            {(['Todos', 'Online', 'Presencial'] as ModalFilter[]).map(f => (
-              <div key={f} className="shrink-0">
-                <Chip
-                  label={f} variant="text" size="small"
-                  state={filter === f ? 'selected' : 'idle'}
-                  onClick={() => onFilterChange(f)}
-                />
-              </div>
-            ))}
+// ─── Step 2: Médico ───────────────────────────────────────────────────────────
+
+function Step2Medico({
+  specialty,
+  doctors,
+  onBack,
+  onSelect,
+}: {
+  specialty: string
+  doctors: Doctor[]
+  onBack: () => void
+  onSelect: (doctor: Doctor) => void
+}) {
+  const [featured, familyDoctor, ...others] = doctors
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <NavBar
+        type="page"
+        title={specialty}
+        iconLeft={true}
+        rightIcons={0}
+        onBack={onBack}
+      />
+
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <div style={{
+          padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-06)',
+        }}>
+
+          {/* Featured doctor — earliest availability */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
+            <p style={sectionLabel}>Disponível mais cedo</p>
+            <CardMFC
+              style="highlighted"
+              name={featured.name}
+              bio={featured.description}
+              rating={featured.rating}
+              distance={featured.distance}
+              modality={featured.modality}
+              imageUrl={featured.imageUrl}
+              width="100%"
+              onLinkClick={() => onSelect(featured)}
+            />
           </div>
 
-          {/* Empty (filtered) */}
-          {filtered.length === 0 ? (
-            <div style={{
-              flex: 1, display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              gap: 'var(--spacing-04)', padding: 'var(--spacing-06)',
-            }}>
-              <Icon name="stethoscope" size={32} color="var(--color-content-tertiary)" />
-              <p style={{
-                fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-                color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0,
-              }}>
-                Nenhum especialista disponível para essa modalidade
-              </p>
-              <Button
-                label="Ver todos os especialistas" style="secondary" size="medium"
-                onClick={() => onFilterChange('Todos')}
+          {/* Family doctor — plan-linked */}
+          {familyDoctor && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
+              <p style={sectionLabel}>Sua médica de família</p>
+              <ListItem
+                title={familyDoctor.name}
+                description={`${familyDoctor.rating}/5 · ${familyDoctor.distance} · ${familyDoctor.modality}`}
+                size="large"
+                leftSide="image"
+                imageSrc={familyDoctor.imageUrl}
+                rightAsset="icon"
+                divider={others.length > 0}
+                onClick={() => onSelect(familyDoctor)}
               />
             </div>
-          ) : (
-            /* Specialist list */
-            <div className="flex-1 overflow-y-auto">
-              {filtered.map((s, i) => (
+          )}
+
+          {/* Other doctors */}
+          {others.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
+              <p style={sectionLabel}>Outros médicos</p>
+              {others.map((doc, i) => (
                 <ListItem
-                  key={s.id}
-                  title={s.name}
-                  description={`${s.specialty} · ${s.modality}`}
-                  size="small"
+                  key={doc.name}
+                  title={doc.name}
+                  description={`${doc.rating}/5 · ${doc.distance} · ${doc.modality}`}
+                  size="large"
                   leftSide="image"
-                  imageSrc={s.imageUrl}
-                  rightAsset="text-icon"
-                  rightText={s.nextSlot}
-                  divider={i < filtered.length - 1}
-                  state={selected?.id === s.id ? 'pressed' : 'default'}
-                  onClick={() => onSelect(s)}
+                  imageSrc={doc.imageUrl}
+                  rightAsset="icon"
+                  divider={i < others.length - 1}
+                  onClick={() => onSelect(doc)}
                 />
               ))}
             </div>
           )}
 
-          {/* CTA — outside scroll per Rule K */}
-          <div style={{
-            padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
-            borderTop: '1px solid var(--color-stroke)',
-            backgroundColor: 'var(--color-surface)',
-            flexShrink: 0,
-          }}>
-            <Button
-              label="Próximo"
-              style="primary" size="large"
-              state={selected ? 'enabled' : 'disabled'}
-              className="w-full"
-              onClick={onNext}
-            />
-          </div>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   )
 }
 
-// ─── Step 2: Data e horário ──────────────────────────────────────────────────
+// ─── Step 3: Data e horário ───────────────────────────────────────────────────
 
-function StepDataHora({
-  state, specialist, modalities, modalityChoice, onModalityChange,
-  dates, selectedDate, onDateSelect, availableTimes, selectedTime, onTimeSelect,
-  onBack, onNext, onRetry,
+function Step3DataHorario({
+  selectedDate,
+  selectedTime,
+  onDateSelect,
+  onTimeSelect,
+  onBack,
+  onNext,
 }: {
-  state: DataHoraState
-  specialist: Specialist
-  modalities: ('Online' | 'Presencial')[]
-  modalityChoice: 'Online' | 'Presencial'
-  onModalityChange: (m: 'Online' | 'Presencial') => void
-  dates: string[]
   selectedDate: string | null
-  onDateSelect: (d: string) => void
-  availableTimes: string[]
   selectedTime: string | null
+  onDateSelect: (d: string) => void
   onTimeSelect: (t: string) => void
   onBack: () => void
   onNext: () => void
-  onRetry: () => void
 }) {
   const canProceed = !!selectedDate && !!selectedTime
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <NavBar type="page" title="Quando quer consultar?" rightIcons={0} onBack={onBack} />
+      <NavBar
+        type="page"
+        title="Escolha o horário"
+        iconLeft={true}
+        rightIcons={0}
+        onBack={onBack}
+      />
 
-      {/* Loading */}
-      {state === 'loading' && (
-        <div style={{
-          flex: 1, padding: 'var(--spacing-06)',
-          display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)',
-        }}>
-          {[...Array(3)].map((_, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-              <div style={{ height: 14, borderRadius: 'var(--radius-xs)', backgroundColor: 'var(--color-surface-subtle)', width: '30%' }} />
-              <div style={{ display: 'flex', gap: 'var(--spacing-02)' }}>
-                {[...Array(4)].map((_, j) => (
-                  <div key={j} style={{ width: 56, height: 36, borderRadius: 'var(--radius-pill)', backgroundColor: 'var(--color-surface-subtle)' }} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Error */}
-      {state === 'error' && (
-        <div style={{ flex: 1, padding: 'var(--spacing-06)' }}>
-          <Callout
-            status="Alert"
-            title="Não foi possível carregar as disponibilidades"
-            description="Verifique sua conexão e tente novamente."
-            showLink={true} linkLabel="Tentar novamente"
-            onLinkClick={onRetry}
-            width="100%"
-          />
-        </div>
-      )}
-
-      {/* Empty — no slots available at all */}
-      {state === 'empty' && (
-        <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 'var(--spacing-04)', padding: 'var(--spacing-06)',
-        }}>
-          <Icon name="calendar" size={32} color="var(--color-content-tertiary)" />
-          <p style={{
-            fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-            color: 'var(--color-content-secondary)', textAlign: 'center', margin: 0,
-          }}>
-            {specialist.name} não tem disponibilidade para o período exibido
-          </p>
-          <Button
-            label="Escolher outro especialista" style="secondary" size="medium"
-            onClick={onBack}
-          />
-        </div>
-      )}
-
-      {/* Loaded / Conflict */}
-      {(state === 'loaded' || state === 'conflict') && (
-        <>
-          <div className="flex-1 overflow-y-auto">
-            <div style={{
-              padding: 'var(--spacing-06)',
-              display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)',
-            }}>
-
-              {/* Conflict warning — slot taken */}
-              {state === 'conflict' && (
-                <Callout
-                  status="Alert"
-                  title="Horário indisponível"
-                  description="Este horário acabou de ser reservado. Escolha outro para continuar."
-                  width="100%"
-                />
-              )}
-
-              {/* Tipo de atendimento — only shows when specialist offers both */}
-              {modalities.length > 1 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-                  <p style={{
-                    fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-content-secondary)', margin: 0,
-                  }}>
-                    Tipo de atendimento
-                  </p>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-02)' }}>
-                    {modalities.map(m => (
-                      <Chip
-                        key={m} label={m} variant="text" size="small"
-                        state={modalityChoice === m ? 'selected' : 'idle'}
-                        onClick={() => onModalityChange(m)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Dia */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-                <p style={{
-                  fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-                  fontWeight: 'var(--font-weight-regular)',
-                  color: 'var(--color-content-secondary)', margin: 0,
-                }}>
-                  Dia
-                </p>
-                <div
-                  style={{ display: 'flex', gap: 'var(--spacing-02)', overflowX: 'auto', scrollbarWidth: 'none' }}
-                  className="flex-nowrap"
-                >
-                  {dates.map(d => (
-                    <div key={d} className="shrink-0">
-                      <Chip
-                        label={d} variant="text" size="small"
-                        state={selectedDate === d ? 'selected' : 'idle'}
-                        onClick={() => onDateSelect(d)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Horário — progressive: only appears after date is selected */}
-              {selectedDate && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-                  <p style={{
-                    fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-                    fontWeight: 'var(--font-weight-regular)',
-                    color: 'var(--color-content-secondary)', margin: 0,
-                  }}>
-                    Horário
-                  </p>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-02)', flexWrap: 'wrap' }}>
-                    {availableTimes.map(t => (
-                      <Chip
-                        key={t} label={t} variant="text" size="small"
-                        state={selectedTime === t ? 'selected' : 'idle'}
-                        onClick={() => onTimeSelect(t)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* CTA — outside scroll per Rule K */}
-          <div style={{
-            padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
-            borderTop: '1px solid var(--color-stroke)',
-            backgroundColor: 'var(--color-surface)', flexShrink: 0,
-          }}>
-            <Button
-              label="Próximo"
-              style="primary" size="large"
-              state={canProceed ? 'enabled' : 'disabled'}
-              className="w-full"
-              onClick={onNext}
-            />
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-// ─── Step 3: Confirmação ─────────────────────────────────────────────────────
-
-function StepConfirmacao({
-  state, specialist, date, time, modality, onBack, onConfirm, onChangeTime,
-}: {
-  state: ConfirmacaoState
-  specialist: Specialist
-  date: string
-  time: string
-  modality: 'Online' | 'Presencial'
-  onBack: () => void
-  onConfirm: () => void
-  onChangeTime: () => void
-}) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <NavBar type="page" title="Confirmar agendamento" rightIcons={0} onBack={onBack} />
-
-      <div className="flex-1 overflow-y-auto">
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         <div style={{
           padding: 'var(--spacing-06)',
-          display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-06)',
         }}>
 
-          {/* Conflict — slot taken during confirmation */}
-          {state === 'conflict' && (
-            <Callout
-              status="Alert"
-              title="Horário reservado"
-              description="Este horário foi escolhido por outra pessoa enquanto você revisava. Escolha um novo horário para continuar."
-              showLink={true} linkLabel="Escolher outro horário"
-              onLinkClick={onChangeTime}
-              width="100%"
-            />
-          )}
-
-          {/* Especialista */}
+          {/* Data */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-            <p style={{
-              fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-              fontWeight: 'var(--font-weight-regular)',
-              color: 'var(--color-content-secondary)', margin: 0,
-            }}>
-              Especialista
-            </p>
-            <CardMFC
-              style="compact"
-              name={specialist.name}
-              label={specialist.specialty}
-              modality={specialist.modality}
-              imageUrl={specialist.imageUrl}
-              width="100%"
-            />
+            <p style={sectionLabel}>Data</p>
+            <div
+              style={{ display: 'flex', gap: 'var(--spacing-02)', overflowX: 'auto', scrollbarWidth: 'none' }}
+              className="flex-nowrap"
+            >
+              {DATE_CHIPS.map((d) => (
+                <div key={d} className="shrink-0">
+                  <Chip
+                    label={d}
+                    variant="text"
+                    size="small"
+                    state={selectedDate === d ? 'selected' : 'idle'}
+                    onClick={() => onDateSelect(d)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Data e horário */}
+          {/* Horários disponíveis */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)' }}>
-            <p style={{
-              fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-sm)',
-              fontWeight: 'var(--font-weight-regular)',
-              color: 'var(--color-content-secondary)', margin: 0,
-            }}>
-              Data e horário
-            </p>
-            <BaseCard
-              size="small"
-              filled={false}
-              showCategory={true}
-              category="Primeira consulta"
-              showTitle={true}
-              title={`${date} Dez · ${time}`}
-              showSubtitle={true}
-              subtitle={modality}
-              leftAsset={false}
-              rightAsset={false}
-              action={state === 'conflict' ? 'none' : 'link'}
-              linkLabel="Alterar"
-              onClick={onChangeTime}
-              width="100%"
-            />
+            <p style={sectionLabel}>Horários disponíveis</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-02)' }}>
+              {TIME_CHIPS.map((t, i) => (
+                <div
+                  key={t}
+                  style={{
+                    animation: `fadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) ${i * 60}ms both`,
+                  }}
+                >
+                  <Chip
+                    label={t}
+                    variant="text"
+                    size="small"
+                    state={selectedTime === t ? 'selected' : 'idle'}
+                    onClick={() => onTimeSelect(t)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* CTA — outside scroll per Rule K */}
+      {/* CTA — outside scroll (Rule K) */}
       <div style={{
         padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
         borderTop: '1px solid var(--color-stroke)',
-        backgroundColor: 'var(--color-surface)', flexShrink: 0,
+        backgroundColor: 'var(--color-surface)',
+        flexShrink: 0,
       }}>
         <Button
-          label="Confirmar agendamento"
-          style="primary" size="large"
-          state={
-            state === 'confirming' ? 'loading' :
-            state === 'conflict'   ? 'disabled' :
-            'enabled'
-          }
+          label="Confirmar horário"
+          style="primary"
+          size="large"
+          state={canProceed ? 'enabled' : 'disabled'}
           className="w-full"
-          onClick={onConfirm}
+          onClick={onNext}
         />
       </div>
     </div>
   )
 }
 
-// ─── Step 4: Sucesso ─────────────────────────────────────────────────────────
+// ─── Step 4: Confirmação ──────────────────────────────────────────────────────
 
-function StepSucesso({
-  specialist, date, time, modality,
+function Step4Confirmacao({
+  doctor,
+  specialty,
+  date,
+  time,
+  onReset,
 }: {
-  specialist: Specialist
+  doctor: Doctor | null
+  specialty: string
   date: string
   time: string
-  modality: 'Online' | 'Presencial'
+  onReset: () => void
 }) {
+  const summaryRowLabel: CSSProperties = {
+    fontFamily: 'var(--font-family-base)',
+    fontSize: 'var(--font-size-xs)',
+    color: 'var(--color-content-tertiary)',
+    fontWeight: 'var(--font-weight-regular)' as CSSProperties['fontWeight'],
+    margin: 0,
+    flexShrink: 0,
+  }
+
+  const summaryRowValue: CSSProperties = {
+    fontFamily: 'var(--font-family-base)',
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-content-primary)',
+    fontWeight: 'var(--font-weight-medium)' as CSSProperties['fontWeight'],
+    margin: 0,
+    textAlign: 'right' as CSSProperties['textAlign'],
+    flex: 1,
+  }
+
+  const rows = [
+    { label: 'Médico',      value: `${doctor?.name ?? 'Dra. Ana Lima'} — ${specialty}` },
+    { label: 'Data',        value: date && time ? `${date === 'Hoje' ? 'Hoje' : `Terça, 22 de abril`} · ${time}` : 'Terça, 22 de abril · 09:30' },
+    { label: 'Modalidade',  value: doctor?.modality ?? 'Online e presencial' },
+  ]
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* No back on success — flow completed */}
-      <NavBar type="page" showTitle={false} rightIcons={0} />
+      <NavBar
+        type="page"
+        title="Consulta agendada"
+        iconLeft={false}
+        rightIcons={1}
+        rightIcon1="close"
+        rightIcon1Size={20}
+        onRightIcon1={onReset}
+      />
 
-      <div className="flex-1 overflow-y-auto">
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         <div style={{
           padding: 'var(--spacing-06)',
-          display: 'flex', flexDirection: 'column', gap: 'var(--spacing-06)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-06)',
         }}>
 
-          {/* Success illustration — fora do DS */}
+          {/* Title block — left-aligned */}
           <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', gap: 'var(--spacing-04)',
-            marginTop: 'var(--spacing-08)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--spacing-02)',
+            animation: 'fadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both',
           }}>
-            <div style={{ position: 'relative' }}>
-              <div style={{
-                width: 72, height: 72, borderRadius: '50%',
-                backgroundColor: 'var(--color-brand)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Icon name="checkOutlined" size={36} color="var(--color-gray-white)" />
-              </div>
-              <MissingTag label="SuccessIcon — fora do DS" />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-02)', alignItems: 'center' }}>
-              <h1 style={{
-                fontFamily: 'var(--font-family-base)',
-                fontSize: 'var(--font-size-lg)',
-                fontWeight: 'var(--font-weight-regular)',
-                color: 'var(--color-content-primary)',
-                lineHeight: 'var(--line-height-title)',
-                margin: 0, textAlign: 'center',
-              }}>
-                Agendamento{' '}
-                <span style={{ color: 'var(--color-brand)' }}>confirmado!</span>
-              </h1>
-              <p style={{
-                fontFamily: 'var(--font-family-label)',
-                fontSize: 'var(--font-size-sm)',
-                color: 'var(--color-content-secondary)',
-                textAlign: 'center', margin: 0, lineHeight: 1.5,
-              }}>
-                Você vai receber uma confirmação por e-mail e uma notificação no app.
-              </p>
-            </div>
+            <h1 style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-xl)',
+              fontWeight: 'var(--font-weight-medium)' as CSSProperties['fontWeight'],
+              color: 'var(--color-content-primary)',
+              margin: 0,
+              lineHeight: 'var(--line-height-title)',
+            }}>
+              Consulta agendada!
+            </h1>
+            <p style={{
+              fontFamily: 'var(--font-family-base)',
+              fontSize: 'var(--font-size-sm)',
+              color: 'var(--color-content-secondary)',
+              margin: 0,
+              lineHeight: 1.5,
+            }}>
+              Você receberá uma confirmação por e-mail
+            </p>
           </div>
 
-          {/* Doctor */}
-          <CardMFC
-            style="compact"
-            name={specialist.name}
-            label={specialist.specialty}
-            modality={specialist.modality}
-            imageUrl={specialist.imageUrl}
-            width="100%"
-          />
-
-          {/* Appointment summary */}
-          <BaseCard
-            size="small"
-            filled={true}
-            showCategory={true}
-            category="Primeira consulta"
-            showTitle={true}
-            title={`${date} Dez · ${time}`}
-            showSubtitle={true}
-            subtitle={modality}
-            leftAsset={false}
-            rightAsset={false}
-            action="none"
-            width="100%"
-          />
+          {/* Appointment summary card */}
+          <div style={{
+            width: '100%',
+            borderRadius: 'var(--radius-xl)',
+            border: '1px solid var(--color-black-10)',
+            backgroundColor: 'var(--color-surface)',
+            padding: 'var(--spacing-05)',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--spacing-04)',
+            animation: 'fadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both',
+          }}>
+            {rows.map((row, i) => (
+              <div key={row.label}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 'var(--spacing-04)',
+                }}>
+                  <p style={summaryRowLabel}>{row.label}</p>
+                  <p style={summaryRowValue}>{row.value}</p>
+                </div>
+                {i < rows.length - 1 && (
+                  <div style={{
+                    height: 1,
+                    backgroundColor: 'var(--color-stroke)',
+                    marginTop: 'var(--spacing-04)',
+                  }} />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* CTAs — outside scroll, two actions per Rule Q */}
+      {/* CTAs — outside scroll (Rule K) */}
       <div style={{
         padding: 'var(--spacing-04) var(--spacing-06) var(--spacing-06)',
         borderTop: '1px solid var(--color-stroke)',
-        backgroundColor: 'var(--color-surface)', flexShrink: 0,
-        display: 'flex', flexDirection: 'column', gap: 'var(--spacing-03)',
+        backgroundColor: 'var(--color-surface)',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--spacing-03)',
       }}>
         <Button
           label="Ver meus agendamentos"
-          style="primary" size="large" state="enabled"
-          className="w-full" onClick={() => {}}
+          style="primary"
+          size="large"
+          className="w-full"
+          onClick={() => { console.log('Ver meus agendamentos') }}
         />
         <Button
-          label="Ir para o início"
-          style="tertiary" size="large" state="enabled"
-          className="w-full" onClick={() => {}}
+          label="Voltar ao início"
+          style="tertiary"
+          size="large"
+          className="w-full"
+          onClick={onReset}
         />
       </div>
     </div>

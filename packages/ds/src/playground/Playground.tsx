@@ -44,6 +44,7 @@ import { BuscaEspecialistasScreen }    from '../screens/BuscaEspecialistasScreen
 import { ExtratoCoparticipacaoScreen } from '../screens/ExtratoCoparticipacaoScreen'
 import { ReembolsoFlowScreen }              from '../screens/ReembolsoFlowScreen'
 import { CadastroDependenteFlowScreen }    from '../screens/CadastroDependenteFlowScreen'
+import { RedeCredenciadaFlowScreen }       from '../screens/RedeCredenciadaFlowScreen'
 import type { ComponentConfig } from './types'
 import menuIconComponentes from '../assets/menu-icons/componentes.svg'
 import menuIconTemplates from '../assets/menu-icons/templates.svg'
@@ -525,6 +526,7 @@ export function Playground() {
     { name: 'Extrato Coparticipação',  component: ExtratoCoparticipacaoScreen },
     { name: 'Busca de Especialistas', component: BuscaEspecialistasScreen },
     { name: 'Solicitação de Exame', component: SolicitacaoExameFlowScreen },
+    { name: 'Rede Credenciada Flow', component: RedeCredenciadaFlowScreen },
     { name: 'Agendamento Consulta Flow', component: AgendamentoConsultaFlowScreen },
     { name: 'Escolha Especialista', component: EscolhaEspecialistaScreen },
     { name: 'Agendamento',          component: AgendamentoFlowScreen     },
@@ -543,6 +545,7 @@ export function Playground() {
   ]
   const phoneScale = usePhoneScale()
   const [activeTemplate, setActiveTemplate] = useState<number | null>(null)
+  const [templateResetKey, setTemplateResetKey] = useState(0)
   const [slotOverrides, setSlotOverrides] = useState<Record<string, React.ReactNode>>({})
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [slotPickerPos, setSlotPickerPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -909,7 +912,7 @@ export function Playground() {
               },
               getOverride: (id) => slotOverrides[id] ?? null,
             }}>
-              {TemplateComponent ? <TemplateComponent /> : null}
+              {TemplateComponent ? <TemplateComponent key={templateResetKey} /> : null}
             </TemplateEditContext.Provider>
             </div>
           </div>
@@ -1086,7 +1089,7 @@ export function Playground() {
               <div
                 key={tmpl.name}
                 ref={parallax.setRef(parallaxIdx)}
-                onClick={() => setActiveTemplate(i)}
+                onClick={() => { setActiveTemplate(i); setTemplateResetKey(k => k + 1) }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && setActiveTemplate(i)}
