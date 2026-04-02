@@ -30,7 +30,7 @@ Abra o terminal e rode os dois comandos abaixo:
 
 ```bash
 echo '@leobertonceli:registry=https://npm.pkg.github.com' >> ~/.npmrc
-echo '//npm.pkg.github.com/:_authToken=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' >> ~/.npmrc
+echo '//npm.pkg.github.com/:_authToken=TOKEN_FORNECIDO_PELO_LEO' >> ~/.npmrc
 ```
 
 Isso configura o npm para buscar o pacote do DS no lugar certo.
