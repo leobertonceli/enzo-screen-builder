@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "ds",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "5174"],
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["node_modules/.bin/vite", "--port", "5174"],
       "cwd": "/Users/leonardo.bertonceli/Desktop/DS Agent/packages/ds",
       "port": 5174
     }

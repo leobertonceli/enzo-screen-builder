@@ -20,13 +20,13 @@ interface VariantConfig {
 }
 
 const VARIANT_CONFIG: Record<TagVariant, VariantConfig> = {
-  Red:      { bg: 'var(--color-red-00)',     textColor: 'var(--color-content-primary)', iconName: 'alert-circle-outline',  primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-red-60)' },
-  Magenta:  { bg: 'var(--color-magenta-00)', textColor: 'var(--color-content-primary)', iconName: 'heart-outline',         primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-brand)' },
-  Blue:     { bg: 'var(--color-blue-00)',    textColor: 'var(--color-content-primary)', iconName: 'information-outline',   primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-blue-50)' },
-  Green:    { bg: 'var(--color-green-00)',   textColor: 'var(--color-content-primary)', iconName: 'check-circle-outline',  primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-green-90)' },
-  Orange:   { bg: 'var(--color-orange-00)',  textColor: 'var(--color-content-primary)', iconName: 'alert',                 primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-orange-80)' },
-  Grey:     { bg: 'var(--color-gray-10)',    textColor: 'var(--color-gray-90)',         iconName: 'autorenew',             primaryIconColor: 'var(--color-gray-90)',         semanticIconColor: 'var(--color-gray-90)' },
-  Disabled: { bg: 'var(--color-gray-10)',    textColor: 'var(--color-gray-40)',         iconName: 'block-helper',          primaryIconColor: 'var(--color-gray-40)',         semanticIconColor: 'var(--color-gray-40)' },
+  Red:      { bg: 'var(--color-red-00)',     textColor: 'var(--color-content-primary)', iconName: 'alertCircleOutlined',  primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-red-60)' },
+  Magenta:  { bg: 'var(--color-magenta-00)', textColor: 'var(--color-content-primary)', iconName: 'heartOutlined',        primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-brand)' },
+  Blue:     { bg: 'var(--color-blue-00)',    textColor: 'var(--color-content-primary)', iconName: 'info',                 primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-blue-50)' },
+  Green:    { bg: 'var(--color-green-00)',   textColor: 'var(--color-content-primary)', iconName: 'success',              primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-green-90)' },
+  Orange:   { bg: 'var(--color-orange-00)',  textColor: 'var(--color-content-primary)', iconName: 'alertTriangle',        primaryIconColor: 'var(--color-content-primary)', semanticIconColor: 'var(--color-orange-80)' },
+  Grey:     { bg: 'var(--color-gray-10)',    textColor: 'var(--color-gray-90)',         iconName: 'repeat',               primaryIconColor: 'var(--color-gray-90)',         semanticIconColor: 'var(--color-gray-90)' },
+  Disabled: { bg: 'var(--color-gray-10)',    textColor: 'var(--color-gray-40)',         iconName: 'block',                primaryIconColor: 'var(--color-gray-40)',         semanticIconColor: 'var(--color-gray-40)' },
 }
 
 const labelStyle: CSSProperties = {

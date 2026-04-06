@@ -63,7 +63,7 @@ export function Link({
   const s = sizeMap[size]
   const colors = colorMap[context]
 
-  const iconName = icon === 'left' ? 'arrow-left' : 'arrow-right'
+  const iconName = icon === 'left' ? 'arrowLeft' : 'arrowRight'
 
   const rootStyle: CSSProperties = {
     display: 'inline-flex',

@@ -74,8 +74,8 @@ export function Callout({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-01)' }}>
 
         {/* Header: icon + title + optional close */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-06)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-02)', flex: '1 0 0', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-02)', flex: '1 1 0', minWidth: 0 }}>
             <div style={{ flexShrink: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon name={activeIcon} size={ICON_SIZE.md} color="var(--color-content-primary)" />
             </div>
@@ -86,7 +86,7 @@ export function Callout({
                 fontWeight: 'var(--font-weight-medium)' as CSSProperties['fontWeight'],
                 fontSize: 'var(--font-size-sm)',
                 color: 'var(--color-content-primary)',
-                flex: '1 0 0',
+                flex: '1 1 0',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -97,14 +97,14 @@ export function Callout({
             </p>
           </div>
           {showClose && (
-            <div style={{ flexShrink: 0, cursor: 'pointer', paddingTop: 2 }}>
+            <div style={{ flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <Icon name="close" size={ICON_SIZE.sm} color="var(--color-content-primary)" />
             </div>
           )}
         </div>
 
-        {/* Description */}
-        <div style={{ paddingLeft: 'var(--spacing-08)' }}>
+        {/* Description — paddingLeft = icon (20px) + gap (8px) = spacing-07 */}
+        <div style={{ paddingLeft: 'calc(20px + var(--spacing-02))' }}>
           <p
             {...editable(isEditable, (t) => onChange?.('description', t))}
             style={{
@@ -123,7 +123,7 @@ export function Callout({
 
       {/* Link */}
       {showLink && (
-        <div style={{ paddingLeft: 'var(--spacing-08)' }}>
+        <div style={{ paddingLeft: 'calc(20px + var(--spacing-02))' }}>
           <p
             {...editable(isEditable, (t) => onChange?.('linkLabel', t))}
             style={{

@@ -22,12 +22,17 @@ export interface TextFieldProps {
   onFocusChange?: (focused: boolean) => void
 }
 
-let caretKeyframesInjected = false
-function injectCaretKeyframes() {
-  if (caretKeyframesInjected) return
-  caretKeyframesInjected = true
+let tfKeyframesInjected = false
+function injectTFKeyframes() {
+  if (tfKeyframesInjected) return
+  tfKeyframesInjected = true
   const style = document.createElement('style')
-  style.textContent = `@keyframes tf-blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }`
+  style.textContent = `
+    @keyframes tf-blink        { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+    @keyframes tf-label-float  { from { opacity: 0; transform: translateY(6px);  } to { opacity: 1; transform: translateY(0); } }
+    @keyframes tf-placeholder  { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes tf-value-in     { from { opacity: 0; } to { opacity: 1; } }
+  `
   document.head.appendChild(style)
 }
 
@@ -69,7 +74,7 @@ export function TextField({
   onValueChange,
   onFocusChange,
 }: TextFieldProps) {
-  injectCaretKeyframes()
+  injectTFKeyframes()
 
   // ── Interactive mode state ──
   const [internalValue, setInternalValue] = useState(valueProp)
@@ -153,6 +158,7 @@ export function TextField({
           paddingBottom: 'var(--spacing-04)',
           borderRadius: 'var(--radius-sm)',
           border: `1px solid ${borderColor}`,
+          transition: 'border-color 0.4s ease',
           backgroundColor: bg,
           boxSizing: 'border-box',
           cursor: isDisable ? 'not-allowed' : 'text',
@@ -168,7 +174,7 @@ export function TextField({
         }}
       >
         {leftIcon && (
-          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.4s ease' }}>
             <Icon name={leftIcon} size={ICON_SIZE.md} color={iconColor} />
           </div>
         )}
@@ -186,6 +192,7 @@ export function TextField({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                animation: 'tf-label-float 420ms cubic-bezier(0.16, 1, 0.3, 1) both',
                 ...(editable ? { outline: 'none', cursor: 'text', minWidth: 4 } : {}),
               }}
             >
@@ -209,6 +216,7 @@ export function TextField({
                   whiteSpace: 'nowrap',
                   userSelect: 'none',
                   pointerEvents: 'none',
+                  animation: 'tf-value-in 350ms ease-out both',
                 }}>{currentValue || '\u00A0'}</span>
               ) : (
                 <span style={{
@@ -229,6 +237,7 @@ export function TextField({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
+                  animation: 'tf-value-in 350ms ease-out both',
                   ...(editable ? { outline: 'none', cursor: 'text', minWidth: 4 } : {}),
                 }}
               >
@@ -246,6 +255,7 @@ export function TextField({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                animation: 'tf-placeholder 380ms cubic-bezier(0.16, 1, 0.3, 1) both',
                 ...(editable ? { outline: 'none', cursor: 'text', minWidth: 4 } : {}),
               }}
             >
@@ -255,7 +265,7 @@ export function TextField({
         </div>
 
         {rightIcon && (
-          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ flexShrink: 0, zIndex: 1, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.4s ease' }}>
             <Icon name={rightIcon} size={ICON_SIZE.md} color={iconColor} />
           </div>
         )}

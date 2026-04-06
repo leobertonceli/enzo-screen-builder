@@ -13,13 +13,31 @@ Think of yourself as an architect who builds houses from pre-fabricated parts. Y
 
 ## Available components
 
-Read `references/component-api.md` for the full API of each component:
+Read `references/component-api.md` for the full API of each component.
 
-- **Icon** — Material Design icons via `@iconify/react`. Use for any icon need.
-- **Button** — Primary/secondary/tertiary, 3 sizes, states, icon variants
-- **ListItem** — List rows with left icon/image, right asset, divider
-- **Chip** — Pills for filters/tags, text/icon/image variants, states
+### Navigation
+- **NavBar** — Top header for ALL screens. `type="page"` (back arrow, centered title) or `type="modal"` (left-aligned). NEVER build a custom header.
+- **BottomBar** — Bottom tab navigation. Only for hub/root screens.
+
+### Layout & Content
 - **BaseCard** — Cards with slots, actions (buttons/links), filled/outlined
+- **ListItem** — List rows with left icon/image, right asset, divider
+- **Shortcut** — Quick action card for hub screens
+- **Callout** — Informational banner (Alert, Information, Warning, Highlight)
+- **Tabs** — `style="texts"` (underline) or `style="filter"` (pills)
+
+### Forms & Inputs
+- **TextField** — Text input with floating label. Use `onValueChange` for interactive screens.
+- **Checkbox** — Unselected/selected/indeterminate
+- **Button** — Primary/secondary/tertiary, 3 sizes, icon variants
+- **Chip** — Pills for filters/tags, text/icon/image variants
+
+### Display
+- **Avatar** — User photo or placeholder, 4 sizes
+- **Badge** — Counter or dot indicator, overlaid on icons/avatars
+- **ChatBubble** — Message bubbles (text, reply, document, media)
+- **ChatInput** — Message input with mic, attach, send
+- **Icon** — Material Design icons. Use for any icon need.
 
 ## Available tokens
 
@@ -50,13 +68,24 @@ If something doesn't have a matching component, tell the user: "This design incl
 
 Generate a React TSX file that:
 
-1. **Imports only from the DS**
+1. **Imports only from the DS** — always use relative paths from `src/screens/`:
    ```tsx
-   import { Button } from '@/components/Button'
-   import { ListItem } from '@/components/ListItem'
-   import { Chip } from '@/components/Chip'
-   import { BaseCard } from '@/components/BaseCard'
-   import { Icon } from '@/icons/Icon'
+   import { NavBar } from '../components/NavBar/NavBar'
+   import { BottomBar } from '../components/BottomBar/BottomBar'
+   import { Button } from '../components/Button'
+   import { ListItem } from '../components/ListItem'
+   import { Chip } from '../components/Chip'
+   import { BaseCard } from '../components/BaseCard'
+   import { TextField } from '../components/TextField/TextField'
+   import { Tabs } from '../components/Tabs/Tabs'
+   import { Callout } from '../components/Callout/Callout'
+   import { Checkbox } from '../components/Checkbox/Checkbox'
+   import { Avatar } from '../components/Avatar/Avatar'
+   import { Badge } from '../components/Badge/Badge'
+   import { Shortcut } from '../components/Shortcut/Shortcut'
+   import { ChatBubble } from '../components/ChatBubble/ChatBubble'
+   import { ChatInput } from '../components/ChatInput/ChatInput'
+   import { Icon } from '../icons/Icon'
    ```
 
 2. **Uses tokens for ALL visual properties via inline styles**
@@ -164,14 +193,18 @@ export function ScreenName() {
 ## Component usage guidelines
 
 1. **BaseCard**: Never place two BaseCards side by side (no grid/row layout). Always stack vertically. Prefer the `outlined` (filled={false}) version over filled. The component already handles all internal spacing (padding, gap between text/slot/actions) — never add extra spacing wrappers.
+   **Use the minimum props needed.** BaseCard doesn't require category + title + subtitle every time. Many real cards only need a title, or title + action. Ask: "what information does this card actually need?" and use only those props.
+   - Only title → `showCategory={false}`, `showSubtitle={false}`
+   - Card with photo → use `leftImage="url"` instead of `leftIcon`
+   - Help card → title + subtitle + linkLabel (no category, no icon needed)
 2. **Page titles**: Always use `fontSize: 'var(--font-size-xl)'` (24px) with `fontWeight: 'var(--font-weight-regular)'` (400), `fontFamily: 'var(--font-family-base)'`.
 3. **All DS components are black boxes.** Trust their internal layout. Your job is to choose the right props and place them in the page — not to style their insides.
 4. **Horizontal scroll lists**: When placing components (Chips, Buttons, etc.) in a horizontal `flex` container with `overflow-x-auto`, always wrap each item in a `<div className="shrink-0">` to prevent flex shrinking from compressing the component and breaking its layout. Also hide the scrollbar with `scrollbarWidth: 'none'`.
 5. **Icon colors default to #141414.** Use `color="var(--color-content-primary)"` (#141414) for all icons by default. Only change the icon color when it represents a status (success, error, warning, pending) or when the design explicitly requires a different color. Never use brand color on icons just for decoration.
 6. **Prefer small component sizes.** Based on real app screens, the most common sizes are:
    - **ListItem**: `size="small"` is the default for screens. Use `size="large"` only when the design explicitly calls for it.
-   - **BaseCard**: `size="sm"` is the default for screens. Use `size="lg"` only when the design explicitly calls for it.
-   - **Chip**: `size="sm"` is the default for screens.
+   - **BaseCard**: `size="small"` is the default for screens. Use `size="large"` only when the design explicitly calls for it.
+   - **Chip**: `size="small"` is the default for screens.
    - **Icon sizes**: 24px for ListItem large, 20px for ListItem small. Match the icon size to the component size.
    - **ListItem divider**: The last ListItem in a group must have `divider={false}`. Only items that have another item below them get a divider.
 7. **Page titles with colored name.** A common pattern is page titles with a highlighted word in brand color: `"Minha saúde "` + `<span style={{ color: 'var(--color-brand)' }}>Diogo</span>`. The base title is `--color-content-primary`, the highlighted word is `--color-brand`.
@@ -190,7 +223,7 @@ export function ScreenName() {
    This rule applies to **all components** — BaseCard, ListItem, Chip, Button. Prefer the simplest combination that still communicates the intent. Add props only when they add real information, not to "complete" the component.
 
 11. **Even "fora do DS" elements must use tokens.** When building placeholder elements that don't exist in the DS yet, still use all design tokens (fontFamily, fontWeight, fontSize, color, spacing, radius). The only difference is the MissingTag — the visual treatment must be consistent with the DS.
-12. **Screen structure: StatusBar → Navigation (back) → Title.** The page title (h1) always comes below the back navigation bar, never above it. The standard top flow is: StatusBar → Navigation bar with back arrow → h1 page title → Content.
+12. **Screen structure: NavBar → Content.** ALWAYS start screens with `<NavBar>`. The NavBar already includes the status bar internally. Never add a separate status bar div. The standard top flow is: `<NavBar>` → page title (if needed) → content. Detail/flow screens use `type="page"` with back arrow. Hub screens use `type="page"` without back arrow + `<BottomBar>` at the bottom.
 13. **Photos and avatars use standard radius tokens.** Never use `--radius-pill` for photos or avatars — that creates a fully round shape which is not the DS pattern. Use `--radius-xs` (8px) or `--radius-sm` (12px) depending on the size. `--radius-pill` is only for pills/chips/badges.
 14. **Chips as action options (chat context only).** In chat/assistant screens, chips can be stacked vertically as quick-reply options (e.g. "Estou em uma emergência", "Tenho sintomas"). Use `flex-col` with `items-start` and `gap: var(--spacing-02)`. In all other screens, chips should be horizontal (scroll row).
 
@@ -286,6 +319,115 @@ DS components used:
 
 Components fora do DS (flag com MissingTag):
   - StatusBar, PageTitle, ShortcutCard, DoctorCard, NavBar, ScoreWidget
+```
+
+### Recipe: Detail / Flow screen
+Single step in a multi-step flow. Back arrow, centered title, no bottom nav.
+
+```
+Structure:
+  <NavBar type="page" title="Título do passo" onBack={...} rightIcons={0} />
+  <div scroll container>
+    Page title (h1) — opcional, só quando a tela tem heading próprio
+    Content sections (cards, lists, form fields)
+    CTA button — fixo no final ou dentro do scroll
+  </div>
+
+Spacing rules:
+  - Padding lateral: 24px (--spacing-06)
+  - Entre seções: 32px (--spacing-08)
+  - Entre campos de form: 16px (--spacing-04)
+  - CTA fixo no bottom: padding 24px, sempre w-full primary button
+
+DS components used:
+  - NavBar type="page"
+  - TextField com onValueChange
+  - ListItem para seleção de opções
+  - Callout para alertas/informações contextuais
+  - Button primary w-full no CTA
+```
+
+### Recipe: Multi-step flow (fluxo)
+Vários passos encadeados num mesmo arquivo. Cada passo é um componente separado, orquestrado por estado.
+
+```tsx
+type Step = 'intro' | 'form' | 'confirm' | 'success'
+
+export function MeuFluxoScreen() {
+  const [step, setStep] = useState<Step>('intro')
+  const [data, setData] = useState({ campo: '' })
+
+  if (step === 'intro') return <IntroStep onNext={() => setStep('form')} />
+  if (step === 'form')  return <FormStep data={data} onChange={setData} onNext={() => setStep('confirm')} onBack={() => setStep('intro')} />
+  if (step === 'confirm') return <ConfirmStep data={data} onNext={() => setStep('success')} onBack={() => setStep('form')} />
+  return <SuccessStep />
+}
+```
+
+Rules:
+- Each step is a separate function component in the same file
+- State and data flow down from the parent
+- `onBack` always goes to previous step
+- Success/done step has no back button — use `rightIcons={0}` and `iconLeft={false}`
+
+### Recipe: Form screen
+Screen with input fields and submit CTA.
+
+```
+Structure:
+  <NavBar type="page" title="Dados pessoais" onBack={...} />
+  <div scroll container, padding 24px>
+    Section label (optional)
+    <TextField label="Nome" onValueChange={...} />
+    <TextField label="CPF" onValueChange={...} />
+    <TextField label="Data" onValueChange={...} />
+    <Callout status="Information" title="..." /> (optional)
+  </div>
+  <div fixed bottom, padding 24px>
+    <Button label="Continuar" style="primary" size="lg" className="w-full" />
+  </div>
+
+Rules:
+  - Gap between fields: var(--spacing-04) (16px)
+  - Always use onValueChange on TextFields — never hardcode values
+  - CTA button always full-width primary
+  - Use Callout for contextual help/warnings near relevant fields
+```
+
+### Recipe: Selection / List screen
+Screen where user picks an option from a list.
+
+```
+Structure:
+  <NavBar type="page" title="Escolha uma opção" onBack={...} />
+  Search bar (TextField with leftIcon="magnify") — optional
+  Filter chips row — optional
+  <div scroll list>
+    <ListItem> per option (rightAsset="icon", rightIconElement=chevron or radio)
+    ...
+  </div>
+
+Rules:
+  - Last ListItem in group: divider={false}
+  - Use leftSide="image" when options have photos (doctors, clinics)
+  - Use leftSide="icon" when options have category icons
+  - Add Tabs style="filter" above list when there are multiple categories
+```
+
+### Recipe: Confirmation / Summary screen
+Review before submitting. Shows a summary of collected data.
+
+```
+Structure:
+  <NavBar type="page" title="Confirmar" onBack={...} />
+  <div scroll>
+    Summary section (BaseCard outlined with all info)
+    <Callout> with important notice (optional)
+    Details list (ListItem rows with rightAsset="text" showing values)
+  </div>
+  <div fixed bottom>
+    <Button label="Confirmar" style="primary" size="lg" className="w-full" />
+  </div>
 ```
 
 ## Project context

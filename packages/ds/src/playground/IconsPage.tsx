@@ -3,8 +3,9 @@ import { Icon } from '../icons/Icon'
 import { ICONS, ICON_CATEGORIES } from '../icons/iconCatalog'
 import type { IconCategory } from '../icons/iconCatalog'
 
-export function IconsPage() {
-  const [search, setSearch] = useState('')
+export function IconsPage({ searchQuery: externalSearch }: { searchQuery?: string } = {}) {
+  const [internalSearch, setInternalSearch] = useState('')
+  const search = externalSearch !== undefined ? externalSearch : internalSearch
   const [activeCategory, setActiveCategory] = useState<IconCategory | 'All'>('All')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
 
@@ -41,31 +42,33 @@ export function IconsPage() {
     <div className="flex-1 overflow-y-auto p-6" style={{ fontFamily: 'var(--font-family-base)' }}>
       {/* Header: search + filters */}
       <div className="flex flex-col gap-4 mb-6">
-        {/* Search */}
-        <div className="relative max-w-[400px]">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A3A3A3]"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Buscar ícone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-[13px] bg-white border border-[#E5E5E5] rounded-xl outline-none focus:border-[#BE0380] transition-colors"
-            style={{ fontFamily: 'var(--font-family-base)', color: '#141414' }}
-          />
-        </div>
+        {/* Search — hidden when controlled externally via nav pill */}
+        {externalSearch === undefined && (
+          <div className="relative max-w-[400px]">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A3A3A3]"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Buscar ícone..."
+              value={internalSearch}
+              onChange={(e) => setInternalSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 text-[13px] bg-white border border-[#E5E5E5] rounded-xl outline-none focus:border-[#BE0380] transition-colors"
+              style={{ fontFamily: 'var(--font-family-base)', color: '#141414' }}
+            />
+          </div>
+        )}
 
         {/* Category filters */}
         <div className="flex flex-wrap gap-2">

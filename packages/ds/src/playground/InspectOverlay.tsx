@@ -12,6 +12,7 @@ interface InspectData {
   borderRadius: string
   backgroundColor: string
   color: string
+  siblingGaps: SiblingGap[]
 }
 
 interface DSTokenMatch {
@@ -19,6 +20,15 @@ interface DSTokenMatch {
   value: string
   token: string | null
   isDS: boolean
+}
+
+interface SiblingGap {
+  direction: 'right' | 'left' | 'bottom' | 'top'
+  gap: number
+  lineX1: number
+  lineY1: number
+  lineX2: number
+  lineY2: number
 }
 
 /* ── DS token maps for reverse-lookup ── */
@@ -84,6 +94,91 @@ const FONT_WEIGHT_TOKENS: Record<string, string> = {
   '400': '--font-weight-regular',
   '500': '--font-weight-medium',
   '600': '--font-weight-semibold',
+}
+
+/* ── Compute gaps between el and its nearest siblings in each direction ── */
+function gapsForTarget(target: HTMLElement, targetRect: DOMRect, siblings: HTMLElement[]): SiblingGap[] {
+  const gaps: SiblingGap[] = []
+  const DIRECTIONS = ['right', 'left', 'bottom', 'top'] as const
+
+  for (const direction of DIRECTIONS) {
+    let nearest: { gap: number; sr: DOMRect } | null = null
+
+    for (const sibling of siblings) {
+      const sr = sibling.getBoundingClientRect()
+      if (sr.width < 1 || sr.height < 1) continue
+
+      let gap = 0
+      let overlaps = false
+
+      if (direction === 'right') {
+        gap = sr.left - targetRect.right
+        overlaps = sr.top < targetRect.bottom - 2 && sr.bottom > targetRect.top + 2
+      } else if (direction === 'left') {
+        gap = targetRect.left - sr.right
+        overlaps = sr.top < targetRect.bottom - 2 && sr.bottom > targetRect.top + 2
+      } else if (direction === 'bottom') {
+        gap = sr.top - targetRect.bottom
+        overlaps = sr.left < targetRect.right - 2 && sr.right > targetRect.left + 2
+      } else {
+        gap = targetRect.top - sr.bottom
+        overlaps = sr.left < targetRect.right - 2 && sr.right > targetRect.left + 2
+      }
+
+      if (gap >= 2 && overlaps && (nearest === null || gap < nearest.gap)) {
+        nearest = { gap, sr }
+      }
+    }
+
+    if (nearest) {
+      const { gap, sr } = nearest
+      let lineX1 = 0, lineY1 = 0, lineX2 = 0, lineY2 = 0
+
+      if (direction === 'right') {
+        const midY = (Math.max(targetRect.top, sr.top) + Math.min(targetRect.bottom, sr.bottom)) / 2
+        lineX1 = targetRect.right; lineY1 = midY; lineX2 = sr.left; lineY2 = midY
+      } else if (direction === 'left') {
+        const midY = (Math.max(targetRect.top, sr.top) + Math.min(targetRect.bottom, sr.bottom)) / 2
+        lineX1 = sr.right; lineY1 = midY; lineX2 = targetRect.left; lineY2 = midY
+      } else if (direction === 'bottom') {
+        const midX = (Math.max(targetRect.left, sr.left) + Math.min(targetRect.right, sr.right)) / 2
+        lineX1 = midX; lineY1 = targetRect.bottom; lineX2 = midX; lineY2 = sr.top
+      } else {
+        const midX = (Math.max(targetRect.left, sr.left) + Math.min(targetRect.right, sr.right)) / 2
+        lineX1 = midX; lineY1 = sr.bottom; lineX2 = midX; lineY2 = targetRect.top
+      }
+
+      gaps.push({ direction, gap: Math.round(gap), lineX1, lineY1, lineX2, lineY2 })
+    }
+  }
+
+  return gaps
+}
+
+function computeSiblingGaps(el: HTMLElement, rect: DOMRect): SiblingGap[] {
+  // Walk up max 3 levels to find an ancestor that has meaningful siblings
+  let target: HTMLElement = el
+  let targetRect: DOMRect = rect
+
+  for (let i = 0; i < 3; i++) {
+    const parent = target.parentElement
+    if (!parent) return []
+
+    const siblings = Array.from(parent.children).filter(c => c !== target) as HTMLElement[]
+    const usefulSiblings = siblings.filter(s => {
+      const sr = s.getBoundingClientRect()
+      return sr.width > 1 && sr.height > 1
+    })
+
+    if (usefulSiblings.length > 0) {
+      return gapsForTarget(target, targetRect, usefulSiblings)
+    }
+
+    target = parent
+    targetRect = parent.getBoundingClientRect()
+  }
+
+  return []
 }
 
 /* Known DS component names — detected by data-component attribute or class patterns */
@@ -201,6 +296,62 @@ function collectTokenMatches(s: CSSStyleDeclaration, el: HTMLElement): DSTokenMa
   }
 
   return matches
+}
+
+const GAP_COLOR = '#FF6B6B'
+
+function GapIndicator({ gap }: { gap: SiblingGap }) {
+  const isH = gap.direction === 'left' || gap.direction === 'right'
+
+  if (isH) {
+    const left = Math.min(gap.lineX1, gap.lineX2)
+    const width = Math.abs(gap.lineX2 - gap.lineX1)
+    const y = gap.lineY1
+    if (width < 2) return null
+    return (
+      <div className="fixed pointer-events-none" style={{ left, top: y - 10, width, height: 20, zIndex: 9997 }}>
+        <div style={{ position: 'absolute', left: 0, top: 2, bottom: 2, width: 1, backgroundColor: GAP_COLOR }} />
+        <div style={{ position: 'absolute', right: 0, top: 2, bottom: 2, width: 1, backgroundColor: GAP_COLOR }} />
+        <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, backgroundColor: GAP_COLOR }} />
+        {width > 18 && (
+          <div style={{
+            position: 'absolute', left: '50%', top: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: GAP_COLOR, color: '#fff',
+            fontSize: 9, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+            padding: '1px 4px', borderRadius: 3,
+            whiteSpace: 'nowrap', lineHeight: 1.5,
+          }}>
+            {gap.gap}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const top = Math.min(gap.lineY1, gap.lineY2)
+  const height = Math.abs(gap.lineY2 - gap.lineY1)
+  const x = gap.lineX1
+  if (height < 2) return null
+  return (
+    <div className="fixed pointer-events-none" style={{ left: x - 10, top, width: 20, height, zIndex: 9997 }}>
+      <div style={{ position: 'absolute', top: 0, left: 2, right: 2, height: 1, backgroundColor: GAP_COLOR }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 2, right: 2, height: 1, backgroundColor: GAP_COLOR }} />
+      <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: 1, backgroundColor: GAP_COLOR }} />
+      {height > 18 && (
+        <div style={{
+          position: 'absolute', left: '50%', top: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: GAP_COLOR, color: '#fff',
+          fontSize: 9, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+          padding: '1px 4px', borderRadius: 3,
+          whiteSpace: 'nowrap', lineHeight: 1.5,
+        }}>
+          {gap.gap}
+        </div>
+      )}
+    </div>
+  )
 }
 
 interface Props {
@@ -349,6 +500,11 @@ export function InspectOverlay({ active, containerRef }: Props) {
           }}
         />
       )}
+
+      {/* Sibling gap indicators */}
+      {displayData.siblingGaps.map((gap, i) => (
+        <GapIndicator key={i} gap={gap} />
+      ))}
 
       {/* Element border */}
       <div
@@ -519,5 +675,6 @@ function inspectElement(el: HTMLElement): InspectData {
     borderRadius: s.borderRadius,
     backgroundColor: s.backgroundColor,
     color: s.color,
+    siblingGaps: computeSiblingGaps(el, rect),
   }
 }

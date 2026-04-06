@@ -17,7 +17,7 @@ export const ChipConfig: ComponentConfig = {
     },
     {
       label: 'Ação com ícone',
-      values: { label: 'Emergência', variant: 'icon', size: 'small', state: 'idle', showCounter: false, counter: '12', affordanceIcon: false, affordanceIconName: 'close', iconName: 'alert-circle-outline' },
+      values: { label: 'Emergência', variant: 'icon', size: 'small', state: 'idle', showCounter: false, counter: '12', affordanceIcon: false, affordanceIconName: 'close', iconName: 'alertCircleOutlined' },
     },
     {
       label: 'Filtro com contador',

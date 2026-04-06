@@ -7,23 +7,23 @@ export const ShortcutConfig: ComponentConfig = {
   presets: [
     {
       label: 'Callout — Agendar',
-      values: { type: 'callout', state: 'idle', title: 'Agendar consulta', subtitle: 'Próxima disponível', badge: true, badgeCount: 2, iconName: 'calendar-outline' },
+      values: { type: 'callout', state: 'idle', title: 'Agendar consulta', subtitle: 'Próxima disponível', badge: true, badgeCount: 2, iconName: 'calendar' },
     },
     {
       label: 'Callout — Exames',
-      values: { type: 'callout', state: 'idle', title: 'Ver resultados', subtitle: 'Exames recentes', badge: false, badgeCount: 1, iconName: 'file-document-outline' },
+      values: { type: 'callout', state: 'idle', title: 'Ver resultados', subtitle: 'Exames recentes', badge: false, badgeCount: 1, iconName: 'paper' },
     },
     {
       label: 'Support — Favoritos',
-      values: { type: 'support', state: 'idle', title: 'Favoritos', badge: false, badgeCount: 1, iconName: 'heart-outline' },
+      values: { type: 'support', state: 'idle', title: 'Favoritos', badge: false, badgeCount: 1, iconName: 'heartOutlined' },
     },
     {
       label: 'Support — Notificações',
-      values: { type: 'support', state: 'idle', title: 'Notificações', badge: true, badgeCount: 3, iconName: 'bell-outline' },
+      values: { type: 'support', state: 'idle', title: 'Notificações', badge: true, badgeCount: 3, iconName: 'bell' },
     },
     {
       label: 'Support — Mensagens',
-      values: { type: 'support', state: 'idle', title: 'Mensagens', badge: true, badgeCount: 5, iconName: 'message-outline' },
+      values: { type: 'support', state: 'idle', title: 'Mensagens', badge: true, badgeCount: 5, iconName: 'chat' },
     },
   ],
   controls: {
@@ -31,7 +31,7 @@ export const ShortcutConfig: ComponentConfig = {
     state:      { type: 'select',      label: 'State',       options: ['idle', 'pressed', 'disabled', 'loading'], default: 'idle' },
     title:      { type: 'text',        label: 'Title',       default: 'Título' },
     subtitle:   { type: 'text',        label: 'Subtitle',    default: 'Subtítulo', showWhen: { field: 'type', values: ['callout'] } },
-    iconName:   { type: 'icon-picker', label: 'Icon',        default: 'checkbox-marked-outline' },
+    iconName:   { type: 'icon-picker', label: 'Icon',        default: 'checkOutlined' },
     badge:      { type: 'boolean',     label: 'Badge',       default: false },
     badgeCount: { type: 'text',        label: 'Badge count', default: '1', showWhen: { field: 'badge', values: ['true'] } },
   },

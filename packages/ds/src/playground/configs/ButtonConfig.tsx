@@ -7,31 +7,31 @@ export const ButtonConfig: ComponentConfig = {
   presets: [
     {
       label: 'CTA primário',
-      values: { label: 'Começar agora', darkMode: false, style: 'primary', size: 'large', btnType: 'text', state: 'enabled', iconName: 'chevron-right' },
+      values: { label: 'Começar agora', darkMode: false, style: 'primary', size: 'large', btnType: 'text', state: 'enabled', iconName: 'chevronArrowRight' },
     },
     {
       label: 'Ação secundária',
-      values: { label: 'Cancelar', darkMode: false, style: 'secondary', size: 'medium', btnType: 'text', state: 'enabled', iconName: 'chevron-right' },
+      values: { label: 'Cancelar', darkMode: false, style: 'secondary', size: 'medium', btnType: 'text', state: 'enabled', iconName: 'chevronArrowRight' },
     },
     {
       label: 'Link com ícone',
-      values: { label: 'Ver mais', darkMode: false, style: 'tertiary', size: 'small', btnType: 'right-icon', state: 'enabled', iconName: 'chevron-right' },
+      values: { label: 'Ver mais', darkMode: false, style: 'tertiary', size: 'small', btnType: 'right-icon', state: 'enabled', iconName: 'chevronArrowRight' },
     },
     {
       label: 'Favoritar (ícone)',
-      values: { label: '', darkMode: false, style: 'secondary', size: 'medium', btnType: 'only-icon', state: 'enabled', iconName: 'heart-outline' },
+      values: { label: '', darkMode: false, style: 'secondary', size: 'medium', btnType: 'only-icon', state: 'enabled', iconName: 'heartOutlined' },
     },
     {
       label: 'Agendar consulta',
-      values: { label: 'Agendar consulta', darkMode: false, style: 'primary', size: 'large', btnType: 'left-icon', state: 'enabled', iconName: 'calendar-check-outline' },
+      values: { label: 'Agendar consulta', darkMode: false, style: 'primary', size: 'large', btnType: 'left-icon', state: 'enabled', iconName: 'calendarAdd' },
     },
     {
       label: 'Dark mode primário',
-      values: { label: 'Entrar', darkMode: true, style: 'primary', size: 'large', btnType: 'text', state: 'enabled', iconName: 'chevron-right' },
+      values: { label: 'Entrar', darkMode: true, style: 'primary', size: 'large', btnType: 'text', state: 'enabled', iconName: 'chevronArrowRight' },
     },
     {
       label: 'Carregando',
-      values: { label: 'Enviando...', darkMode: false, style: 'primary', size: 'large', btnType: 'text', state: 'loading', iconName: 'chevron-right' },
+      values: { label: 'Enviando...', darkMode: false, style: 'primary', size: 'large', btnType: 'text', state: 'loading', iconName: 'chevronArrowRight' },
     },
   ],
   controls: {
@@ -41,7 +41,7 @@ export const ButtonConfig: ComponentConfig = {
     size:     { type: 'radio',       label: 'Size',      options: ['small', 'medium', 'large'], default: 'small' },
     btnType:  { type: 'radio',       label: 'Type',      options: ['text', 'left-icon', 'right-icon', 'only-icon'], default: 'text' },
     state:    { type: 'select',      label: 'State',     options: ['enabled', 'pressed', 'disabled', 'loading'], default: 'enabled' },
-    iconName: { type: 'icon-picker', label: 'Icon',      default: 'chevron-right', showWhen: { field: 'btnType', values: ['left-icon', 'right-icon', 'only-icon'] } },
+    iconName: { type: 'icon-picker', label: 'Icon',      default: 'chevronArrowRight', showWhen: { field: 'btnType', values: ['left-icon', 'right-icon', 'only-icon'] } },
   },
   render: (p) => {
     const iconName = p.iconName as string

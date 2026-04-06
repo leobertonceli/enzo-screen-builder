@@ -8,31 +8,31 @@ export const BaseCardConfig: ComponentConfig = {
   presets: [
     {
       label: 'Promoção com botão',
-      values: { category: 'Novidade', title: 'Frete grátis', subtitle: 'Aproveite frete grátis em pedidos acima de R$50', size: 'large', filled: false, action: 'button', buttonLabel: 'Ver ofertas', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'truck-delivery-outline', rightIconName: 'link-variant' },
+      values: { category: 'Novidade', title: 'Frete grátis', subtitle: 'Aproveite frete grátis em pedidos acima de R$50', size: 'large', filled: false, action: 'button', buttonLabel: 'Ver ofertas', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'gift', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'Suporte com link',
-      values: { category: 'Suporte', title: 'Precisa de ajuda?', subtitle: 'Fale com nosso atendimento', size: 'small', filled: false, action: 'link', linkLabel: 'Falar com suporte', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'help-circle-outline', rightIconName: 'link-variant' },
+      values: { category: 'Suporte', title: 'Precisa de ajuda?', subtitle: 'Fale com nosso atendimento', size: 'small', filled: false, action: 'link', linkLabel: 'Falar com suporte', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'help', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'Consulta agendada',
-      values: { category: 'Próxima consulta', title: 'Terça, 04 de Março — 16h', subtitle: 'Online com Isabella', size: 'small', filled: false, action: 'link', linkLabel: 'Ver consulta', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
+      values: { category: 'Próxima consulta', title: 'Terça, 04 de Março — 16h', subtitle: 'Online com Isabella', size: 'small', filled: false, action: 'link', linkLabel: 'Ver consulta', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'info', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'Card com slot e 2 botões',
-      values: { category: 'Destaque', title: 'Conheça nossos planos', subtitle: 'Planos a partir de R$99/mês com cobertura completa', size: 'large', filled: false, action: '2buttons', buttonLabel: 'Ver planos', buttonLabel2: 'Comparar', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: true, showSlot: true, leftIconName: 'shield-check-outline', rightIconName: 'chevron-right' },
+      values: { category: 'Destaque', title: 'Conheça nossos planos', subtitle: 'Planos a partir de R$99/mês com cobertura completa', size: 'large', filled: false, action: '2buttons', buttonLabel: 'Ver planos', buttonLabel2: 'Comparar', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: true, showSlot: true, leftIconName: 'plan', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'Card filled mínimo',
-      values: { category: 'Dica', title: 'Beba mais água', subtitle: 'Você bebeu apenas 3 copos hoje', size: 'small', filled: true, action: 'none', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'water-outline', rightIconName: 'link-variant' },
+      values: { category: 'Dica', title: 'Beba mais água', subtitle: 'Você bebeu apenas 3 copos hoje', size: 'small', filled: true, action: 'none', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'heartOutlined', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'Médica com link',
-      values: { category: 'Minha médica', title: 'Isabella Moreira Hueb', subtitle: '', size: 'small', filled: false, action: 'link', linkLabel: 'Agendar consulta', showCategory: true, showTitle: true, showSubtitle: false, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'link-variant', rightIconName: 'link-variant' },
+      values: { category: 'Minha médica', title: 'Isabella Moreira Hueb', subtitle: '', size: 'small', filled: false, action: 'link', linkLabel: 'Agendar consulta', showCategory: true, showTitle: true, showSubtitle: false, leftAsset: false, rightAsset: false, showSlot: false, leftIconName: 'info', rightIconName: 'chevronArrowRight' },
     },
     {
       label: 'FAQ com 2 links',
-      values: { category: 'Dúvidas', title: 'Como funciona o agendamento?', subtitle: 'Tire suas dúvidas sobre consultas online e presenciais', size: 'small', filled: false, action: '2links', linkLabel: 'Saiba mais', linkLabel2: 'Fale conosco', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'frequently-asked-questions', rightIconName: 'link-variant' },
+      values: { category: 'Dúvidas', title: 'Como funciona o agendamento?', subtitle: 'Tire suas dúvidas sobre consultas online e presenciais', size: 'small', filled: false, action: '2links', linkLabel: 'Saiba mais', linkLabel2: 'Fale conosco', showCategory: true, showTitle: true, showSubtitle: true, leftAsset: true, rightAsset: false, showSlot: false, leftIconName: 'help', rightIconName: 'chevronArrowRight' },
     },
   ],
   controls: {
@@ -53,9 +53,9 @@ export const BaseCardConfig: ComponentConfig = {
     rightAsset:    { type: 'boolean',     label: 'Right asset',    default: true },
     showSlot:      { type: 'boolean',     label: 'Slot',           default: false },
     leftAssetType: { type: 'radio',       label: 'Left type',  options: ['icon', 'image'], default: 'icon', showWhen: { field: 'leftAsset', values: ['true'] } },
-    leftIconName:  { type: 'icon-picker', label: 'Left icon',  default: 'link-variant', showWhen: { field: 'leftAssetType', values: ['icon'] } },
+    leftIconName:  { type: 'icon-picker', label: 'Left icon',  default: 'info', showWhen: { field: 'leftAssetType', values: ['icon'] } },
     rightAssetType:{ type: 'radio',       label: 'Right type', options: ['icon', 'image'], default: 'icon', showWhen: { field: 'rightAsset', values: ['true'] } },
-    rightIconName: { type: 'icon-picker', label: 'Right icon', default: 'link-variant', showWhen: { field: 'rightAssetType', values: ['icon'] } },
+    rightIconName: { type: 'icon-picker', label: 'Right icon', default: 'chevronArrowRight', showWhen: { field: 'rightAssetType', values: ['icon'] } },
   },
   render: (p) => {
     const size = p.size as string
