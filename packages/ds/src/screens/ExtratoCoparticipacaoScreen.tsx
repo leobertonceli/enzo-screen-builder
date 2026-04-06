@@ -43,7 +43,7 @@ export function ExtratoCoparticipacaoScreen() {
             Extrato de{' '}
             <span style={{ color: 'var(--color-brand)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
               Março 2026{' '}
-              <Icon name="chevronArrowDown" size={18} style={{ verticalAlign: 'middle' }} />
+              <span style={{ verticalAlign: 'middle', display: 'inline-flex' }}><Icon name="chevronArrowDown" size={18} /></span>
             </span>
           </h1>
 

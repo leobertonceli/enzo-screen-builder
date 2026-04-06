@@ -102,7 +102,7 @@ export const TextFieldConfig: ComponentConfig = {
     showRightIcon:  { type: 'boolean',     label: 'RightIcon',   default: false },
     rightIcon:      { type: 'icon-picker', label: 'Right icon',  default: 'close', showWhen: { field: 'showRightIcon', values: ['true'] } },
   },
-  render: (p, onChange) => <InteractiveTextField p={p} onChange={onChange} />,
+  render: (p, onChange) => <InteractiveTextField p={p} onChange={onChange!} />,
   slotRender: (p) => (
     <TextField
       variant={p.variant as any}

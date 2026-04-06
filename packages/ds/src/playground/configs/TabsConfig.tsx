@@ -38,7 +38,7 @@ export const TabsConfig: ComponentConfig = {
           style={p.style as any}
           items={items}
           activeIndex={Number(p.activeIndex)}
-          onChange={(i) => onChange('activeIndex', String(i))}
+          onChange={(i) => onChange?.('activeIndex', String(i))}
         />
       </div>
     )

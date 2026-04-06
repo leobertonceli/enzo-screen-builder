@@ -133,12 +133,12 @@ function SearchLayout({ template }: { template: GeneratedTemplate }) {
               key={card.key}
               size="small"
               filled={false}
-              category={card.category ?? card.status}
-              showCategory={!!(card.category ?? card.status)}
+              category={card.category ?? (card as Record<string, string>).status}
+              showCategory={!!(card.category ?? (card as Record<string, string>).status)}
               title={card.title}
               showTitle
-              subtitle={card.subtitle ?? card.description}
-              showSubtitle={!!(card.subtitle ?? card.description)}
+              subtitle={card.subtitle ?? (card as Record<string, string>).description}
+              showSubtitle={!!(card.subtitle ?? (card as Record<string, string>).description)}
               leftAsset={false}
               rightAsset={false}
               action={card.linkLabel ? 'link' : 'none'}

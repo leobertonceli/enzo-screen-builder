@@ -1,5 +1,4 @@
 import { BaseCard } from '../components/BaseCard'
-import { Button } from '../components/Button'
 import { Icon } from '../icons/Icon'
 
 function MissingTag({ label }: { label: string }) {

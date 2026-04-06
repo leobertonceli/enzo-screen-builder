@@ -68,8 +68,8 @@ export const NavBarConfig: ComponentConfig = {
     rightIcons: {
       type: 'radio',
       label: 'Right icons',
-      options: [0, 1, 2],
-      default: 0,
+      options: ['0', '1', '2'],
+      default: '0',
     },
   },
   render: (p, onChange) => (
@@ -80,7 +80,7 @@ export const NavBarConfig: ComponentConfig = {
       title={p.title as string}
       showDescription={p.showDescription as boolean}
       description={p.description as string}
-      rightIcons={p.rightIcons as 0 | 1 | 2}
+      rightIcons={Number(p.rightIcons) as 0 | 1 | 2}
       onChange={onChange}
     />
   ),

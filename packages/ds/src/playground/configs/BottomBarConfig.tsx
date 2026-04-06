@@ -41,7 +41,7 @@ export const BottomBarConfig: ComponentConfig = {
       userInitials={p.userInitials as string || undefined}
       userImageUrl={(p.userImageUrl as string) || (p.meuPlanoMode === 'photo' ? userPhoto : undefined)}
       width={375}
-      onTabSelect={(tab) => onChange('selected', tab)}
+      onTabSelect={(tab) => onChange?.('selected', tab)}
     />
   ),
   slotRender: (p) => (

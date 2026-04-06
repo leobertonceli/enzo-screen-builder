@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { NavBar }    from '../components/NavBar/NavBar'
 import { Button }    from '../components/Button/Button'
 import { Chip }      from '../components/Chip/Chip'

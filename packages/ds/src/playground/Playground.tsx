@@ -3,7 +3,6 @@ import { TemplateEditContext } from './TemplateEditContext'
 import { Controls } from './Controls'
 import { InspectOverlay } from './InspectOverlay'
 import { TokensPage } from './TokensPage'
-import type { TokensTab } from './TokensPage'
 import { IconsPage } from './IconsPage'
 import { ButtonConfig } from './configs/ButtonConfig'
 import { ListItemConfig } from './configs/ListItemConfig'
@@ -103,25 +102,6 @@ function distributeColumns(items: ComponentConfig[], cols: number): ComponentCon
 
 const components: ComponentConfig[] = [ButtonConfig, ListItemConfig, ChipConfig, BaseCardConfig, ShortcutConfig, ChatInputConfig, LinkConfig, CardMFCConfig, ChatBubbleConfig, ChatResponseConfig, TagConfig, BottomBarConfig, TextFieldConfig, CalloutConfig, BadgeConfig, CheckboxConfig, AvatarConfig, TabsConfig, NavBarConfig]
 
-/* ── Category labels for filter pills ── */
-const CATEGORIES = ['All', 'Buttons', 'Cards', 'Text Field', 'Lists'] as const
-type Category = (typeof CATEGORIES)[number]
-
-/* map component → category for filtering */
-function getCategory(c: ComponentConfig): string {
-  if (c.name === 'Button') return 'Buttons'
-  if (c.name === 'ListItem') return 'Lists'
-  if (c.name === 'Chip') return 'Buttons'
-  if (c.name === 'BaseCard') return 'Cards'
-  if (c.name === 'CardMFC') return 'Cards'
-  if (c.name === 'ChatBubble') return 'Chat'
-  if (c.name === 'Tag') return 'Badges'
-  if (c.name === 'BottomBar') return 'Navigation'
-  if (c.name === 'NavBar') return 'Navigation'
-  if (c.name === 'TextField') return 'Text Field'
-  if (c.name === 'Callout') return 'Feedback'
-  return 'Other'
-}
 
 function initValues(config: ComponentConfig) {
   return Object.fromEntries(
@@ -149,25 +129,6 @@ const MENU_ITEMS: { page: Page; label: string; icon: string; type: 'img' | 'text
   { page: 'colors', label: 'Color', icon: '#', type: 'text' },
   { page: 'typography', label: 'Typography', icon: 'A', type: 'text' },
 ]
-
-/* Component border-radius map — container matches component */
-const COMPONENT_RADIUS: Record<string, number> = {
-  Button: 16,
-  Chip: 200,
-  BaseCard: 24,
-  ListItem: 16,
-  ChatInput: 20,
-  Link: 200,
-  CardMFC: 24,
-  ChatBubble: 24,
-  Tag: 200,
-  BottomBar: 0,
-  TextField: 12,
-  Callout: 20,
-}
-
-/* Components that don't have their own background — need white container in preview */
-const NEEDS_PREVIEW_BG = new Set(['Chip', 'ChatInput'])
 
 /* ── Logo animation keyframes ── */
 let logoKeyframesInjected = false
@@ -355,7 +316,7 @@ function NavGroup({ page, menuOpen, onToggleMenu, onNavigate, searchOpen, onSear
   onSearchClose: () => void
   searchQuery: string
   onSearchChange: (q: string) => void
-  searchInputRef: React.RefObject<HTMLInputElement>
+  searchInputRef: React.RefObject<HTMLInputElement | null>
   placeholder: string
 }) {
   return (
@@ -570,7 +531,6 @@ function Header({ page, onNavigate, menuOpen, onToggleMenu, collapsed, inline, o
 export function Playground() {
   const [page, setPage] = useState<Page>('components')
   const [active, setActive] = useState<ActiveView>({ kind: 'grid' })
-  const [activeCategory, setActiveCategory] = useState<Category>('All')
   const [inspectMode, setInspectMode] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
@@ -592,7 +552,7 @@ export function Playground() {
   )
 
   /* preset index per component */
-  const [presetIndexMap, setPresetIndexMap] = useState<Record<string, number>>(
+  const [_presetIndexMap, setPresetIndexMap] = useState<Record<string, number>>(
     () => Object.fromEntries(components.map((c) => [c.name, -1]))
   )
 
@@ -682,12 +642,6 @@ export function Playground() {
     window.scrollTo(0, 0)
   }
 
-  /* filter components by category */
-  const filteredComponents =
-    activeCategory === 'All'
-      ? components
-      : components.filter((c) => getCategory(c) === activeCategory)
-
   /* templates config */
   const templates = [
     { name: 'Cadastro de Dependente',  component: CadastroDependenteFlowScreen },
@@ -727,7 +681,7 @@ export function Playground() {
     const filtered = q ? components.filter(c => c.name.toLowerCase().includes(q)) : components
     const [col1Items, col2Items, col3Items] = distributeColumns(filtered, 3)
     const speeds = [0, 0.25, 0.12]
-    const colRefs = [col1Ref, col2Ref, col3Ref]
+    const colRefs = [col1Ref, col2Ref, col3Ref] as React.RefObject<HTMLDivElement>[]
 
     return (
       <GridParallax colRefs={colRefs} speeds={speeds}>
@@ -827,7 +781,6 @@ export function Playground() {
     /* Adaptive colors for dark container */
     const cBg        = isDark ? 'var(--color-gray-100)' : 'var(--color-surface)'
     const cText      = isDark ? 'var(--color-gray-white)' : 'var(--color-content-primary)'
-    const cTextSub   = isDark ? 'var(--color-gray-60)' : 'var(--color-content-tertiary)'
     const cStroke    = isDark ? 'rgba(255,255,255,0.08)' : 'var(--color-stroke)'
     const cBtnBg     = isDark ? 'transparent' : 'var(--color-surface)'
     const cBtnHover  = isDark ? 'rgba(255,255,255,0.06)' : 'var(--color-surface-bg)'

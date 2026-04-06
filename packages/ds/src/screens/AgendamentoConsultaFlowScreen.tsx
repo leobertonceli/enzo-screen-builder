@@ -235,7 +235,7 @@ export function AgendamentoConsultaFlowScreen() {
 // ─── Step 1: Especialidade ────────────────────────────────────────────────────
 
 function Step1Especialidade({
-  searchQuery,
+  searchQuery: _searchQuery,
   onSearchChange,
   specialties,
   onSelect,

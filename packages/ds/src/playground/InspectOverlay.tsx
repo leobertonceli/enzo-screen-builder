@@ -97,7 +97,7 @@ const FONT_WEIGHT_TOKENS: Record<string, string> = {
 }
 
 /* ── Compute gaps between el and its nearest siblings in each direction ── */
-function gapsForTarget(target: HTMLElement, targetRect: DOMRect, siblings: HTMLElement[]): SiblingGap[] {
+function gapsForTarget(_target: HTMLElement, targetRect: DOMRect, siblings: HTMLElement[]): SiblingGap[] {
   const gaps: SiblingGap[] = []
   const DIRECTIONS = ['right', 'left', 'bottom', 'top'] as const
 
@@ -236,7 +236,7 @@ function detectDSComponent(el: HTMLElement): string | null {
   return null
 }
 
-function collectTokenMatches(s: CSSStyleDeclaration, el: HTMLElement): DSTokenMatch[] {
+function collectTokenMatches(s: CSSStyleDeclaration, _el: HTMLElement): DSTokenMatch[] {
   const matches: DSTokenMatch[] = []
 
   // Background color

@@ -605,7 +605,7 @@ function ScreenSpecialists({
                 gap: 'var(--spacing-03)',
                 padding: 'var(--spacing-10) var(--spacing-06)',
               }}>
-                <Icon name="search" size={ICON_SIZE.xlg} color="var(--color-content-tertiary)" />
+                <Icon name="search" size={ICON_SIZE.xl} color="var(--color-content-tertiary)" />
                 <p style={{ ...sectionLabel, textAlign: 'center' }}>Nenhum resultado encontrado</p>
               </div>
             )}
@@ -742,7 +742,7 @@ function ScreenExamSearch({
               gap: 'var(--spacing-03)',
               padding: 'var(--spacing-10) 0',
             }}>
-              <Icon name="search" size={ICON_SIZE.xlg} color="var(--color-content-tertiary)" />
+              <Icon name="search" size={ICON_SIZE.xl} color="var(--color-content-tertiary)" />
               <p style={{ ...sectionLabel, textAlign: 'center' }}>Nenhum exame encontrado</p>
             </div>
           )}

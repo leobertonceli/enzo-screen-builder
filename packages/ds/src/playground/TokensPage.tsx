@@ -771,7 +771,7 @@ function SpacingPage() {
                     flexShrink: 0,
                   }} />
                 </div>
-                <TokenLabel style={{ width: 120, flexShrink: 0 } as React.CSSProperties}>{t.token}</TokenLabel>
+                <div style={{ width: 120, flexShrink: 0 }}><TokenLabel>{t.token}</TokenLabel></div>
                 <TokenMeta>{t.value}</TokenMeta>
               </div>
             ))}
@@ -829,7 +829,7 @@ function SpacingPage() {
    PAGE — EFFECTS (shadows, opacity, elevation)
 ════════════════════════════════════════════════════════════════ */
 
-function EffectsPage() {
+export function EffectsPage() {
   return (
     <div style={{ padding: 'var(--spacing-08)', overflowY: 'auto', flex: 1 }}>
       <div style={{ display: 'flex', gap: 'var(--spacing-12)', flexWrap: 'wrap', alignItems: 'flex-start' }}>

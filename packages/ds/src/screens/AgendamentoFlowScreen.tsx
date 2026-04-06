@@ -3,9 +3,7 @@ import { NavBar }   from '../components/NavBar/NavBar'
 import { Button }   from '../components/Button/Button'
 import { ListItem } from '../components/ListItem/ListItem'
 import { Chip }     from '../components/Chip/Chip'
-import { BaseCard } from '../components/BaseCard/BaseCard'
 import { Link }     from '../components/Link/Link'
-import { Icon }     from '../icons/Icon'
 import mfcFabiana  from '../assets/mfc/mfc-1-fabiana.jpg'
 import mfcTiago    from '../assets/mfc/mfc-2-tiago.jpg'
 import mfcManuela  from '../assets/mfc/mfc-3-manuela.jpg'
@@ -232,7 +230,7 @@ function StepMedico({ onSelect }: { onSelect: (d: Doctor) => void }) {
 function StepHorario({
   doctor,
   onBack,
-  onClose,
+  onClose: _onClose,
   onConfirm,
 }: {
   doctor: Doctor

@@ -18,7 +18,7 @@ function serveExportFileRaw() {
   return {
     name: 'serve-export-file-raw',
     configureServer(server: import('vite').ViteDevServer) {
-      server.middlewares.use('/screen-builder/dist-export/export.html', (req, res, next) => {
+      server.middlewares.use('/screen-builder/dist-export/export.html', (_req, res, next) => {
         const filePath = path.resolve(dirname, 'dist-export/export.html')
         if (!fs.existsSync(filePath)) { next(); return }
         res.setHeader('Content-Type', 'text/html; charset=utf-8')

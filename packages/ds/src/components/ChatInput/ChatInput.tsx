@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Icon } from '../../icons/Icon'
 import { ICON_SIZE } from '../../icons/iconSize'
@@ -361,7 +361,7 @@ export function ChatInput({
   value = '',
   showMic = true,
   showPlus = true,
-  onChange,
+  onChange: _onChange,
   onSend,
   onMic,
   onAdd,

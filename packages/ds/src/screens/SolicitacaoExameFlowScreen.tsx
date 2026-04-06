@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { NavBar }   from '../components/NavBar/NavBar'
 import { Button }   from '../components/Button/Button'
 import { Chip }     from '../components/Chip/Chip'
@@ -367,8 +367,7 @@ function StepLaboratorio({ exame, onNext, onBack }: StepLaboratorioProps) {
                           borderTop: '1px solid var(--color-divider)',
                           backgroundColor: 'var(--color-surface-bg)',
                         }}>
-                          <Icon name="localPin" size={14} color="var(--color-content-tertiary)"
-                            style={{ marginTop: 2, flexShrink: 0 }} />
+                          <span style={{ marginTop: 2, flexShrink: 0, display: 'inline-flex' }}><Icon name="localPin" size={14} color="var(--color-content-tertiary)" /></span>
                           <p style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--font-size-xs)',
                             color: 'var(--color-content-secondary)', margin: 0, lineHeight: 1.5 }}>
                             {lab.endereco}, {lab.bairro}
